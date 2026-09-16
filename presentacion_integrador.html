@@ -810,7 +810,7 @@
                     </div>
                     <div class="card reveal" style="border-left: 6px solid var(--accent-blue);">
                         <div class="card-label">Dimensión Climática</div>
-                        <div class="card-title" style="font-size: 20px;">Series INETER</div>
+                        <div class="card-title" style="font-size: 20px;">API Clima & Tráfico</div>
                         <div class="card-text">Modelación de velocidad y variabilidad de demanda ante precipitaciones en Managua.</div>
                     </div>
                 </div>
@@ -906,9 +906,9 @@
                     <div class="slide-footer">
                         <div>INVESTIGACIÓN APLICADA • CIENCIA DE DATOS</div>
                         <div class="footer-metrics">
-                            <div class="footer-metric-item">Precipitación histórica: <strong>1,119.8 mm/año</strong></div>
-                            <div class="footer-metric-item">Temp. media histórica: <strong>26.9 °C</strong></div>
-                            <div class="footer-metric-item">Fuente: <strong>INETER Managua</strong></div>
+                            <div class="footer-metric-item">Volumen anual: <strong>> 65,000 viajes</strong></div>
+                            <div class="footer-metric-item">Flota: <strong>Estándar, Comfort, Moto</strong></div>
+                            <div class="footer-metric-item">Fuente: <strong>API /movigo/clima</strong></div>
                         </div>
                     </div>
                 </div>
@@ -1037,7 +1037,7 @@
                                 </div>
                                 <div class="metric-callout">
                                     <div class="metric-value-huge">3 FRENTES</div>
-                                    <div class="metric-label-sub">Datos de viaje + Geometría urbana + Registro INETER</div>
+                                    <div class="metric-label-sub">Extracción API REST + Staging PostgreSQL + Modelado dbt</div>
                                 </div>
                                 <p class="card-text">
                                     Se requiere estructurar un <strong>Data Warehouse atómico</strong> que permita simular escenarios de reubicación y tarificación antes de implementarlos físicamente en la flota.
@@ -1085,37 +1085,37 @@
                         <div class="grid-4">
                             <div class="card reveal">
                                 <div class="card-number">OE 1</div>
-                                <div class="card-label">Caracterización</div>
-                                <div class="card-title" style="font-size: 19px;">Comportamiento Operativo</div>
+                                <div class="card-label">Ingesta &amp; DW</div>
+                                <div class="card-title" style="font-size: 19px;">Construir</div>
                                 <div class="card-text" style="font-size: 14px;">
-                                    Caracterizar la demanda y distribución de flota considerando variables operativas, zonas espaciales y condiciones climáticas del municipio.
+                                    Construir un pipeline en Python para extraer datos de la API REST (/movigo), estructurar el Data Warehouse dimensional en PostgreSQL/dbt y auditar > 65,000 viajes.
                                 </div>
                             </div>
 
                             <div class="card reveal">
                                 <div class="card-number">OE 2</div>
-                                <div class="card-label">Análisis de Patrones</div>
-                                <div class="card-title" style="font-size: 19px;">Relaciones &amp; Anomalías</div>
+                                <div class="card-label">Inferencia</div>
+                                <div class="card-title" style="font-size: 19px;">Analizar</div>
                                 <div class="card-text" style="font-size: 14px;">
-                                    Analizar relaciones y variaciones espaciotemporales entre oferta, demanda, tarifas y clima mediante técnicas estadísticas y computacionales.
+                                    Analizar el impacto de la lluvia, congestión y estrato mediante regresión lineal múltiple con verificación Gauss-Markov y contrastes de hipótesis formalizados.
                                 </div>
                             </div>
 
                             <div class="card reveal">
                                 <div class="card-number">OE 3</div>
-                                <div class="card-label">Simulación</div>
-                                <div class="card-title" style="font-size: 19px;">Evaluación de Escenarios</div>
+                                <div class="card-label">Métodos Numéricos</div>
+                                <div class="card-title" style="font-size: 19px;">Implementar</div>
                                 <div class="card-text" style="font-size: 14px;">
-                                    Evaluar escenarios de optimización de redistribución de flota y configuración tarifaria bajo restricciones operativas identificadas.
+                                    Implementar métodos de raíces (Bisección y Newton-Raphson) para el multiplicador de equilibrio ^*$, elasticidad $\mathcal{O}(h^2)$ y regla de Simpson 1/3.
                                 </div>
                             </div>
 
                             <div class="card reveal">
                                 <div class="card-number">OE 4</div>
-                                <div class="card-label">Propuesta Prescriptiva</div>
-                                <div class="card-title" style="font-size: 19px;">Modelo Matemático MILP</div>
+                                <div class="card-label">Optimización</div>
+                                <div class="card-title" style="font-size: 19px;">Desarrollar</div>
                                 <div class="card-text" style="font-size: 14px;">
-                                    Proponer un modelo formal de optimización que recomiende la asignación territorial y esquema tarifario óptimo sustentado en datos.
+                                    Desarrollar modelos prescriptivos con Algoritmo Húngaro (despacho), Dijkstra (rutas con lluvia/congestión) y Mochila 0/1 (campañas con presupuesto C$ 120,000 NIO).
                                 </div>
                             </div>
                         </div>
@@ -1371,7 +1371,7 @@
                                 <div class="card-label">01. Ingesta Cruda</div>
                                 <div class="card-title" style="font-size: 20px;">Raw Layer</div>
                                 <div class="card-text" style="font-size: 14px;">
-                                    Carga sin modificaciones de registros sintéticos/operativos: viajes, GPS, vehículos y boletines climáticos INETER en PostgreSQL.
+                                    Carga sin modificaciones de registros sintéticos/operativos: viajes, GPS, vehículos y ingesta de endpoints API REST (/movigo) mediante Python y pandas hacia PostgreSQL.
                                 </div>
                             </div>
 
@@ -1499,7 +1499,7 @@
                                     <div class="card-label">Dimensión Meteorológica</div>
                                     <div class="card-title" style="font-size: 19px;">dim_weather</div>
                                     <div class="card-text" style="font-size: 14px;">
-                                        Registros sincronizados con INETER: precipitación acumulada (mm), intensidad de lluvia, temperatura ambiental (°C), humedad relativa y condición atmosférica general.
+                                        Datos del endpoint /movigo/clima: precipitación acumulada (mm), temperatura (°C), índice de congestión vial (1.00 a 3.50) y condición atmosférica.
                                     </div>
                                 </div>
                             </div>
@@ -1645,7 +1645,7 @@
                                     <strong>3. Rango Tarifario Aceptable:</strong>
                                     $$P_{\min} \le p_{it} \le P_{\max} \quad \forall i, t$$
                                     <strong>4. Modificador Climático de Red:</strong>
-                                    Los costos de viaje $c_{ij}$ y tiempos de tránsito se ajustan en función de la precipitación horaria reportada por INETER: $v_{ij}(w) = v_{ij}^0 \cdot (1 - \lambda \cdot w_t)$.
+                                    Los costos de viaje $c_{ij}$ y tiempos de tránsito se ajustan en función de la precipitación horaria registrada en la API: $v_{ij}(w) = v_{ij}^0 \cdot (1 - \lambda \cdot w_t)$.
                                 </div>
                             </div>
                         </div>
@@ -1720,7 +1720,7 @@
                                     Acoplamiento de reubicación proactiva con tarifas adaptativas ligadas al clima:
                                 </div>
                                 <ul class="swiss-list" style="margin-top: 14px; color: #f1f5f9;">
-                                    <li>Tarifas calibradas con límites regulatorios estrictos ante alertas INETER.</li>
+                                    <li>Tarifas calibradas con límites regulatorios estrictos ante alertas climáticas y congestión vial.</li>
                                     <li>Incentivos económicos verificables para que la flota atienda zonas lluviosas.</li>
                                     <li>Incremento estimado del <strong>15% en viajes efectivos completados</strong>.</li>
                                     <li>Sostenibilidad económica superior para conductor y plataforma.</li>
@@ -1850,7 +1850,7 @@
                                 <ul class="swiss-list" style="margin-top: 14px;">
                                     <li><strong>Calibración con Datos Sintéticos/Reales:</strong> Carga de un dataset transaccional representativo del municipio de Managua con variables de viaje completas.</li>
                                     <li><strong>Ejecución del Solver MILP en Python:</strong> Obtención de los vectores de redistribución óptima $x_{ijt}$ bajo escenarios seco vs. lluvioso.</li>
-                                    <li><strong>Validación de Sensibilidad Climática:</strong> Corridas comparativas con series históricas de precipitación de INETER.</li>
+                                    <li><strong>Validación de Sensibilidad Climática:</strong> Corridas comparativas con series de precipitación e índice de congestión de la API.</li>
                                     <li><strong>Informe Final y Dashboard de Simulación:</strong> Visualización interactiva de matrices OD y panel de control prescriptivo para Movi Go.</li>
                                 </ul>
                             </div>

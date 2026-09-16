@@ -1,68 +1,123 @@
 # 7. Diseño Metodológico
 
-El diseño metodológico describe la secuencia técnica, operativa y computacional implementada para estructurar el pipeline de datos, transformar los registros transaccionales en un modelo dimensional y ejecutar los análisis estadísticos y de optimización para el servicio de transporte selectivo.
+El diseño metodológico describe la secuencia técnica, computacional y matemática implementada para extraer los datos desde la API REST de Movi Go, cargar la base de datos relacional en PostgreSQL, estructurar el Data Warehouse dimensional con dbt y ejecutar los análisis inferenciales, numéricos y de optimización para el servicio de transporte selectivo en Managua.
 
 ---
 
 ## 7.1 Enfoque, Tipo y Alcance de la Investigación
 
-La presente investigación adopta un enfoque mixto, debido a que combina el análisis cuantitativo de los datos operativos del servicio delivery de Antojitos Express con la interpretación cualitativa de los procesos relacionados con la preparación, asignación y entrega de los pedidos. Según Hernández Sampieri y Mendoza Torres (2023), el enfoque mixto integra las perspectivas cuantitativa y cualitativa dentro de un mismo proceso investigativo, permitiendo una comprensión más amplia del fenómeno estudiado.
+La presente investigación adopta un **enfoque mixto con predominio cuantitativo**, debido a que combina el procesamiento computacional masivo de registros transaccionales, telemétricos y climáticos del servicio de transporte selectivo por aplicación **Movi Go** en el municipio de Managua, con la interpretación analítica y contextual de las reglas de negocio, la dinámica urbana y el comportamiento de oferta y demanda. Según Hernández Sampieri y Mendoza Torres (2023), el enfoque mixto integra perspectivas analíticas complementarias para lograr una comprensión integral del fenómeno estudiado.
 
-El estudio es de tipo descriptivo, puesto que se orienta a caracterizar el comportamiento temporal y espacial de la demanda, los tiempos correspondientes a las diferentes etapas del ciclo de atención, la distribución de los pedidos y la disponibilidad de los repartidores. Según Hernández Sampieri y Mendoza Torres (2023), los estudios descriptivos buscan especificar las características, propiedades y comportamientos relevantes de los fenómenos sometidos a análisis.
+El estudio es de tipo **descriptivo, correlacional y propositivo (prescriptivo)**:
+* **Descriptivo:** Caracteriza la distribución espacial de los más de 65,000 viajes anuales, la disponibilidad de la flota y los patrones temporales de movilidad.
+* **Correlacional:** Evalúa el impacto de la precipitación, la congestión y los estratos socioeconómicos sobre la duración de los viajes, las cancelaciones y los métodos de pago.
+* **Propositivo (Prescriptivo):** Formula modelos de optimización y algoritmos numéricos para resolver problemas concretos de despacho, ruteo y asignación presupuestaria.
 
-Asimismo, la investigación presenta un diseño no experimental, debido a que las variables serán estudiadas sin manipulación deliberada, conservando las condiciones representadas en los registros utilizados para el análisis. Según Hernández Sampieri y Mendoza Torres (2023), en los diseños no experimentales los fenómenos se analizan tal como ocurren en su contexto, sin intervención intencional sobre las variables objeto de estudio.
+Asimismo, la investigación presenta un **diseño no experimental**, dado que las variables se analizan tal como fueron registradas y simuladas en el entorno operativo sin intervención deliberada sobre el comportamiento de los conductores o los usuarios.
 
 ---
 
 ## 7.2 Arquitectura del Pipeline y Paradigma ELT
 
-El procesamiento de información se estructura bajo el paradigma de Extracción, Carga y Transformación (ELT). Inicialmente, el esquema relacional origen con los datos sintéticos se carga directamente en una instancia de PostgreSQL en la nube, preservando las tablas crudas en un esquema dedicado (*raw layer*) sin alterar su estructura inicial.
+El flujo de procesamiento de información se estructura bajo una arquitectura moderna de dos fases:
 
-A partir de esta capa cruda, se implementa la herramienta dbt (*Data Build Tool*) conectada al motor de PostgreSQL para orquestar la transformación de datos en dos fases secuenciales:
+```
+[API REST /movigo] 
+       │ (HTTP GET Paginado - Python / httpx)
+       ▼
+[pandas DataFrames] ──(Reconstrucción de relaciones y Parquet + SHA-256)
+       │ (Carga relacional)
+       ▼
+[PostgreSQL - Raw Layer]
+       │
+       ▼ (Transformación con dbt Core)
+[Staging (stg_*)] ──(dbt tests: unique, not_null, domain rules)
+       │
+       ▼ (Modelado Kimball)
+[Data Marts: fact_viajes + dim_*]
+```
 
-### Capa de Estandarización (Staging)
-Generación de vistas intermedias (`stg_*`) donde se ejecutan tareas de limpieza inicial, renombrado de atributos a convenciones homogéneas (`snake_case`) y estandarización de tipos de datos.
+### 7.2.1 Fase de Extracción y Carga Inicial (API REST &rarr; PostgreSQL)
+Dado que el acceso a los datos de Movi Go es exclusivo vía API REST, se implementa un script en Python (`httpx`/`requests`) con una función modular de extracción paginada (`fetch_all_records`):
+* Manejo de paginación mediante parámetros `limit=200` y `offset` incremental.
+* Reconstrucción en memoria con **pandas** de la integridad referencial entre las tablas operativas: zonas, usuarios, conductores, campañas, clima, viajes y telemetría.
+* Carga automatizada a tablas relacionales crudas (*raw layer*) en una instancia dedicada de **PostgreSQL**.
+* Exportación paralela de los conjuntos de datos en formato columnar **Parquet** con cálculo de firmas criptográficas **SHA-256** para auditoría y trazabilidad DataOps.
 
-### Capa de Modelado Dimensional (Marts)
-Materialización de tablas de hechos y dimensiones basadas en el esquema en estrella de la metodología Kimball. En esta etapa se generan llaves subrogadas (*Surrogate Keys*) deterministas mediante funciones de dispersión (*hash*) para desacoplar las identidades analíticas de las claves operativas del origen.
+### 7.2.2 Fase de Transformación y Modelado Dimensional (dbt Core)
+A partir de la capa cruda en PostgreSQL, la herramienta **dbt (Data Build Tool)** orquesta el proceso ELT en dos capas secuenciales:
+* **Capa de Estandarización (Staging):** Vistas intermedias (`stg_viajes`, `stg_zonas`, etc.) donde se realiza la homologación de atributos a convenciones homogéneas (`snake_case`), tipificación estricta de marcas temporales con zona horaria de Managua y limpieza de valores ausentes.
+* **Capa de Modelado Dimensional (Marts):** Materialización de tablas de hechos y dimensiones basadas en la metodología Kimball, generando llaves subrogadas deterministas mediante funciones de dispersión hash (MD5).
 
-### Pruebas Automatizadas de Calidad (dbt Tests)
-La confiabilidad del flujo se asegura mediante pruebas automatizadas de datos (*dbt tests*) declaradas en esquemas YAML, validando aserciones de unicidad, no nulidad, consistencia de llaves foráneas y reglas de dominio (tales como distancias o tiempos no negativos).
+### 7.2.3 Aseguramiento de Calidad de Datos (dbt Tests)
+La confiabilidad del flujo se audita mediante pruebas automáticas declaradas en esquemas YAML de dbt:
+* Aserciones de unicidad y no nulidad en llaves subrogadas.
+* Consistencia de llaves foráneas entre hechos y dimensiones.
+* Reglas de dominio de negocio: `multiplicador_dinamico >= 1.00`, `distancia_km >= 0`, `duracion_minutos >= 0` y `tarifa_final > 0`.
 
 ---
 
 ## 7.3 Definición del Grano y Estructura Dimensional
 
-El diseño del Data Warehouse analítico adopta como proceso de negocio central el ciclo de solicitud y ejecución del viaje. El grano atómico de la tabla de hechos principal (`fct_trips`) se define exactamente al nivel de una fila por cada intento o viaje registrado, almacenando métricas cuantitativas como el tiempo de espera hasta el abordaje, duración total del recorrido, distancia en kilómetros, tarifa cobrada y costo operativo incurrido.
+El diseño del Data Warehouse analítico adopta como proceso de negocio central el ciclo de solicitud, despacho y ejecución del viaje.
 
-Esta tabla de hechos se vincula con dimensiones conformadas que aportan el contexto de análisis:
-* **`dim_zones`**: Delimitación y características de las zonas urbanas de Managua.
-* **`dim_vehicles`**: Atributos de la flota disponible.
-* **`dim_date` / `dim_time`**: Granularidad temporal por día, hora y franja operativa.
-* **`dim_weather`**: Condiciones meteorológicas registradas, incluyendo precipitaciones y temperatura.
+### Grano Atómico de la Tabla de Hechos: `fact_viajes`
+Se define al nivel de una fila por cada intento o viaje registrado (> 65,000 observaciones anuales). Contiene:
+* **Métricas Monetarias:** `tarifa_base`, `multiplicador_dinamico`, `tarifa_final`, `propina`.
+* **Métricas Operativas:** `distancia_km`, `duracion_minutos`, `tiempo_espera_recogida_min`.
+* **Métricas de Calidad:** `calificacion_usuario`, `calificacion_conductor`.
+* **Llaves Foráneas:** Vinculación con las dimensiones del modelo.
 
----
-
-## 7.4 Análisis Estadístico, Modelación Numérica y Optimización
-
-La capa analítica y prescriptiva se ejecuta en Python interactuando directamente contra los Data Marts de PostgreSQL mediante conexiones vectorizadas (SQLAlchemy y pandas). El procesamiento cuantitativo se distribuye en tres fases:
-
-### Fase 1: Caracterización y Detección de Patrones
-Cálculo de métricas agregadas, matrices Origen-Destino (OD) y análisis de autocorrelación espaciotemporal para reconocer zonas críticas de desbalance entre oferta y demanda vehicular.
-
-### Fase 2: Inferencia Estadística
-Aplicación de pruebas de hipótesis y modelos de regresión lineal/no lineal para contrastar cómo las variaciones climáticas y las franjas horarias alteran las velocidades de circulación, los tiempos de atención y los componentes de la tarifa.
-
-### Fase 3: Formulación Matemática de Optimización (MILP)
-Implementación de un modelo de Programación Lineal Entera Mixta (MILP) formulado para minimizar simultáneamente los tiempos de espera del usuario y los costos por recorridos en vacío (*deadhead miles*). El modelo está sujeto a restricciones de conservación de flujo vehicular, disponibilidad de flota por zona horaria y rangos tarifarios definidos.
+### Dimensiones Conformadas:
+* **`dim_zona_origen` / `dim_zona_destino`:** Cuadrantes urbanos de Managua, nombre comercial, estrato socioeconómico (`alto`, `medio`, `popular`, `comercial`), latitud, longitud y radio de cobertura.
+* **`dim_conductor`:** Flota vehicular registrada, tipo de servicio (`movigo_estandar`, `movigo_comfort`, `movigo_moto`), modelo de auto, año, placa, calificación histórica y tasa de aceptación.
+* **`dim_usuario`:** Identificador, teléfono de contacto, método de pago habitual y calificación promedio.
+* **`dim_tiempo`:** Fecha, día de la semana, hora, minuto y clasificación de franja horaria (pico matutino, valle, pico vespertino, nocturno).
+* **`dim_clima`:** Registro meteorológico diario sincronizado con la API: precipitación acumulada (mm), temperatura (°C), índice de congestión vial (1.00 a 3.50) y condición del cielo.
 
 ---
 
-## 7.5 Evaluación de Escenarios y Visualización
+## 7.4 Metodología Analítica, Inferencia y Métodos Numéricos
 
-Los resultados del pipeline y del motor de optimización se evalúan mediante simulaciones estructuradas sobre tres escenarios operativos:
-1. **Escenario Base:** Derivado de los datos sintéticos iniciales con operación tradicional.
-2. **Escenario de Redistribución Territorial Óptima:** Rebalanceo proactivo de la flota mediante el modelo MILP.
-3. **Escenario Integrado:** Acopla rebalanceo vehicular con ajuste tarifario adaptativo ante eventos climáticos.
+La capa analítica interactúa directamente contra los Data Marts de PostgreSQL utilizando conexiones vectorizadas en Python (SQLAlchemy, pandas, scipy, statsmodels, pulp):
 
-Finalmente, se construyen gráficos y paneles visuales en Python que sintetizan la reducción de tiempos muertos, el aprovechamiento de la flota y la coherencia del esquema tarifario propuesto.
+### 7.4.1 Inferencia Estadística y Validación de Supuestos (Estadística II)
+1. **Regresión Lineal Múltiple:** Se modela el volumen de demanda diaria en función de factores climáticos y congestión:
+   $$\text{ViajesDiarios} = \beta_0 + \beta_1 (\text{Precipitación}_{mm}) + \beta_2 (\text{ÍndiceCongestión}) + \epsilon$$
+   generando la tabla ANOVA completa ($SCA$, $SCE$, $SCT$, grados de libertad y significancia del estadístico $F$).
+2. **Validación de Supuestos Gauss-Markov:** 
+   * Normalidad de residuos (Shapiro-Wilk / Jarque-Bera).
+   * Homocedasticidad (Breusch-Pagan / White).
+   * No autocorrelación serial (estadístico Durbin-Watson).
+3. **Batería de Pruebas de Hipótesis:**
+   * **Prueba $t$ de Welch:** Evaluar si el multiplicador dinámico ($> 1.25\times$) eleva significativamente el costo final del viaje frente a la tarifa base ($p < 0.05$).
+   * **Prueba $z$ de proporciones:** Contrastar la tasa de cancelaciones en horas pico vs. horas valle.
+   * **ANOVA de un factor:** Determinar si la duración promedio difiere según el estrato socioeconómico de destino.
+   * **Prueba $\chi^2$:** Contrastar la independencia entre el método de pago utilizado y el estrato del cuadrante de origen ($p < 0.01$).
+
+### 7.4.2 Métodos Numéricos y Calibración
+1. **Búsqueda de Raíces:** Implementación de los métodos de **Bisección** y **Newton-Raphson** para encontrar el multiplicador de equilibrio $m^*$ que anula la función de exceso de demanda:
+   $$f(m) = \text{Demanda}(m) - \text{Oferta}(m) = 0$$
+2. **Diferenciación Numérica:** Estimación de la elasticidad-precio de la demanda mediante esquemas de diferencias finitas centradas de orden $\mathcal{O}(h^2)$.
+3. **Integración Numérica:** Aplicación de la **Regla de Simpson 1/3** sobre la curva horaria de viajes para aproximar el volumen acumulado de demanda diaria.
+
+---
+
+## 7.5 Modelos de Optimización Prescriptiva y Simulación
+
+La capa prescriptiva implementa tres formulaciones matemáticas concretas:
+
+1. **Despacho Óptimo (Algoritmo Húngaro):**
+   * Resuelve la asignación biyectiva óptima entre conductores disponibles en telemetría GPS y solicitudes pendientes para minimizar el tiempo total de recogida de los usuarios.
+2. **Ruta Mínima Bajo Lluvia y Congestión (Algoritmo de Dijkstra):**
+   * Modela la red de cuadrantes de Managua como un grafo ponderado por distancia e índice de congestión vial.
+   * Compara los caminos mínimos en escenarios de flujo libre vs. lluvia torrencial con saturación vial.
+3. **Optimización Presupuestaria de Incentivos (Problema de la Mochila 0/1):**
+   * Maximiza las horas de conexión adicionales de los conductores seleccionando las mejores campañas de bonos (`/movigo/campanas`) bajo un límite presupuestario estricto de **C$ 120,000 NIO**, resuelto mediante Programación Dinámica.
+
+### Evaluación de Escenarios Operativos:
+* **Escenario 0 (Línea Base):** Operación tradicional con despacho reactivo y multiplicador dinámico no calibrado.
+* **Escenario 1 (Optimización de Despacho y Ruteo):** Despacho mediante Algoritmo Húngaro acoplado a rutas inteligentes con Dijkstra.
+* **Escenario 2 (Optimización Integral con Campañas y Tarifa de Equilibrio):** Incorporación del presupuesto óptimo de incentivos (Mochila 0/1) y multiplicador calibrado $m^*$ ante perturbaciones climáticas.
+
+Finalmente, los resultados se integran en un tablero de control analítico (*BI Dashboard*) que visualiza la reducción de cancelaciones, el ahorro en tiempos muertos y el comportamiento de la tarifa en el municipio de Managua.

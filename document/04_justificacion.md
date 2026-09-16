@@ -2,56 +2,68 @@
 
 ## 4.1 Justificación Práctica: Gestión Basada en Evidencia para Movi Go
 
-La presente investigación se justifica por la necesidad de abordar la gestión del transporte selectivo desde una perspectiva basada en evidencia. La literatura sobre movilidad bajo demanda demuestra que la correspondencia entre localización de vehículos, demanda y decisiones de asignación constituye un elemento central para mejorar el desempeño del sistema (Alonso-Mora et al., 2017; Jiao et al., 2021).
+La presente investigación se justifica por la necesidad de abordar la gestión operativa del transporte selectivo por aplicación desde una perspectiva basada en evidencia empírica. La literatura especializada demuestra que la correspondencia dinámica entre localización de vehículos, demanda y decisiones de asignación constituye un pilar esencial para elevar el rendimiento del sistema (Alonso-Mora et al., 2017; Jiao et al., 2021).
 
-En consecuencia, la distribución de vehículos y las tarifas deben examinarse como decisiones relacionadas con la capacidad de respuesta, el uso de recursos, la cobertura territorial y las condiciones reales de operación. Analizarlas mediante datos permite construir criterios verificables y comparar escenarios alternativos, en lugar de fundamentar las decisiones únicamente en apreciaciones operativas.
+A través del acceso a un volumen de más de **65,000 registros anuales de viajes** expuestos vía API, el estudio permite a Movi Go:
+* Identificar con precisión matemática las franjas horarias y cuadrantes urbanos donde se concentran los cuellos de botella de la demanda en Managua.
+* Cuantificar la pérdida económica derivada de los recorridos en vacío (*deadhead miles*) y las cancelaciones recurrentes en horas pico.
+* Evaluar el comportamiento real de los conductores registrados en sus tres categorías (`movigo_estandar`, `movigo_comfort`, `movigo_moto`), analizando sus tasas de aceptación y tiempos de respuesta.
 
-Desde el punto de vista práctico, el estudio puede aportar a Movi Go una comprensión más precisa sobre cómo se comporta la demanda y cómo se relaciona con la distribución territorial de la flota. El análisis de zonas, horarios, recorridos, disponibilidad de vehículos y condiciones de prestación del servicio puede contribuir a reconocer concentraciones de demanda, diferencias entre sectores, variaciones en los tiempos de atención y posibles desajustes entre la localización de las unidades y las necesidades de los usuarios.
-
-Esta información constituye un insumo relevante para valorar criterios de posicionamiento, asignación y redistribución de vehículos, así como para examinar diferentes alternativas de operación sin asumir de antemano que existe una única solución válida para todo el municipio o para todos los periodos de servicio.
-
----
-
-## 4.2 Relevancia del Análisis Tarifario en la Sostenibilidad del Servicio
-
-La investigación también resulta pertinente por la necesidad de estudiar el sistema tarifario en relación con las condiciones reales de operación. Las tarifas no deben considerarse como un elemento independiente de la dinámica del servicio, puesto que pueden guardar relación con variables como distancia, duración del viaje, localización, intensidad de la demanda, disponibilidad de unidades y otras condiciones que inciden en el desplazamiento.
-
-Analizar estas relaciones permitirá identificar patrones, variaciones y posibles situaciones atípicas, y ofrecerá una base cuantitativa para evaluar escenarios tarifarios de manera más objetiva. El propósito no es establecer anticipadamente una modificación de tarifas, sino generar evidencia que permita valorar su comportamiento dentro del sistema y examinar alternativas coherentes con las restricciones y condiciones que sean identificadas durante el proceso investigativo.
+Esta información deja de ser una apreciación cualitativa para transformarse en métricas operativas contrastables que orienten el despacho y la retención de socios conductores.
 
 ---
 
-## 4.3 Relevancia Metodológica: Integración Multidisciplinar en Ciencia de Datos
+## 4.2 Relevancia del Análisis Tarifario y Calibración del Surge Pricing
 
-En el ámbito metodológico, el estudio posee relevancia porque permite integrar diferentes procedimientos propios de la Ciencia de Datos dentro de una misma problemática. La caracterización de variables, la depuración y organización de los registros, el análisis estadístico descriptivo e inferencial, la identificación de relaciones y anomalías, la modelación numérica, la programación de procesos y la evaluación de escenarios de optimización pueden articularse de forma secuencial para construir una interpretación más completa del funcionamiento del servicio. Esta integración reduce el riesgo de formular conclusiones a partir de una sola técnica o de observaciones aisladas y favorece la contrastación de resultados desde diferentes perspectivas analíticas.
+El análisis del sistema tarifario es fundamental para garantizar la sostenibilidad del servicio. Dado que Movi Go opera con una tarifa paramétrica estructurada:
 
----
+$$\text{TarifaBase} = \text{BajadaBandera} + (18 \times \text{distancia\_km}) + (4.5 \times \text{duracion\_minutos})$$
 
-## 4.4 Modelación, Simulación y Evaluación de Escenarios de Optimización
+$$\text{TarifaFinal} = \text{TarifaBase} \times \text{multiplicador\_dinamico}$$
 
-La modelación y la simulación adquieren especial importancia debido a que la distribución de la flota y el comportamiento tarifario se desarrollan bajo condiciones variables. Mediante la construcción de escenarios será posible examinar cómo cambia el sistema cuando se modifican determinados parámetros, restricciones o condiciones de operación, sin intervenir inmediatamente sobre el funcionamiento real de la empresa.
+donde la bajada de bandera varía por zona entre C$ 30 y C$ 90 NIO y el multiplicador dinámico oscila entre $1.00\times$ y $3.20\times$, la investigación permite comprobar si los incrementos tarifarios responden efectivamente a desbalances de mercado o si terminan castigando al usuario e induciendo cancelaciones masivas. 
 
-A su vez, las técnicas de optimización permitirán comparar alternativas factibles y analizar cuáles presentan mejores resultados de acuerdo con los criterios que se definan a partir de los datos. De esta manera, la investigación no se limita a describir el comportamiento observado, sino que avanza hacia la evaluación de posibles configuraciones del sistema sustentadas en evidencia cuantitativa.
-
----
-
-## 4.5 Dimensión Tecnológica, Scripting y Gestión Analítica de Datos
-
-La dimensión tecnológica y de gestión de datos constituye igualmente una razón fundamental para el desarrollo del estudio. La información requerida puede proceder de diferentes registros operativos y, eventualmente, de fuentes externas relacionadas con variables territoriales y climáticas. Para que estos datos puedan ser utilizados de manera confiable, será necesario organizarlos, depurarlos, integrarlos y estructurarlos de forma que permitan realizar consultas y análisis reproducibles.
-
-La programación en scripting puede facilitar la automatización de procesos de limpieza, cálculo de indicadores, generación de visualizaciones y ejecución de escenarios, mientras que las bases de datos analíticas pueden proporcionar una estructura adecuada para relacionar información por zonas, periodos, viajes, tarifas y demás variables relevantes. Esto contribuye a mejorar la trazabilidad del análisis y puede sentar bases para futuros procesos de gestión de información dentro de la empresa.
+Calibrar el multiplicador mediante métodos cuantitativos ofrece una base sólida para fijar precios justos y competitivos que conserven la lealtad del cliente sin desincentivar la conexión de choferes.
 
 ---
 
-## 4.6 Consideración de Factores Territoriales y Climatológicos
+## 4.3 Relevancia Tecnológica y Flujo de Ingeniería de Datos
 
-La consideración de factores territoriales y climáticos amplía la comprensión del problema sin convertir el clima en su explicación exclusiva. La evidencia disponible muestra que la precipitación y otras variables meteorológicas pueden modificar la distribución espaciotemporal de la demanda y ciertos indicadores operativos, pero sus efectos dependen del contexto y deben analizarse conjuntamente con las condiciones de oferta y localización (Chen et al., 2017; Sun et al., 2020; Liu et al., 2021). En el caso de Managua, la información climática oficial de INETER permitirá contextualizar y contrastar estas relaciones con los registros operativos de Movi Go, siempre que las escalas temporal y espacial de las fuentes sean compatibles.
+Desde la perspectiva técnica y de gestión de datos, el proyecto cobra una relevancia destacada al resolver el reto de **integrar datos transaccionales no accesibles directamente por base de datos, sino a través de una API REST**.
+
+El pipeline tecnológico implementado demuestra un diseño robusto y moderno:
+1. **Extracción y Paginación:** Script en Python (`httpx`/`requests`) que consume colecciones paginadas de hasta 200 registros por página, reconstruyendo llaves y relaciones en memoria mediante **pandas**.
+2. **Capa Operativa Relacional:** Ingesta estructurada hacia **PostgreSQL** para consolidar la capa cruda (*raw data layer*).
+3. **Modelado Dimensional y Gobierno:** Transformación con **dbt Core**, estructurando un esquema en estrella con la tabla de hechos atómica `fact_viajes` y dimensiones conformadas, protegidas mediante pruebas de calidad (*dbt tests*) que validan la no negatividad y las reglas de dominio.
+4. **DataOps y Auditoría:** Almacenamiento seguro en formato columnar **Parquet** con cálculo de sumas de comprobación **SHA-256** para certificar la integridad de los datos.
 
 ---
 
-## 4.7 Relevancia Social y Formativa (Integración Curricular en Integrador IV)
+## 4.4 Modelación, Simulación y Métodos Numéricos
 
-Desde una perspectiva social y académica, la investigación es pertinente porque el transporte constituye un servicio vinculado con las necesidades de movilidad de la población y porque una mejor comprensión de su funcionamiento puede favorecer decisiones más consistentes respecto a disponibilidad, cobertura y condiciones de prestación.
+La modelación matemática y el análisis numérico adquieren protagonismo al permitir simular el comportamiento del sistema sin perturbar la operación real de la empresa:
+* **Búsqueda de Raíces (Bisección y Newton-Raphson):** Permite hallar el multiplicador de equilibrio $m^*$ que anula el exceso de demanda ($f(m) = 0$).
+* **Diferenciación Numérica $\mathcal{O}(h^2)$:** Permite estimar la elasticidad-precio de la demanda en diferentes zonas de la capital mediante diferencias finitas centrales.
+* **Integración Numérica (Simpson 1/3):** Permite aproximar el volumen total acumulado de viajes a partir de la función de intensidad horaria diaria.
 
-Al mismo tiempo, el proyecto responde a los propósitos formativos del Integrador IV, al articular **Estadística II**, **Análisis Numérico**, **Programación en Scripting**, **Optimización** y **Bases de Datos Analíticas** alrededor de una problemática real. Esta articulación fortalece competencias de investigación, pensamiento crítico, comunicación científica y toma de decisiones basadas en evidencia, debido a que exige seleccionar variables pertinentes, validar la calidad de los datos, interpretar resultados, reconocer limitaciones y formular alternativas coherentes con los hallazgos obtenidos.
+---
 
-En consecuencia, la realización del estudio se justifica por su capacidad para integrar dimensiones operativas, territoriales, tarifarias, tecnológicas y climáticas dentro de un mismo marco de análisis, generando conocimiento útil tanto para comprender el comportamiento actual del servicio como para evaluar posibles escenarios de optimización. La relevancia del proyecto no radica únicamente en obtener una solución matemática, sino en construir un proceso analítico riguroso que permita sustentar decisiones sobre la distribución territorial de la flota y el sistema tarifario de Movi Go con información verificable, criterios transparentes y una visión integral de las condiciones que inciden en la prestación del servicio en el municipio de Managua.
+## 4.5 Optimización Prescriptiva y Asignación de Recursos
+
+En el plano de la Investigación de Operaciones, el estudio proporciona soluciones prescriptivas concretas a problemas clásicos de movilidad:
+1. **Algoritmo Húngaro:** Resuelve el problema de asignación biyectiva óptima entre solicitudes entrantes y vehículos desocupados monitoreados por telemetría GPS, minimizando el tiempo total de espera.
+2. **Algoritmo de Dijkstra:** Determina la ruta más corta y menos congestionada entre cuadrantes urbanos representados como grafos ponderados, comparando condiciones de flujo libre frente a inundaciones por tormenta.
+3. **Problema de la Mochila (Knapsack 0/1):** Optimiza la selección de campañas de incentivos y bonos para conductores (`/movigo/campanas`) maximizando las horas-hombre de conexión ganadas bajo una restricción de presupuesto de **C$ 120,000 NIO**.
+
+---
+
+## 4.6 Relevancia Social, Urbana y Formativa (Integrador IV)
+
+Desde una perspectiva social y urbana, optimizar el transporte selectivo en Managua contribuye a mejorar la accesibilidad de la ciudadanía en una ciudad donde el 26% de los traslados diarios dependen de este modo de transporte (JICA, 2017). Un despacho más ágil reduce la congestión vial, disminuye la emisión de contaminantes por recorridos ociosos y proporciona tarifas previsibles y transparentes.
+
+En el ámbito académico, el proyecto responde con fidelidad a los objetivos formativos del **Integrador IV**, articulando de manera armónica las cinco asignaturas del semestre:
+* **Bases de Datos Analíticas:** Arquitectura ELT, dbt, modelado dimensional Kimball y tableros BI.
+* **Programación en Scripting:** Ingesta de APIs REST, paginación, exportación a Parquet y scripts de alerta DataOps.
+* **Estadística II:** Regresión lineal múltiple (viajes vs. lluvia y congestión), ANOVA, contrastes de hipótesis (Welch, proporciones $z$, estratos, $\chi^2$) y verificación de supuestos Gauss-Markov.
+* **Métodos Numéricos:** Raíces de funciones no lineales (Bisección y Newton-Raphson), diferenciación numérica e integración Simpson 1/3.
+* **Optimización:** Asignación con Algoritmo Húngaro, rutas mínimas con Dijkstra y optimización combinatoria 0/1 Knapsack.
