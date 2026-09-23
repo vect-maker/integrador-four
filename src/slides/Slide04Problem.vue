@@ -8,7 +8,7 @@
                         </div>
                         <div class="header-right">
                             <span>Diagnóstico &amp; Retos Críticos</span>
-                            <span class="slide-number-tag">04 / 16</span>
+                            <span class="slide-number-tag">04 / 11</span>
                         </div>
                     </div>
 
@@ -21,7 +21,10 @@
 
                         <div class="grid-2">
                             <div class="card reveal" style="border-top: 6px solid var(--accent-red);">
-                                <div class="card-label">Manifestaciones del Problema</div>
+                                <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
+                                    <AlertTriangle :size="14" style="color: var(--accent-red);" />
+                                    <span>Manifestaciones del Problema</span>
+                                </div>
                                 <div class="card-title">Ineficiencias del Despacho Reactivo</div>
                                 <div class="card-text" style="margin-bottom: 16px;">
                                     Cuando la decisión de posicionamiento depende de la intuición de los conductores o de solicitudes inmediatas:
@@ -35,7 +38,10 @@
                             </div>
 
                             <div class="card reveal" style="border-top: 6px solid var(--border-bold);">
-                                <div class="card-label">La Oportunidad desde Ciencia de Datos</div>
+                                <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
+                                    <Sparkles :size="14" style="color: var(--ink-primary);" />
+                                    <span>La Oportunidad desde Ciencia de Datos</span>
+                                </div>
                                 <div class="card-title">De la Estimación a la Evidencia Analítica</div>
                                 <div class="card-text" style="margin-bottom: 16px;">
                                     El avance no presume ineficiencias de forma arbitraria: establece el marco de datos para medirlas con rigor científico:
@@ -69,5 +75,6 @@
 </template>
 
 <script setup>
+import { AlertTriangle, Sparkles } from '@lucide/vue';
 // Slide 4: 04. Problema: Desbalance Espacial
 </script>

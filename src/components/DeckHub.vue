@@ -10,7 +10,7 @@
           @click="deckStore.prevSlide()"
           title="Diapositiva Anterior (← / Tecla Flecha Izquierda)"
         >
-          <span class="icon">‹</span>
+          <ChevronLeft :size="16" :stroke-width="2.5" />
         </button>
 
         <div
@@ -28,7 +28,7 @@
           @click="deckStore.nextSlide()"
           title="Siguiente Diapositiva (→ / Espacio / Tecla Flecha Derecha)"
         >
-          <span class="icon">›</span>
+          <ChevronRight :size="16" :stroke-width="2.5" />
         </button>
       </div>
 
@@ -41,7 +41,7 @@
           @click="deckStore.openPresenter()"
           title="Modo Presentador con Notas y Cronómetro (Tecla S)"
         >
-          <span class="btn-icon">🎤</span>
+          <Presentation :size="15" :stroke-width="2" class="btn-icon" />
           <span class="btn-label">Presentador <kbd>S</kbd></span>
         </button>
 
@@ -51,7 +51,7 @@
           @click="deckStore.toggleNotes()"
           title="Panel Rápido de Notas del Orador (Tecla N)"
         >
-          <span class="btn-icon">📝</span>
+          <FileText :size="15" :stroke-width="2" class="btn-icon" />
           <span class="btn-label">Notas <kbd>N</kbd></span>
         </button>
 
@@ -61,7 +61,7 @@
           @click="deckStore.toggleOverview()"
           title="Malla / Resumen de Diapositivas (Tecla O)"
         >
-          <span class="btn-icon">🔲</span>
+          <LayoutGrid :size="15" :stroke-width="2" class="btn-icon" />
           <span class="btn-label">Resumen <kbd>O</kbd></span>
         </button>
 
@@ -70,7 +70,7 @@
           @click="deckStore.cycleTheme()"
           :title="`Cambiar Tema Visual (Actual: ${deckStore.currentTheme}) - Tecla T`"
         >
-          <span class="btn-icon">🎨</span>
+          <Palette :size="15" :stroke-width="2" class="btn-icon" />
           <span class="btn-label">{{ friendlyThemeName }} <kbd>T</kbd></span>
         </button>
 
@@ -80,7 +80,7 @@
           @click="deckStore.toggleFullscreen()"
           title="Pantalla Completa (Tecla F)"
         >
-          <span class="btn-icon">{{ deckStore.isFullscreen ? '✕' : '⛶' }}</span>
+          <component :is="deckStore.isFullscreen ? Minimize2 : Maximize2" :size="15" :stroke-width="2" class="btn-icon" />
           <span class="btn-label"><kbd>F</kbd></span>
         </button>
       </div>
@@ -96,7 +96,7 @@
       <div v-if="showJumpList" class="hub-jump-menu">
         <div class="jump-header">
           <span>Índice de Diapositivas</span>
-          <button class="jump-close" @click="showJumpList = false">✕</button>
+          <button class="jump-close" @click="showJumpList = false" title="Cerrar"><X :size="14" /></button>
         </div>
         <ul class="jump-list">
           <li
@@ -117,6 +117,17 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useDeckStore } from '../stores/deck';
+import {
+  ChevronLeft,
+  ChevronRight,
+  Presentation,
+  FileText,
+  LayoutGrid,
+  Palette,
+  Maximize2,
+  Minimize2,
+  X
+} from '@lucide/vue';
 
 const deckStore = useDeckStore();
 const showJumpList = ref(false);

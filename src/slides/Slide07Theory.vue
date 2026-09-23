@@ -8,7 +8,7 @@
                         </div>
                         <div class="header-right">
                             <span>Teoría de Transporte &amp; Comportamiento Exógeno</span>
-                            <span class="slide-number-tag">07 / 16</span>
+                            <span class="slide-number-tag">07 / 11</span>
                         </div>
                     </div>
 
@@ -21,7 +21,10 @@
 
                         <div class="grid-3">
                             <div class="card reveal">
-                                <div class="card-label">Heterogeneidad Espaciotemporal</div>
+                                <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
+                                    <Network :size="13" style="color: var(--accent-red);" />
+                                    <span>Heterogeneidad Espaciotemporal</span>
+                                </div>
                                 <div class="card-title">Xu et al. / Moran's I</div>
                                 <div class="card-text">
                                     La demanda de movilidad presenta alta autocorrelación espacial y picos concentrados. Si las unidades no se anticipan a los centros generadores de viajes, se incrementa el ratio de <strong>deadhead miles</strong> (recorridos sin pasajero), consumiendo combustible y depreciando la flota.
@@ -32,7 +35,10 @@
                             </div>
 
                             <div class="card reveal">
-                                <div class="card-label">Doble Incidencia Climática</div>
+                                <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
+                                    <CloudRain :size="13" style="color: var(--accent-blue);" />
+                                    <span>Doble Incidencia Climática</span>
+                                </div>
                                 <div class="card-title">Precipitación &amp; Velocidad</div>
                                 <div class="card-text">
                                     En Managua, con 1,119.8 mm anuales y estacionalidad marcada, la lluvia genera un efecto dual:
@@ -44,7 +50,10 @@
                             </div>
 
                             <div class="card reveal">
-                                <div class="card-label">Riesgos de Tarificación</div>
+                                <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
+                                    <TrendingDown :size="13" style="color: var(--accent-red);" />
+                                    <span>Riesgos de Tarificación</span>
+                                </div>
                                 <div class="card-title">Efectos Adversos del Surge Pricing</div>
                                 <div class="card-text">
                                     Investigaciones en <em>Nature Communications</em> evidencian que una tarificación dinámica mal diseñada puede inducir desbalances en lugar de corregirlos.
@@ -72,5 +81,6 @@
 </template>
 
 <script setup>
+import { Network, CloudRain, TrendingDown } from '@lucide/vue';
 // Slide 7: 07. Marco Teórico: Transporte & Clima
 </script>

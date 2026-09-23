@@ -8,7 +8,7 @@
                         </div>
                         <div class="header-right">
                             <span>Movi Go • Transporte Selectivo</span>
-                            <span class="slide-number-tag">02 / 16</span>
+                            <span class="slide-number-tag">02 / 11</span>
                         </div>
                     </div>
 
@@ -22,7 +22,10 @@
                         <div class="grid-3">
                             <div class="card reveal">
                                 <div class="card-number">01</div>
-                                <div class="card-label">Dimensión Operativa</div>
+                                <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
+                                    <Clock :size="14" style="color: var(--accent-red);" />
+                                    <span>Dimensión Operativa</span>
+                                </div>
                                 <div class="card-title">Dinámica de Flota y Tiempos</div>
                                 <div class="card-text">
                                     Disponibilidad real de unidades, duración del viaje, tiempos de aproximación y permanencia sin pasajero. La capacidad efectiva se degrada cuando las unidades circulan desocupadas lejos del foco de demanda.
@@ -36,7 +39,10 @@
 
                             <div class="card reveal">
                                 <div class="card-number">02</div>
-                                <div class="card-label">Dimensión Territorial</div>
+                                <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
+                                    <MapPin :size="14" style="color: var(--ink-primary);" />
+                                    <span>Dimensión Territorial</span>
+                                </div>
                                 <div class="card-title">Heterogeneidad Espacial</div>
                                 <div class="card-text">
                                     Managua presenta una estructura urbana discontinua y policéntrica (sectores comerciales, residenciales, productivos e institucionales) que genera asimetrías severas en flujos de origen y destino.
@@ -50,7 +56,10 @@
 
                             <div class="card reveal">
                                 <div class="card-number">03</div>
-                                <div class="card-label">Dimensión Tarifaria</div>
+                                <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
+                                    <TrendingUp :size="14" style="color: var(--accent-blue);" />
+                                    <span>Dimensión Tarifaria</span>
+                                </div>
                                 <div class="card-title">Coherencia de Precios</div>
                                 <div class="card-text">
                                     La tarifa debe articular los costos reales del viaje, las condiciones de circulación y la sostenibilidad del conductor sin generar barreras al usuario ni incentivos perversos de desbalance.
@@ -86,5 +95,6 @@
 </template>
 
 <script setup>
+import { Clock, MapPin, TrendingUp } from '@lucide/vue';
 // Slide 2: 02. Contextualización: Sistema Dinámico
 </script>

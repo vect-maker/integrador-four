@@ -8,7 +8,7 @@
                         </div>
                         <div class="header-right">
                             <span>Literatura Científica &amp; Antecedentes</span>
-                            <span class="slide-number-tag">03 / 16</span>
+                            <span class="slide-number-tag">03 / 11</span>
                         </div>
                     </div>
 
@@ -21,7 +21,10 @@
 
                         <div class="grid-4">
                             <div class="card reveal">
-                                <div class="card-label">Asignación &amp; Despacho</div>
+                                <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
+                                    <Share2 :size="13" style="color: var(--accent-red);" />
+                                    <span>Asignación &amp; Despacho</span>
+                                </div>
                                 <div class="card-title">Alonso-Mora et al. (2017)</div>
                                 <div class="card-text" style="font-size: 15px;">
                                     Modelo de asignación dinámica viaje-vehículo probado en NYC: demostró que la localización de la demanda y la disponibilidad deben optimizarse conjuntamente bajo restricciones de tiempo y capacidad.
@@ -32,7 +35,10 @@
                             </div>
 
                             <div class="card reveal">
-                                <div class="card-label">Reposicionamiento</div>
+                                <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
+                                    <RotateCw :size="13" style="color: var(--ink-primary);" />
+                                    <span>Reposicionamiento</span>
+                                </div>
                                 <div class="card-title">Jiao et al. (2021)</div>
                                 <div class="card-text" style="font-size: 15px;">
                                     Aprendizaje por refuerzo para orientar la redistribución proactiva de unidades vacías considerando el estado espaciotemporal global del sistema y reduciendo el tiempo de inactividad de los choferes.
@@ -43,7 +49,10 @@
                             </div>
 
                             <div class="card reveal">
-                                <div class="card-label">Tarifa &amp; Clima</div>
+                                <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
+                                    <CloudRain :size="13" style="color: var(--accent-blue);" />
+                                    <span>Tarifa &amp; Clima</span>
+                                </div>
                                 <div class="card-title">Zha (2018) / Liu (2021)</div>
                                 <div class="card-text" style="font-size: 15px;">
                                     Zha et al. evaluaron equilibrio bi-nivel en surge pricing. Liu et al. probaron que 1 mm de lluvia eleva ~0.39% los viajes pero distorsiona fuertemente la velocidad de red y los tiempos de recogida.
@@ -54,7 +63,10 @@
                             </div>
 
                             <div class="card accent-card reveal">
-                                <div class="card-label">Marco Institucional</div>
+                                <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
+                                    <Building2 :size="13" style="color: var(--accent-red);" />
+                                    <span>Marco Institucional</span>
+                                </div>
                                 <div class="card-title">Plan Maestro JICA (2017)</div>
                                 <div class="card-text" style="font-size: 15px; color: #e2e8f0;">
                                     Diagnóstico de Managua: el <strong>26% de los viajes urbanos</strong> se realizan en taxi selectivo. Confirma la centralidad del modo para la accesibilidad de la capital y la pertinencia de optimizarlo con datos.
@@ -84,5 +96,6 @@
 </template>
 
 <script setup>
+import { Share2, RotateCw, CloudRain, Building2 } from '@lucide/vue';
 // Slide 3: 03. Estado del Arte & Literatura
 </script>

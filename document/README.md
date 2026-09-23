@@ -19,7 +19,7 @@ El documento de investigación del proyecto ha sido organizado de manera modular
 | **02** | [`02_antecedentes.md`](./02_antecedentes.md) | Revisión del estado del arte en asignación dinámica, tarificación con *surge pricing*, impacto meteorológico y diagnóstico de movilidad en Managua. |
 | **03** | [`03_planteamiento_del_problema.md`](./03_planteamiento_del_problema.md) | Desbalance espaciotemporal, cancelaciones en horas pico, congestión por lluvias torrenciales y necesidad de calibración matemática de la tarifa y flota. |
 | **04** | [`04_justificacion.md`](./04_justificacion.md) | Justificación práctica con ~65,000 viajes anuales, tecnológica (API REST &rarr; pandas &rarr; PostgreSQL &rarr; dbt) y curricular (las 5 materias del Integrador IV). |
-| **05** | [`05_objetivos.md`](./05_objetivos.md) | Objetivo General y cuatro Objetivos Específicos alineados a la ingeniería de datos, inferencia estadística, métodos numéricos y optimización. |
+| **05** | [`05_objetivos.md`](./05_objetivos.md) | Objetivo General (*Optimizar*) y cuatro Objetivos Específicos centrados en verbos de acción (*Estructurar*, *Analizar*, *Evaluar*, *Formular*). |
 | **06** | [`06_marco_teorico.md`](./06_marco_teorico.md) | Fundamentos de arquitectura de datos (API/ELT/dbt), modelo dimensional Kimball, teoría de *surge pricing*, algoritmos de despacho (Húngaro, Dijkstra, Mochila) y raíces numéricas. |
 | **07** | [`07_matriz_de_descriptores.md`](./07_matriz_de_descriptores.md) | Operacionalización de variables, dimensiones, indicadores empíricos e instrumentos de recolección basados en los endpoints de la API. |
 | **08** | [`08_diseno_metodologico.md`](./08_diseno_metodologico.md) | Enfoque cuantitativo no experimental sobre el servicio selectivo Movi Go, arquitectura de ingesta API &rarr; PostgreSQL, modelo en estrella `fact_viajes` y suite analítica. |
@@ -34,9 +34,9 @@ A diferencia de aproximaciones abstractas, la investigación se fundamenta en un
 
 El flujo de ingeniería de datos inicia mediante un cliente extractor en Python con paginación optimizada que descarga los datos de la API, reconstruye las relaciones relacionales e ingesta los datos hacia una base de datos relacional **PostgreSQL**. A partir de este repositorio central se orquesta el pipeline ELT con **dbt**, materializando un **Data Warehouse en estrella (Kimball)** gobernado por pruebas automatizadas de integridad. 
 
-Sobre estos Data Marts se articulan las cinco disciplinas del Integrador IV:
-1. **Bases de Datos Analíticas:** Data Warehouse estrella (`fact_viajes`), linaje con dbt y dashboards de BI.
-2. **Programación en Scripting:** Automatización del cliente API REST, almacenamiento en Parquet y alertas DataOps de cancelación.
-3. **Estadística II:** Regresión múltiple (demanda vs. lluvia y congestión), ANOVA de duración por estrato, validación Gauss-Markov y pruebas de hipótesis (Welch para tarifa dinámica, $z$ de cancelaciones, $\chi^2$ de pagos).
-4. **Métodos Numéricos:** Bisección y Newton-Raphson para el multiplicador de equilibrio $m^*$, diferenciación numérica $\mathcal{O}(h^2)$ para elasticidad-precio e integración Simpson 1/3 para el volumen acumulado de viajes.
-5. **Optimización:** Algoritmo Húngaro para asignación óptima conductor-viaje, Dijkstra para rutas críticas bajo inundación y Problema de la Mochila 0/1 para maximizar horas de conexión en campañas con restricción de C$ 120,000 NIO.
+Sobre estos Data Marts conformados con dbt se articulan las áreas del Integrador IV:
+1. **Bases de Datos Analíticas:** Arquitectura analítica y transformación con **dbt**, diseño dimensional (`fact_viajes`) y tableros BI.
+2. **Programación en Scripting:** Ingesta y consumo automatizado de la API REST (`/movigo`), paginación, almacenamiento en Parquet y DataOps.
+3. **Estadística Aplicada:** Modelación de demanda, inferencia sobre factores climáticos/congestión y contrastes de hipótesis contextuales.
+4. **Métodos Numéricos:** Exploración de esquemas iterativos para calibración tarifaria ($m^*$), estimación de elasticidades e integración de flujos.
+5. **Optimización Operativa:** Modelos prescriptivos de asignación de flota, mitigación de recorridos en vacío (*deadhead*) y análisis de ruteo territorial.

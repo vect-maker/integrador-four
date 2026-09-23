@@ -1,14 +1,14 @@
 <template>
-  <section class="slide" data-slide="15" data-title="15. Síntesis & Próximos Pasos">
+  <section class="slide" data-slide="10" data-title="10. Síntesis &amp; Próximos Pasos">
     <div class="slide-canvas">
       <div class="slide-header">
         <div class="header-left">
           <span class="swiss-square"></span>
-          <span>14. Conclusiones y Próximos Pasos</span>
+          <span>10. Conclusiones y Próximos Pasos</span>
         </div>
         <div class="header-right">
           <span>Evaluación del Avance</span>
-          <span class="slide-number-tag">15 / 16</span>
+          <span class="slide-number-tag">10 / 11</span>
         </div>
       </div>
 
@@ -21,7 +21,10 @@
 
         <div class="grid-2">
           <div class="card reveal" style="border-left: 6px solid var(--border-bold);">
-            <div class="card-label">Logros Consolidados en este Avance</div>
+            <div class="card-label" style="display: flex; align-items: center; gap: 6px; margin-bottom: 8px;">
+              <CheckCircle2 :size="13" style="color: var(--accent-blue);" />
+              <span>Logros Consolidados en este Avance</span>
+            </div>
             <div class="card-title">Cimientos Analíticos y Arquitectura Lista</div>
             <ul class="swiss-list" style="margin-top: 14px;">
               <li><strong>Definición Rigurosa del Problema:</strong> Integración formal de la triple dimensión (operativa, territorial y climática) sin presunciones arbitrarias.</li>
@@ -32,7 +35,10 @@
           </div>
 
           <div class="card reveal" style="border-left: 6px solid var(--accent-red);">
-            <div class="card-label">Siguientes Hitos de Ejecución</div>
+            <div class="card-label" style="display: flex; align-items: center; gap: 6px; margin-bottom: 8px;">
+              <Target :size="13" style="color: var(--accent-red);" />
+              <span>Siguientes Hitos de Ejecución</span>
+            </div>
             <div class="card-title">Calibración, Solvers &amp; Escenarios Finales</div>
             <ul class="swiss-list" style="margin-top: 14px;">
               <li><strong>Calibración con Datos Sintéticos/Reales:</strong> Carga de un dataset transaccional representativo del municipio de Managua con variables de viaje completas.</li>
@@ -51,21 +57,22 @@
     </div>
 
     <aside class="notes">
-      <p class="notes-meta">⏱ <strong>17:30 - 18:30</strong> | Duración: 1:00 min | <em>Fase: Conclusiones y Próximos Pasos</em></p>
-      <p>En este avance de investigación consolidamos los cimientos técnicos, metodológicos y matemáticos:</p>
-      <p>1. Disponemos de un <strong>Data Mart validado</strong> con más de 65,000 registros procesados mediante el pipeline dbt.<br>
-      2. Demostramos estadísticamente la <strong>autocorrelación espacial y el sesgo socioeconómico</strong> en la demanda.<br>
-      3. Formulamos y probamos computacionalmente el <strong>modelo matemático MILP</strong>.</p>
+      <p class="notes-meta">⏱ <strong>10:00 - 11:00</strong> | Duración: 1:00 min | <em>Fase: Conclusiones y Próximos Pasos</em></p>
+      <p>En este avance de investigación consolidamos los cimientos técnicos, metodológicos y analíticos:</p>
+      <p>1. Disponemos de un <strong>Data Mart validado</strong> con registros procesados mediante el pipeline dbt sobre la base de la API REST.<br>
+      2. Establecimos el marco para el <strong>análisis espaciotemporal y contextual</strong> de la demanda y el clima.<br>
+      3. Formulamos las directrices para la <strong>evaluación de la dinámica tarifaria y optimización</strong>.</p>
       <p>Nuestros <strong>próximos pasos hacia la entrega final</strong> son:</p>
-      <p>- Calibrar los ponderadores multiobjetivo mediante análisis de sensibilidad en el frente de Pareto.<br>
-      - Implementar la arquitectura de inferencia en tiempo real con ventanas de despacho de 3 minutos.<br>
-      - Finalizar el artículo científico con las especificaciones académicas requeridas.</p>
+      <p>- Calibrar los ponderadores multiobjetivo mediante análisis de escenarios en Managua.<br>
+      - Evaluar el comportamiento de algoritmos prescriptivos y sensibilidad climática.<br>
+      - Finalizar el informe y tablero interactivo de control para la toma de decisiones.</p>
       <p class="notes-transition">👉 <em>Transición:</em> "Agradecemos su atención y quedamos a su entera disposición para la sesión de preguntas."</p>
     </aside>
   </section>
 </template>
 
 <script setup>
+import { CheckCircle2, Target } from '@lucide/vue';
 import KatexMath from '../components/KatexMath.vue';
-// Slide 15: 15. Síntesis & Próximos Pasos
+// Slide 10: 10. Síntesis & Próximos Pasos
 </script>

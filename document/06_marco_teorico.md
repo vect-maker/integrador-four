@@ -128,16 +128,16 @@ evaluando la tabla ANOVA completa ($SCA$, $SCE$, $SCT$, grados de libertad y sig
 
 ---
 
-## 6.8 Métodos Numéricos en Modelación de Transporte
+## 6.8 Métodos Cuantitativos y Numéricos en Modelación de Transporte
 
-La matemática computacional y el análisis numérico proporcionan herramientas clave para calibrar el comportamiento de la plataforma:
+La matemática computacional y el análisis numérico proporcionan marcos metodológicos flexibles para explorar el comportamiento de la plataforma y calibrar tarifas dinámicas:
 
 ### 1. Búsqueda de Raíces para el Multiplicador de Equilibrio:
 Se define la función de exceso de demanda en el mercado de viajes:
 
 $$f(m) = \text{Demanda}(m) - \text{Oferta}(m) = 0$$
 
-Se implementan los algoritmos de **Bisección** y **Newton-Raphson** para encontrar la raíz $m^*$ (multiplicador de equilibrio), evaluando la velocidad de convergencia y el error residual.
+Como marco de resolución, se consideran métodos iterativos de búsqueda de raíces (como **Bisección** o esquemas tipo **Newton-Raphson**) para aproximar el multiplicador de equilibrio $m^*$, evaluando su convergencia y estabilidad numérica ante diferentes volatilidades de mercado.
 
 ### 2. Diferenciación Numérica de la Elasticidad-Precio:
 Se aproxima la elasticidad-precio de la demanda mediante diferencias finitas centradas de orden $\mathcal{O}(h^2)$:
@@ -153,7 +153,7 @@ A partir de la función horaria continua de intensidad de viajes $q(t)$ a lo lar
 
 ## 6.9 Modelos de Optimización Prescriptiva (Investigación de Operaciones)
 
-La fase prescriptiva implementa tres algoritmos canónicos de optimización para resolver problemas críticos de la empresa:
+La fase prescriptiva formula y evalúa modelos canónicos de optimización como alternativas estructuradas para resolver problemas operativos de la empresa:
 
 ### 1. Algoritmo Húngaro (Despacho Óptimo Viaje-Conductor):
 Dado un conjunto de $n$ conductores disponibles (monitoreados mediante `/movigo/telemetria`) y $n$ solicitudes simultáneas de viaje, se construye la matriz de tiempos de llegada $C = [c_{ij}]$ y se resuelve el problema de asignación biyectiva que minimiza el tiempo global de respuesta:

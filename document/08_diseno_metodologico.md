@@ -77,47 +77,45 @@ Se define al nivel de una fila por cada intento o viaje registrado (> 65,000 obs
 
 ---
 
-## 7.4 Metodología Analítica, Inferencia y Métodos Numéricos
-
-La capa analítica interactúa directamente contra los Data Marts de PostgreSQL utilizando conexiones vectorizadas en Python (SQLAlchemy, pandas, scipy, statsmodels, pulp):
-
-### 7.4.1 Inferencia Estadística y Validación de Supuestos (Estadística II)
-1. **Regresión Lineal Múltiple:** Se modela el volumen de demanda diaria en función de factores climáticos y congestión:
-   $$\text{ViajesDiarios} = \beta_0 + \beta_1 (\text{Precipitación}_{mm}) + \beta_2 (\text{ÍndiceCongestión}) + \epsilon$$
-   generando la tabla ANOVA completa ($SCA$, $SCE$, $SCT$, grados de libertad y significancia del estadístico $F$).
-2. **Validación de Supuestos Gauss-Markov:** 
-   * Normalidad de residuos (Shapiro-Wilk / Jarque-Bera).
-   * Homocedasticidad (Breusch-Pagan / White).
-   * No autocorrelación serial (estadístico Durbin-Watson).
-3. **Batería de Pruebas de Hipótesis:**
-   * **Prueba $t$ de Welch:** Evaluar si el multiplicador dinámico ($> 1.25\times$) eleva significativamente el costo final del viaje frente a la tarifa base ($p < 0.05$).
-   * **Prueba $z$ de proporciones:** Contrastar la tasa de cancelaciones en horas pico vs. horas valle.
-   * **ANOVA de un factor:** Determinar si la duración promedio difiere según el estrato socioeconómico de destino.
-   * **Prueba $\chi^2$:** Contrastar la independencia entre el método de pago utilizado y el estrato del cuadrante de origen ($p < 0.01$).
-
-### 7.4.2 Métodos Numéricos y Calibración
-1. **Búsqueda de Raíces:** Implementación de los métodos de **Bisección** y **Newton-Raphson** para encontrar el multiplicador de equilibrio $m^*$ que anula la función de exceso de demanda:
-   $$f(m) = \text{Demanda}(m) - \text{Oferta}(m) = 0$$
-2. **Diferenciación Numérica:** Estimación de la elasticidad-precio de la demanda mediante esquemas de diferencias finitas centradas de orden $\mathcal{O}(h^2)$.
-3. **Integración Numérica:** Aplicación de la **Regla de Simpson 1/3** sobre la curva horaria de viajes para aproximar el volumen acumulado de demanda diaria.
-
+## 7.4 Metodología Analítica, Inferencia y Métodos Cuantitativos
+ 
+La capa analítica interactúa directamente contra los Data Marts modelados mediante dbt en PostgreSQL utilizando conexiones vectorizadas en Python (SQLAlchemy, pandas, scipy, statsmodels, pulp):
+ 
+### 7.4.1 Inferencia Estadística y Factores Contextuales
+1. **Modelación Econométrica de Demanda:** Se evalúa la relación funcional del volumen de demanda en función de factores exógenos climáticos y de congestión (ej. regresión lineal multivariada o modelos aditivos generalizados):
+   $$\text{ViajesDiarios} = f(\text{Precipitación}, \text{ÍndiceCongestión}, \text{FactoresContextuales}) + \epsilon$$
+   evaluando la bondad de ajuste y significancia estadística de los estimadores.
+2. **Evaluación de Supuestos del Modelo:** 
+   * Análisis de distribución y normalidad de residuos.
+   * Diagnóstico de heterocedasticidad y estabilidad de varianza.
+   * Diagnóstico de autocorrelación serial temporal.
+3. **Contrastes de Hipótesis Contextuales (Exploratorios):**
+   * Evaluación de impacto del multiplicador dinámico sobre el importe y variabilidad tarifaria.
+   * Contraste de tasas de cancelación entre franjas horarias de alta y baja concurrencia.
+   * Comparación de duraciones y demoras según estratos socioeconómicos o zonas territoriales.
+   * Contrastes de independencia entre modalidades de pago y zonas de origen/destino.
+ 
+### 7.4.2 Métodos Numéricos y Calibración Tarifaria
+1. **Calibración de Equilibrio Tarifario:** Exploración de funciones de exceso de demanda $f(m) = \text{Demanda}(m) - \text{Oferta}(m) = 0$ y evaluación de métodos iterativos de resolución numérica (como Bisección o esquemas basados en derivadas como Newton-Raphson) para identificar multiplicadores de balance.
+2. **Estimación de Elasticidad-Precio:** Aproximación empírica y por diferenciación numérica de la elasticidad de la demanda ante variaciones tarifarias.
+3. **Agregación Continua de Demanda:** Métodos de cuadratura o integración numérica sobre curvas horarias estimadas para computar volúmenes agregados diarios.
+ 
 ---
-
-## 7.5 Modelos de Optimización Prescriptiva y Simulación
-
-La capa prescriptiva implementa tres formulaciones matemáticas concretas:
-
-1. **Despacho Óptimo (Algoritmo Húngaro):**
-   * Resuelve la asignación biyectiva óptima entre conductores disponibles en telemetría GPS y solicitudes pendientes para minimizar el tiempo total de recogida de los usuarios.
-2. **Ruta Mínima Bajo Lluvia y Congestión (Algoritmo de Dijkstra):**
-   * Modela la red de cuadrantes de Managua como un grafo ponderado por distancia e índice de congestión vial.
-   * Compara los caminos mínimos en escenarios de flujo libre vs. lluvia torrencial con saturación vial.
-3. **Optimización Presupuestaria de Incentivos (Problema de la Mochila 0/1):**
-   * Maximiza las horas de conexión adicionales de los conductores seleccionando las mejores campañas de bonos (`/movigo/campanas`) bajo un límite presupuestario estricto de **C$ 120,000 NIO**, resuelto mediante Programación Dinámica.
-
-### Evaluación de Escenarios Operativos:
-* **Escenario 0 (Línea Base):** Operación tradicional con despacho reactivo y multiplicador dinámico no calibrado.
-* **Escenario 1 (Optimización de Despacho y Ruteo):** Despacho mediante Algoritmo Húngaro acoplado a rutas inteligentes con Dijkstra.
-* **Escenario 2 (Optimización Integral con Campañas y Tarifa de Equilibrio):** Incorporación del presupuesto óptimo de incentivos (Mochila 0/1) y multiplicador calibrado $m^*$ ante perturbaciones climáticas.
-
-Finalmente, los resultados se integran en un tablero de control analítico (*BI Dashboard*) que visualiza la reducción de cancelaciones, el ahorro en tiempos muertos y el comportamiento de la tarifa en el municipio de Managua.
+ 
+## 7.5 Modelos Prescriptivos de Optimización y Evaluación Operativa
+ 
+La capa prescriptiva formula y contrasta enfoques matemáticos adaptables a la asignación de recursos y mitigación de desequilibrios:
+ 
+1. **Asignación Operativa de Flota:**
+   * Formulación de modelos de asignación bipartita / emparejamiento entre oferta vehicular disponible y solicitudes entrantes, buscando reducir tiempos de espera y recorridos en vacío (*deadhead*).
+2. **Ruteo y Redes Territoriales:**
+   * Modelación de la red vial urbana como grafo ponderado por distancia e índices de congestión o afectación climática, evaluando algoritmos de caminos mínimos para mitigar demoras.
+3. **Estrategias de Incentivos y Cobertura:**
+   * Modelos de distribución de incentivos o bonos para conductores bajo restricciones presupuestarias para estimular la oferta en horas pico o zonas deficitarias.
+ 
+### Evaluación Comparativa de Escenarios Operativos:
+* **Escenario 0 (Línea Base):** Operación observada a partir del histórico de la API con asignación reactiva y multiplicador dinámico no calibrado.
+* **Escenario 1 (Optimización de Despacho y Ruteo):** Despacho basado en modelos prescriptivos de asignación y ruteo inteligente.
+* **Escenario 2 (Estrategia Integral con Calibración de Oferta y Tarifa):** Esquema integral que combina incentivos focalizados y multiplicadores tarifarios calibrados ante contingencias climáticas.
+ 
+Los resultados consolidados se comunican a través de tableros de control analítico (*BI Dashboards*) que sintetizan indicadores clave de servicio, cobertura territorial y eficiencia operativa en Managua.

@@ -20,13 +20,8 @@
       <Slide07Theory />
       <Slide08Methodology />
       <Slide09Pipeline />
-      <Slide10Kimball />
-      <Slide11SpatialAnalysis />
-      <Slide12OptimizationMILP />
-      <Slide13Simulation />
-      <Slide14CurriculumIntegration />
-      <Slide15Conclusion />
-      <Slide16Questions />
+      <Slide10Conclusion />
+      <Slide11Questions />
     </div>
 
     <!-- Floating Deck Hub Presentation Controls (Pinia Powered) -->
@@ -53,7 +48,7 @@ import DeckHub from './components/DeckHub.vue';
 import NotesDrawer from './components/NotesDrawer.vue';
 import SlideOverview from './components/SlideOverview.vue';
 
-// 16 Individual Slide Components
+// 11 Individual Slide Components
 import Slide01Cover from './slides/Slide01Cover.vue';
 import Slide02Context from './slides/Slide02Context.vue';
 import Slide03Literature from './slides/Slide03Literature.vue';
@@ -63,13 +58,8 @@ import Slide06Variables from './slides/Slide06Variables.vue';
 import Slide07Theory from './slides/Slide07Theory.vue';
 import Slide08Methodology from './slides/Slide08Methodology.vue';
 import Slide09Pipeline from './slides/Slide09Pipeline.vue';
-import Slide10Kimball from './slides/Slide10Kimball.vue';
-import Slide11SpatialAnalysis from './slides/Slide11SpatialAnalysis.vue';
-import Slide12OptimizationMILP from './slides/Slide12OptimizationMILP.vue';
-import Slide13Simulation from './slides/Slide13Simulation.vue';
-import Slide14CurriculumIntegration from './slides/Slide14CurriculumIntegration.vue';
-import Slide15Conclusion from './slides/Slide15Conclusion.vue';
-import Slide16Questions from './slides/Slide16Questions.vue';
+import Slide10Conclusion from './slides/Slide10Conclusion.vue';
+import Slide11Questions from './slides/Slide11Questions.vue';
 
 const deckStore = useDeckStore();
 const deckRef = ref(null);

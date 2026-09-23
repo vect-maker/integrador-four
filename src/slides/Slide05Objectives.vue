@@ -1,88 +1,105 @@
 <template>
-  <section class="slide " data-slide="5" data-title="05. Objetivos de Investigación">
-<div class="slide-canvas">
-                    <div class="slide-header">
-                        <div class="header-left">
-                            <span class="swiss-square"></span>
-                            <span>04. Objetivos del Estudio</span>
-                        </div>
-                        <div class="header-right">
-                            <span>Alcance &amp; Metas de Investigación</span>
-                            <span class="slide-number-tag">05 / 16</span>
-                        </div>
-                    </div>
+  <section class="slide" data-slide="5" data-title="05. Objetivos de Investigación">
+    <div class="slide-canvas">
+      <div class="slide-header">
+        <div class="header-left">
+          <span class="swiss-square"></span>
+          <span>04. Objetivos del Estudio</span>
+        </div>
+        <div class="header-right">
+          <span>Alcance &amp; Metas de Investigación</span>
+          <span class="slide-number-tag">05 / 11</span>
+        </div>
+      </div>
 
-                    <div class="slide-body">
-                        <div class="section-tag reveal">DIRECCIONAMIENTO CIENTÍFICO</div>
-                        <h2 class="slide-title reveal">Objetivo General &amp; <em>Específicos</em></h2>
+      <div class="slide-body">
+        <div class="section-tag reveal">DIRECCIONAMIENTO CIENTÍFICO</div>
+        <h2 class="slide-title reveal">Objetivo General &amp; <em>Específicos</em></h2>
 
-                        <!-- General Goal Box -->
-                        <div class="card accent-card reveal" style="margin-bottom: 24px; padding: 24px 32px; border-left: 8px solid var(--accent-red);">
-                            <div class="card-label" style="color: var(--accent-red);">Objetivo General</div>
-                            <div style="font-family: var(--font-display); font-size: 24px; font-weight: 800; line-height: 1.3;">
-                                Optimizar la distribución territorial de la flota vehicular y el sistema tarifario del servicio de transporte selectivo de la empresa Movi Go en el municipio de Managua, considerando factores operativos, territoriales y climáticos.
-                            </div>
-                        </div>
+        <!-- General Goal Box -->
+        <div class="card accent-card reveal" style="margin-bottom: 24px; padding: 22px 28px; border-left: 8px solid var(--accent-red);">
+          <div class="card-label" style="color: var(--accent-red); display: flex; align-items: center; gap: 6px;">
+            <Target :size="15" />
+            <span>Objetivo General</span>
+          </div>
+          <div style="font-family: var(--font-display); font-size: 22px; font-weight: 800; line-height: 1.35; color: var(--ink-primary);">
+            Optimizar la distribución operativa de la flota vehicular y el esquema de tarifa dinámica del servicio de transporte selectivo Movi Go en el municipio de Managua mediante la ingesta de datos transaccionales y meteorológicos vía API REST y su modelado y transformación con dbt, evaluando patrones espaciotemporales y estrategias de asignación bajo condiciones variables de demanda y clima urbano.
+          </div>
+        </div>
 
-                        <!-- 4 Specific Goals in Grid -->
-                        <div class="grid-4">
-                            <div class="card reveal">
-                                <div class="card-number">OE 1</div>
-                                <div class="card-label">Ingesta &amp; DW</div>
-                                <div class="card-title" style="font-size: 19px;">Construir</div>
-                                <div class="card-text" style="font-size: 14px;">
-                                    Construir un pipeline en Python para extraer datos de la API REST (/movigo), estructurar el Data Warehouse dimensional en PostgreSQL/dbt y auditar > 65,000 viajes.
-                                </div>
-                            </div>
+        <!-- 4 Specific Goals in Grid Centered on Initial Action Verbs -->
+        <div class="grid-4">
+          <div class="card reveal">
+            <div class="card-number">OE 1</div>
+            <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
+              <Database :size="13" style="color: var(--accent-red);" />
+              <span>Objetivo Específico 1</span>
+            </div>
+            <div class="card-title" style="font-size: 20px; color: var(--accent-red); font-weight: 800; letter-spacing: -0.02em;">Estructurar</div>
+            <div class="card-text" style="font-size: 13.5px; line-height: 1.55;">
+              <strong>Estructurar</strong> un pipeline de ingeniería de datos analítico mediante <strong>dbt (Data Build Tool)</strong> sobre PostgreSQL a partir de los datos extraídos de la <strong>API REST (/movigo)</strong>, garantizando la consolidación, estandarización y auditoría del histórico operativo.
+            </div>
+          </div>
 
-                            <div class="card reveal">
-                                <div class="card-number">OE 2</div>
-                                <div class="card-label">Inferencia</div>
-                                <div class="card-title" style="font-size: 19px;">Analizar</div>
-                                <div class="card-text" style="font-size: 14px;">
-                                    Analizar el impacto de la lluvia, congestión y estrato mediante regresión lineal múltiple con verificación Gauss-Markov y contrastes de hipótesis formalizados.
-                                </div>
-                            </div>
+          <div class="card reveal">
+            <div class="card-number">OE 2</div>
+            <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
+              <LineChart :size="13" style="color: var(--accent-red);" />
+              <span>Objetivo Específico 2</span>
+            </div>
+            <div class="card-title" style="font-size: 20px; color: var(--accent-red); font-weight: 800; letter-spacing: -0.02em;">Analizar</div>
+            <div class="card-text" style="font-size: 13.5px; line-height: 1.55;">
+              <strong>Analizar</strong> la distribución espaciotemporal de los flujos de demanda, los tiempos de espera y la duración de los trayectos frente a eventos meteorológicos, condiciones de tráfico y disparidades territoriales entre las zonas de Managua.
+            </div>
+          </div>
 
-                            <div class="card reveal">
-                                <div class="card-number">OE 3</div>
-                                <div class="card-label">Métodos Numéricos</div>
-                                <div class="card-title" style="font-size: 19px;">Implementar</div>
-                                <div class="card-text" style="font-size: 14px;">
-                                    Implementar métodos de raíces (Bisección y Newton-Raphson) para el multiplicador de equilibrio ^*$, elasticidad $\mathcal{O}(h^2)$ y regla de Simpson 1/3.
-                                </div>
-                            </div>
+          <div class="card reveal">
+            <div class="card-number">OE 3</div>
+            <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
+              <Sliders :size="13" style="color: var(--accent-red);" />
+              <span>Objetivo Específico 3</span>
+            </div>
+            <div class="card-title" style="font-size: 20px; color: var(--accent-red); font-weight: 800; letter-spacing: -0.02em;">Evaluar</div>
+            <div class="card-text" style="font-size: 13.5px; line-height: 1.55;">
+              <strong>Evaluar</strong> la dinámica del esquema de tarificación dinámica (<em>surge pricing</em>) y la sensibilidad de la oferta y la demanda vehicular ante variaciones en el multiplicador de precios bajo distintas condiciones y franjas horarias.
+            </div>
+          </div>
 
-                            <div class="card reveal">
-                                <div class="card-number">OE 4</div>
-                                <div class="card-label">Optimización</div>
-                                <div class="card-title" style="font-size: 19px;">Desarrollar</div>
-                                <div class="card-text" style="font-size: 14px;">
-                                    Desarrollar modelos prescriptivos con Algoritmo Húngaro (despacho), Dijkstra (rutas con lluvia/congestión) y Mochila 0/1 (campañas con presupuesto C$ 120,000 NIO).
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+          <div class="card reveal">
+            <div class="card-number">OE 4</div>
+            <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
+              <Cpu :size="13" style="color: var(--accent-red);" />
+              <span>Objetivo Específico 4</span>
+            </div>
+            <div class="card-title" style="font-size: 20px; color: var(--accent-red); font-weight: 800; letter-spacing: -0.02em;">Formular</div>
+            <div class="card-text" style="font-size: 13.5px; line-height: 1.55;">
+              <strong>Formular</strong> modelos prescriptivos de optimización operativa para la asignación y el rebalanceo territorial de la flota vehicular, orientados a mitigar los recorridos improductivos en vacío (<em>deadhead</em>) y equilibrar tiempos de servicio.
+            </div>
+          </div>
+        </div>
+      </div>
 
-                    <div class="slide-footer">
-                        <div>ARTICULACIÓN ACADÉMICA</div>
-                        <div>INTEGRADOR IV: ESTADÍSTICA • ANÁLISIS NUMÉRICO • SCRIPTING • OPTIMIZACIÓN • DATA WAREHOUSE</div>
-                    </div>
-                </div>
+      <div class="slide-footer">
+        <div>ALCANCE DE LA INVESTIGACIÓN</div>
+        <div>FUENTE: API REST /MOVIGO • TRANSFORMACIÓN: DBT CORE EN POSTGRESQL • VERBOS DE ACCIÓN UNÍVOCOS</div>
+      </div>
+    </div>
+
     <aside class="notes">
-      <p class="notes-meta">⏱ <strong>05:00 - 06:15</strong> | Duración: 1:15 min | <em>Fase: Objetivos</em></p>
-      <p>Definimos nuestro <strong>Objetivo General</strong> de manera muy clara y medible:</p>
-      <p>Diseñar e implementar un <strong>modelo matemático de optimización MILP multicriterio</strong> y un sistema tarifario dinámico adaptativo para la plataforma Movi Go, equilibrando tiempos de espera, kilometraje en vacío y sostenibilidad tarifaria ante variaciones climáticas en Managua.</p>
-      <p>Este objetivo se desglosa en <strong>cuatro objetivos específicos</strong>:</p>
-      <p>1. Construir el pipeline de <strong>ingesta y modelado dimensional ELT</strong> con dbt Core y PostgreSQL.<br>
-      2. Realizar el <strong>análisis espacio-temporal</strong> mediante matrices Origen-Destino e índices de autocorrelación espacial (Moran's I).<br>
-      3. Formular el <strong>modelo MILP</strong> con funciones de penalización pluvial.<br>
-      4. <strong>Simular y contrastar tres escenarios</strong> operacionales para validar la hipótesis de mejora.</p>
+      <p class="notes-meta">⏱ <strong>04:00 - 05:00</strong> | Duración: 1:00 min | <em>Fase: Objetivos</em></p>
+      <p>Cada objetivo de nuestra investigación se formula rigurosamente centrado en un único verbo de acción al inicio:</p>
+      <p><strong>Objetivo General:</strong> <em>Optimizar</em> la distribución operativa de la flota y la tarifa dinámica a partir de la ingesta vía API REST y el modelado con dbt.</p>
+      <p>Y cuatro <strong>Objetivos Específicos</strong> unívocos:</p>
+      <p>1. <strong>Estructurar:</strong> El pipeline analítico con dbt sobre PostgreSQL a partir de los datos de la API REST.<br>
+      2. <strong>Analizar:</strong> La distribución espaciotemporal de flujos, esperas y demoras frente a lluvia y tráfico.<br>
+      3. <strong>Evaluar:</strong> La dinámica tarifaria de surge pricing y la sensibilidad entre oferta y demanda.<br>
+      4. <strong>Formular:</strong> Modelos prescriptivos de asignación y rebalanceo de flota para mitigar el deadhead.</p>
       <p class="notes-transition">👉 <em>Transición:</em> "Pasemos a ver cómo operacionalizamos formalmente cada una de las variables involucradas."</p>
     </aside>
   </section>
 </template>
 
 <script setup>
+import { Target, Database, LineChart, Sliders, Cpu } from '@lucide/vue';
 // Slide 5: 05. Objetivos de Investigación
 </script>

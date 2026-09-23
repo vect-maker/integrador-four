@@ -4,14 +4,14 @@
       <div class="notes-drawer" role="dialog" aria-modal="true" aria-labelledby="notes-title">
         <div class="drawer-header">
           <div class="drawer-title-group">
-            <span class="drawer-tag">ORADOR</span>
+            <span class="drawer-tag"><FileText :size="11" style="display: inline-block; vertical-align: -1px; margin-right: 4px;" /> ORADOR</span>
             <h3 id="notes-title" class="drawer-heading">
               Notas • {{ deckStore.formattedCurrent }} / {{ deckStore.formattedTotal }}
             </h3>
             <span class="drawer-slide-title">{{ deckStore.currentTitle }}</span>
           </div>
           <button class="drawer-close-btn" @click="deckStore.toggleNotes(false)" title="Cerrar panel de notas (Escape o N)">
-            <span>✕</span> <kbd>Esc</kbd>
+            <X :size="14" /> <kbd>Esc</kbd>
           </button>
         </div>
 
@@ -28,6 +28,7 @@
 
 <script setup>
 import { useDeckStore } from '../stores/deck';
+import { FileText, X } from '@lucide/vue';
 
 const deckStore = useDeckStore();
 </script>

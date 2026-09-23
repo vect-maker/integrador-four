@@ -31,17 +31,26 @@
 
                 <div class="title-aside">
                     <div class="card reveal" style="border-left: 6px solid var(--accent-red); margin-bottom: 16px;">
-                        <div class="card-label">Dimensión Operativa</div>
+                        <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
+                            <Activity :size="13" style="color: var(--accent-red);" />
+                            <span>Dimensión Operativa</span>
+                        </div>
                         <div class="card-title" style="font-size: 20px;">Flota &amp; Deadhead</div>
                         <div class="card-text">Reducción de tiempos muertos y recorridos en vacío mediante asignación dinámica.</div>
                     </div>
                     <div class="card reveal" style="border-left: 6px solid var(--border-bold); margin-bottom: 16px;">
-                        <div class="card-label">Dimensión Territorial</div>
+                        <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
+                            <MapPin :size="13" style="color: var(--ink-primary);" />
+                            <span>Dimensión Territorial</span>
+                        </div>
                         <div class="card-title" style="font-size: 20px;">Matrices OD &amp; Moran</div>
                         <div class="card-text">Discretización urbana en zonas operativas y detección de clusters espaciales.</div>
                     </div>
                     <div class="card reveal" style="border-left: 6px solid var(--accent-blue);">
-                        <div class="card-label">Dimensión Climática</div>
+                        <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
+                            <CloudRain :size="13" style="color: var(--accent-blue);" />
+                            <span>Dimensión Climática</span>
+                        </div>
                         <div class="card-title" style="font-size: 20px;">API Clima & Tráfico</div>
                         <div class="card-text">Modelación de velocidad y variabilidad de demanda ante precipitaciones en Managua.</div>
                     </div>
@@ -49,19 +58,27 @@
 
                 <div class="title-bottom">
                     <div class="reveal">
-                        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); text-transform: uppercase;">Carrera</div>
+                        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); text-transform: uppercase; display: flex; align-items: center; gap: 4px;">
+                            <GraduationCap :size="12" /> Carrera
+                        </div>
                         <div style="font-weight: 800; font-size: 16px;">Ingeniería en Ciencia de Datos</div>
                     </div>
                     <div class="reveal">
-                        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); text-transform: uppercase;">Nivel Académico</div>
+                        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); text-transform: uppercase; display: flex; align-items: center; gap: 4px;">
+                            <Calendar :size="12" /> Nivel Académico
+                        </div>
                         <div style="font-weight: 800; font-size: 16px;">Segundo Año • 2026</div>
                     </div>
                     <div class="reveal">
-                        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); text-transform: uppercase;">Metodología / Stack</div>
-                        <div style="font-weight: 800; font-size: 16px;">ELT • dbt • Kimball • MILP</div>
+                        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); text-transform: uppercase; display: flex; align-items: center; gap: 4px;">
+                            <Database :size="12" /> Metodología / Stack
+                        </div>
+                        <div style="font-weight: 800; font-size: 16px;">API REST • dbt • Inferencia • Optimización</div>
                     </div>
                     <div class="reveal">
-                        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); text-transform: uppercase;">Ubicación de Análisis</div>
+                        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); text-transform: uppercase; display: flex; align-items: center; gap: 4px;">
+                            <Map :size="12" /> Ubicación de Análisis
+                        </div>
                         <div style="font-weight: 800; font-size: 16px;">Municipio de Managua</div>
                     </div>
                 </div>
@@ -76,5 +93,6 @@
 </template>
 
 <script setup>
+import { Activity, MapPin, CloudRain, GraduationCap, Calendar, Database, Map } from '@lucide/vue';
 // Slide 1: 01. Portada: Caso Movi Go
 </script>

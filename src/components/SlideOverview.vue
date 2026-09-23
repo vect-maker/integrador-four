@@ -12,12 +12,12 @@
         <!-- Top Toolbar -->
         <header class="overview-header">
           <div class="header-left">
-            <span class="swiss-square"></span>
+            <LayoutGrid :size="18" style="color: var(--accent-red); margin-right: 8px; flex-shrink: 0;" />
             <h2>Índice General de Diapositivas</h2>
             <span class="overview-total">{{ deckStore.totalSlides }} Láminas</span>
           </div>
-          <button class="overview-close-btn" @click="deckStore.toggleOverview(false)">
-            <span>Cerrar</span> <kbd>Esc</kbd>
+          <button class="overview-close-btn" @click="deckStore.toggleOverview(false)" title="Cerrar índice (Esc u O)">
+            <X :size="14" /> <span>Cerrar</span> <kbd>Esc</kbd>
           </button>
         </header>
 
@@ -49,6 +49,7 @@
 
 <script setup>
 import { useDeckStore } from '../stores/deck';
+import { LayoutGrid, X } from '@lucide/vue';
 
 const deckStore = useDeckStore();
 

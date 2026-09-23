@@ -39,21 +39,21 @@ El pipeline tecnológico implementado demuestra un diseño robusto y moderno:
 
 ---
 
-## 4.4 Modelación, Simulación y Métodos Numéricos
+## 4.4 Modelación Analítica, Simulación y Métodos Numéricos
 
-La modelación matemática y el análisis numérico adquieren protagonismo al permitir simular el comportamiento del sistema sin perturbar la operación real de la empresa:
-* **Búsqueda de Raíces (Bisección y Newton-Raphson):** Permite hallar el multiplicador de equilibrio $m^*$ que anula el exceso de demanda ($f(m) = 0$).
-* **Diferenciación Numérica $\mathcal{O}(h^2)$:** Permite estimar la elasticidad-precio de la demanda en diferentes zonas de la capital mediante diferencias finitas centrales.
-* **Integración Numérica (Simpson 1/3):** Permite aproximar el volumen total acumulado de viajes a partir de la función de intensidad horaria diaria.
+La modelación matemática y el análisis cuantitativo permiten evaluar el comportamiento del sistema y explorar alternativas analíticas sin perturbar la operación real de la empresa:
+* **Estimación de Equilibrio y Dinámica Tarifaria:** Modelos para evaluar la respuesta de la demanda ante multiplicadores dinámicos ($f(m) = 0$), explorando métodos de resolución iterativa o búsqueda de raíces numéricas (tales como Bisección o Newton-Raphson como alternativas metodológicas).
+* **Sensibilidad y Elasticidad:** Análisis de la elasticidad-precio de la demanda mediante aproximaciones diferenciales numéricas o empíricas según la dispersión zonal de los datos.
+* **Agregación de Flujos:** Técnicas de integración numérica o aproximación temporal continua para estimar volúmenes diarios acumulados a partir de curvas horarias.
 
 ---
 
-## 4.5 Optimización Prescriptiva y Asignación de Recursos
+## 4.5 Optimización Prescriptiva y Estrategias de Operación
 
-En el plano de la Investigación de Operaciones, el estudio proporciona soluciones prescriptivas concretas a problemas clásicos de movilidad:
-1. **Algoritmo Húngaro:** Resuelve el problema de asignación biyectiva óptima entre solicitudes entrantes y vehículos desocupados monitoreados por telemetría GPS, minimizando el tiempo total de espera.
-2. **Algoritmo de Dijkstra:** Determina la ruta más corta y menos congestionada entre cuadrantes urbanos representados como grafos ponderados, comparando condiciones de flujo libre frente a inundaciones por tormenta.
-3. **Problema de la Mochila (Knapsack 0/1):** Optimiza la selección de campañas de incentivos y bonos para conductores (`/movigo/campanas`) maximizando las horas-hombre de conexión ganadas bajo una restricción de presupuesto de **C$ 120,000 NIO**.
+En el plano de la Investigación de Operaciones, el estudio formula y evalúa modelos prescriptivos adaptables a los problemas de movilidad urbana:
+1. **Modelos de Asignación de Flota:** Enfoques de optimización combinatoria y emparejamiento (por ejemplo, formulaciones tipo Algoritmo Húngaro o programación lineal) para relacionar vehículos disponibles y solicitudes entrantes minimizando tiempos de espera.
+2. **Ruteo y Redes Viales:** Análisis de caminos óptimos en grafos bajo congestión o perturbaciones climáticas (evaluando algoritmos de caminos mínimos como Dijkstra o similares en la red de cuadrantes).
+3. **Estrategias de Incentivos y Cobertura:** Formulación de modelos de asignación de recursos o incentivos operativos para conductores, evaluables bajo restricciones presupuestarias y escenarios de demanda pico.
 
 ---
 
@@ -61,9 +61,9 @@ En el plano de la Investigación de Operaciones, el estudio proporciona solucion
 
 Desde una perspectiva social y urbana, optimizar el transporte selectivo en Managua contribuye a mejorar la accesibilidad de la ciudadanía en una ciudad donde el 26% de los traslados diarios dependen de este modo de transporte (JICA, 2017). Un despacho más ágil reduce la congestión vial, disminuye la emisión de contaminantes por recorridos ociosos y proporciona tarifas previsibles y transparentes.
 
-En el ámbito académico, el proyecto responde con fidelidad a los objetivos formativos del **Integrador IV**, articulando de manera armónica las cinco asignaturas del semestre:
-* **Bases de Datos Analíticas:** Arquitectura ELT, dbt, modelado dimensional Kimball y tableros BI.
-* **Programación en Scripting:** Ingesta de APIs REST, paginación, exportación a Parquet y scripts de alerta DataOps.
-* **Estadística II:** Regresión lineal múltiple (viajes vs. lluvia y congestión), ANOVA, contrastes de hipótesis (Welch, proporciones $z$, estratos, $\chi^2$) y verificación de supuestos Gauss-Markov.
-* **Métodos Numéricos:** Raíces de funciones no lineales (Bisección y Newton-Raphson), diferenciación numérica e integración Simpson 1/3.
-* **Optimización:** Asignación con Algoritmo Húngaro, rutas mínimas con Dijkstra y optimización combinatoria 0/1 Knapsack.
+En el ámbito académico, el proyecto responde con fidelidad a los objetivos formativos del **Integrador IV**, articulando de manera armónica las áreas temáticas del semestre:
+* **Bases de Datos Analíticas:** Arquitectura ELT, modelado y transformación analítica con **dbt**, diseño dimensional y tableros BI.
+* **Programación en Scripting:** Ingesta automatizada de la API REST, paginación, exportación a Parquet y flujos DataOps.
+* **Estadística Aplicada:** Modelación econométrica/estadística de la demanda, inferencia multivariada y contrastes de hipótesis contextuales.
+* **Métodos Numéricos:** Exploración de esquemas iterativos para calibración de tarifas, elasticidad y aproximación de volumen de flujos.
+* **Optimización e Investigación de Operaciones:** Modelos prescriptivos de asignación de recursos, ruteo en redes y distribución territorial de flota.

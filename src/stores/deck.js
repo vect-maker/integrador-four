@@ -5,7 +5,7 @@ import { openPresenterWindow } from '../utils/presenter';
 export const useDeckStore = defineStore('deck', () => {
   // --- State ---
   const currentSlide = ref(1);
-  const totalSlides = ref(16);
+  const totalSlides = ref(11);
   const isNotesOpen = ref(false);
   const isOverviewOpen = ref(false);
   const isFullscreen = ref(false);
