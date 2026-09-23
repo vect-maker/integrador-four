@@ -21,8 +21,8 @@
 
         <div class="grid-2">
           <div class="card reveal" style="border-left: 6px solid var(--border-bold);">
-            <div class="card-label" style="display: flex; align-items: center; gap: 6px; margin-bottom: 8px;">
-              <CheckCircle2 :size="13" style="color: var(--accent-blue);" />
+            <div class="card-label" style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+              <CheckCircle2 :size="20" style="color: var(--accent-blue); flex-shrink: 0;" />
               <span>Logros Consolidados en este Avance</span>
             </div>
             <div class="card-title">Cimientos Analíticos y Arquitectura Lista</div>
@@ -30,19 +30,19 @@
               <li><strong>Definición Rigurosa del Problema:</strong> Integración formal de la triple dimensión (operativa, territorial y climática) sin presunciones arbitrarias.</li>
               <li><strong>Arquitectura de Datos ELT Implementada:</strong> Esquema dimensional Kimball listo en PostgreSQL, con staging y marts gobernados por dbt.</li>
               <li><strong>Matriz de Operacionalización Completa:</strong> Descriptores, indicadores numéricos y técnicas de validación estructuradas.</li>
-              <li><strong>Modelo MILP Formulado:</strong> Función objetivo multicriterio y restricciones físicas de red vehicular codificadas.</li>
+              <li><strong>Marco de Optimización y Modelado:</strong> Formulación conceptual de los criterios operativos y restricciones de red para la toma de decisiones.</li>
             </ul>
           </div>
 
           <div class="card reveal" style="border-left: 6px solid var(--accent-red);">
-            <div class="card-label" style="display: flex; align-items: center; gap: 6px; margin-bottom: 8px;">
-              <Target :size="13" style="color: var(--accent-red);" />
+            <div class="card-label" style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+              <Target :size="20" style="color: var(--accent-red); flex-shrink: 0;" />
               <span>Siguientes Hitos de Ejecución</span>
             </div>
-            <div class="card-title">Calibración, Solvers &amp; Escenarios Finales</div>
+            <div class="card-title">Calibración, Simulación &amp; Escenarios Finales</div>
             <ul class="swiss-list" style="margin-top: 14px;">
               <li><strong>Calibración con Datos Sintéticos/Reales:</strong> Carga de un dataset transaccional representativo del municipio de Managua con variables de viaje completas.</li>
-              <li><strong>Ejecución del Solver MILP en Python:</strong> Obtención de los vectores de redistribución óptima <KatexMath expr="x_{ijt}" /> bajo escenarios seco vs. lluvioso.</li>
+              <li><strong>Experimentación y Evaluación de Modelos:</strong> Calibración y simulación de alternativas algorítmicas de optimización de flota bajo escenarios seco vs. lluvioso.</li>
               <li><strong>Validación de Sensibilidad Climática:</strong> Corridas comparativas con series de precipitación e índice de congestión de la API.</li>
               <li><strong>Informe Final y Dashboard de Simulación:</strong> Visualización interactiva de matrices OD y panel de control prescriptivo para Movi Go.</li>
             </ul>
@@ -73,6 +73,5 @@
 
 <script setup>
 import { CheckCircle2, Target } from '@lucide/vue';
-import KatexMath from '../components/KatexMath.vue';
 // Slide 10: 10. Síntesis & Próximos Pasos
 </script>

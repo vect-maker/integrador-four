@@ -22,8 +22,8 @@
                         <div class="grid-3">
                             <div class="card reveal">
                                 <div class="card-number">01</div>
-                                <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
-                                    <Clock :size="14" style="color: var(--accent-red);" />
+                                <div class="card-label" style="display: flex; align-items: center; gap: 8px;">
+                                    <Clock :size="20" style="color: var(--accent-red); flex-shrink: 0;" />
                                     <span>Dimensión Operativa</span>
                                 </div>
                                 <div class="card-title">Dinámica de Flota y Tiempos</div>
@@ -39,8 +39,8 @@
 
                             <div class="card reveal">
                                 <div class="card-number">02</div>
-                                <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
-                                    <MapPin :size="14" style="color: var(--ink-primary);" />
+                                <div class="card-label" style="display: flex; align-items: center; gap: 8px;">
+                                    <MapPin :size="20" style="color: var(--ink-primary); flex-shrink: 0;" />
                                     <span>Dimensión Territorial</span>
                                 </div>
                                 <div class="card-title">Heterogeneidad Espacial</div>
@@ -56,8 +56,8 @@
 
                             <div class="card reveal">
                                 <div class="card-number">03</div>
-                                <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
-                                    <TrendingUp :size="14" style="color: var(--accent-blue);" />
+                                <div class="card-label" style="display: flex; align-items: center; gap: 8px;">
+                                    <TrendingUp :size="20" style="color: var(--accent-blue); flex-shrink: 0;" />
                                     <span>Dimensión Tarifaria</span>
                                 </div>
                                 <div class="card-title">Coherencia de Precios</div>

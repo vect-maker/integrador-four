@@ -18,8 +18,8 @@
 
         <!-- General Goal Box -->
         <div class="card accent-card reveal" style="margin-bottom: 24px; padding: 22px 28px; border-left: 8px solid var(--accent-red);">
-          <div class="card-label" style="color: var(--accent-red); display: flex; align-items: center; gap: 6px;">
-            <Target :size="15" />
+          <div class="card-label" style="color: var(--accent-red); display: flex; align-items: center; gap: 8px;">
+            <Target :size="22" style="flex-shrink: 0;" />
             <span>Objetivo General</span>
           </div>
           <div style="font-family: var(--font-display); font-size: 22px; font-weight: 800; line-height: 1.35; color: var(--ink-primary);">
@@ -31,8 +31,8 @@
         <div class="grid-4">
           <div class="card reveal">
             <div class="card-number">OE 1</div>
-            <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
-              <Database :size="13" style="color: var(--accent-red);" />
+            <div class="card-label" style="display: flex; align-items: center; gap: 8px;">
+              <Database :size="20" style="color: var(--accent-red); flex-shrink: 0;" />
               <span>Objetivo Específico 1</span>
             </div>
             <div class="card-title" style="font-size: 20px; color: var(--accent-red); font-weight: 800; letter-spacing: -0.02em;">Estructurar</div>
@@ -43,8 +43,8 @@
 
           <div class="card reveal">
             <div class="card-number">OE 2</div>
-            <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
-              <LineChart :size="13" style="color: var(--accent-red);" />
+            <div class="card-label" style="display: flex; align-items: center; gap: 8px;">
+              <LineChart :size="20" style="color: var(--accent-red); flex-shrink: 0;" />
               <span>Objetivo Específico 2</span>
             </div>
             <div class="card-title" style="font-size: 20px; color: var(--accent-red); font-weight: 800; letter-spacing: -0.02em;">Analizar</div>
@@ -55,8 +55,8 @@
 
           <div class="card reveal">
             <div class="card-number">OE 3</div>
-            <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
-              <Sliders :size="13" style="color: var(--accent-red);" />
+            <div class="card-label" style="display: flex; align-items: center; gap: 8px;">
+              <Sliders :size="20" style="color: var(--accent-red); flex-shrink: 0;" />
               <span>Objetivo Específico 3</span>
             </div>
             <div class="card-title" style="font-size: 20px; color: var(--accent-red); font-weight: 800; letter-spacing: -0.02em;">Evaluar</div>
@@ -67,8 +67,8 @@
 
           <div class="card reveal">
             <div class="card-number">OE 4</div>
-            <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
-              <Cpu :size="13" style="color: var(--accent-red);" />
+            <div class="card-label" style="display: flex; align-items: center; gap: 8px;">
+              <Cpu :size="20" style="color: var(--accent-red); flex-shrink: 0;" />
               <span>Objetivo Específico 4</span>
             </div>
             <div class="card-title" style="font-size: 20px; color: var(--accent-red); font-weight: 800; letter-spacing: -0.02em;">Formular</div>

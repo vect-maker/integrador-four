@@ -21,8 +21,8 @@
 
                         <div class="grid-2">
                             <div class="card reveal" style="border-top: 6px solid var(--accent-red);">
-                                <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
-                                    <AlertTriangle :size="14" style="color: var(--accent-red);" />
+                                <div class="card-label" style="display: flex; align-items: center; gap: 8px;">
+                                    <AlertTriangle :size="20" style="color: var(--accent-red); flex-shrink: 0;" />
                                     <span>Manifestaciones del Problema</span>
                                 </div>
                                 <div class="card-title">Ineficiencias del Despacho Reactivo</div>
@@ -38,8 +38,8 @@
                             </div>
 
                             <div class="card reveal" style="border-top: 6px solid var(--border-bold);">
-                                <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
-                                    <Sparkles :size="14" style="color: var(--ink-primary);" />
+                                <div class="card-label" style="display: flex; align-items: center; gap: 8px;">
+                                    <Sparkles :size="20" style="color: var(--ink-primary); flex-shrink: 0;" />
                                     <span>La Oportunidad desde Ciencia de Datos</span>
                                 </div>
                                 <div class="card-title">De la Estimación a la Evidencia Analítica</div>

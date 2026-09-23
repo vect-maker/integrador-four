@@ -1,8 +1,20 @@
 <template>
-  <div v-if="!deckStore.isPreview" class="deck-hub-container">
+  <div
+    v-if="!deckStore.isPreview"
+    class="deck-hub-container"
+    :class="{
+      'is-notes-mode': deckStore.isNotesOpen,
+      'is-overview-mode': deckStore.isOverviewOpen,
+      'is-minimized': isMinimized
+    }"
+  >
     <!-- Floating Hub Bar -->
-    <nav class="deck-hub" aria-label="Controles de la presentación">
-      <!-- Group 1: Navigation -->
+    <nav
+      class="deck-hub"
+      :class="{ 'is-compact': isMinimized }"
+      aria-label="Controles de la presentación"
+    >
+      <!-- Group 1: Navigation (Always accessible) -->
       <div class="hub-group">
         <button
           class="hub-btn nav-btn"
@@ -15,11 +27,20 @@
 
         <div
           class="hub-counter"
-          :title="deckStore.currentTitle"
-          @click="toggleDropdown"
+          :class="{ 'is-clickable': !deckStore.isOverviewOpen && !deckStore.isNotesOpen }"
+          :title="counterTooltip"
+          @click="handleCounterClick"
         >
           <span class="counter-num">{{ deckStore.counterText }}</span>
-          <span class="counter-title-hint">{{ truncatedTitle }}</span>
+          <span v-if="!isMinimized && !deckStore.isOverviewOpen && !deckStore.isNotesOpen" class="counter-title-hint">
+            {{ truncatedTitle }}
+          </span>
+          <span v-else-if="!isMinimized && deckStore.isOverviewOpen" class="counter-mode-badge">
+            RESUMEN
+          </span>
+          <span v-else-if="!isMinimized && deckStore.isNotesOpen" class="counter-mode-badge">
+            NOTAS
+          </span>
         </div>
 
         <button
@@ -34,56 +55,155 @@
 
       <div class="hub-divider"></div>
 
-      <!-- Group 2: Mode & Tools -->
-      <div class="hub-group">
+      <!-- Minimized State: Single Expand Button -->
+      <template v-if="isMinimized">
         <button
-          class="hub-btn tool-btn"
-          @click="deckStore.openPresenter()"
-          title="Modo Presentador con Notas y Cronómetro (Tecla S)"
+          class="hub-btn tool-btn min-toggle-btn"
+          @click="toggleMinimize"
+          title="Expandir barra de controles (Tecla H)"
         >
-          <Presentation :size="15" :stroke-width="2" class="btn-icon" />
-          <span class="btn-label">Presentador <kbd>S</kbd></span>
+          <ChevronUp :size="15" :stroke-width="2.5" class="btn-icon" />
+          <span class="btn-label">Herramientas <kbd>H</kbd></span>
         </button>
+      </template>
 
-        <button
-          class="hub-btn tool-btn"
-          :class="{ 'is-active': deckStore.isNotesOpen }"
-          @click="deckStore.toggleNotes()"
-          title="Panel Rápido de Notas del Orador (Tecla N)"
-        >
-          <FileText :size="15" :stroke-width="2" class="btn-icon" />
-          <span class="btn-label">Notas <kbd>N</kbd></span>
-        </button>
+      <!-- Expanded State: Adapts tools dynamically according to active mode -->
+      <template v-else>
+        <!-- 1. OVERVIEW MODE: Contextual slide-selection & preview tools -->
+        <div v-if="deckStore.isOverviewOpen" class="hub-group">
+          <button
+            class="hub-btn tool-btn theme-btn"
+            @click="deckStore.cycleTheme()"
+            :title="`Cambiar Tema Visual (Actual: ${deckStore.currentTheme}) - Tecla T`"
+          >
+            <Palette :size="15" :stroke-width="2" class="btn-icon" />
+            <span class="btn-label">{{ friendlyThemeName }} <kbd>T</kbd></span>
+          </button>
 
-        <button
-          class="hub-btn tool-btn"
-          :class="{ 'is-active': deckStore.isOverviewOpen }"
-          @click="deckStore.toggleOverview()"
-          title="Malla / Resumen de Diapositivas (Tecla O)"
-        >
-          <LayoutGrid :size="15" :stroke-width="2" class="btn-icon" />
-          <span class="btn-label">Resumen <kbd>O</kbd></span>
-        </button>
+          <button
+            class="hub-btn tool-btn is-active close-mode-btn"
+            @click="deckStore.toggleOverview(false)"
+            title="Cerrar vista resumen (Tecla Esc u O)"
+          >
+            <X :size="15" :stroke-width="2" class="btn-icon" />
+            <span class="btn-label">Cerrar Resumen <kbd>Esc</kbd></span>
+          </button>
 
-        <button
-          class="hub-btn tool-btn theme-btn"
-          @click="deckStore.cycleTheme()"
-          :title="`Cambiar Tema Visual (Actual: ${deckStore.currentTheme}) - Tecla T`"
-        >
-          <Palette :size="15" :stroke-width="2" class="btn-icon" />
-          <span class="btn-label">{{ friendlyThemeName }} <kbd>T</kbd></span>
-        </button>
+          <button
+            class="hub-btn tool-btn icon-only"
+            @click="toggleMinimize"
+            title="Minimizar barra de controles (Tecla H)"
+          >
+            <ChevronDown :size="15" :stroke-width="2" />
+          </button>
+        </div>
 
-        <button
-          class="hub-btn tool-btn"
-          :class="{ 'is-active': deckStore.isFullscreen }"
-          @click="deckStore.toggleFullscreen()"
-          title="Pantalla Completa (Tecla F)"
-        >
-          <component :is="deckStore.isFullscreen ? Minimize2 : Maximize2" :size="15" :stroke-width="2" class="btn-icon" />
-          <span class="btn-label"><kbd>F</kbd></span>
-        </button>
-      </div>
+        <!-- 2. NOTES MODE: Speaker reference tools (Elevated above drawer) -->
+        <div v-else-if="deckStore.isNotesOpen" class="hub-group">
+          <button
+            class="hub-btn tool-btn"
+            @click="deckStore.openPresenter()"
+            title="Abrir Ventana de Presentador con Cronómetro (Tecla S)"
+          >
+            <Presentation :size="15" :stroke-width="2" class="btn-icon" />
+            <span class="btn-label">Doble Pantalla <kbd>S</kbd></span>
+          </button>
+
+          <button
+            class="hub-btn tool-btn is-active close-mode-btn"
+            @click="deckStore.toggleNotes(false)"
+            title="Cerrar panel de notas (Tecla Esc o N)"
+          >
+            <X :size="15" :stroke-width="2" class="btn-icon" />
+            <span class="btn-label">Cerrar Notas <kbd>Esc</kbd></span>
+          </button>
+
+          <button
+            class="hub-btn tool-btn icon-only"
+            :class="{ 'is-active': deckStore.isFullscreen }"
+            @click="deckStore.toggleFullscreen()"
+            title="Pantalla Completa (Tecla F)"
+          >
+            <component :is="deckStore.isFullscreen ? Minimize2 : Maximize2" :size="15" :stroke-width="2" />
+          </button>
+
+          <button
+            class="hub-btn tool-btn icon-only"
+            @click="toggleMinimize"
+            title="Minimizar barra de controles (Tecla H)"
+          >
+            <ChevronDown :size="15" :stroke-width="2" />
+          </button>
+        </div>
+
+        <!-- 3. NORMAL MODE: Standard Presentation Toolbar -->
+        <div v-else class="hub-group">
+          <button
+            class="hub-btn tool-btn"
+            @click="deckStore.openPresenter()"
+            title="Modo Presentador con Notas y Cronómetro (Tecla S)"
+          >
+            <Presentation :size="15" :stroke-width="2" class="btn-icon" />
+            <span class="btn-label">Presentador <kbd>S</kbd></span>
+          </button>
+
+          <button
+            class="hub-btn tool-btn"
+            :class="{ 'is-active': deckStore.isNotesOpen }"
+            @click="deckStore.toggleNotes()"
+            title="Panel Rápido de Notas del Orador (Tecla N)"
+          >
+            <FileText :size="15" :stroke-width="2" class="btn-icon" />
+            <span class="btn-label">Notas <kbd>N</kbd></span>
+          </button>
+
+          <button
+            class="hub-btn tool-btn"
+            :class="{ 'is-active': deckStore.isOverviewOpen }"
+            @click="deckStore.toggleOverview()"
+            title="Malla / Resumen de Diapositivas (Tecla O)"
+          >
+            <LayoutGrid :size="15" :stroke-width="2" class="btn-icon" />
+            <span class="btn-label">Resumen <kbd>O</kbd></span>
+          </button>
+
+          <button
+            class="hub-btn tool-btn theme-btn"
+            @click="deckStore.cycleTheme()"
+            :title="`Cambiar Tema Visual (Actual: ${deckStore.currentTheme}) - Tecla T`"
+          >
+            <Palette :size="15" :stroke-width="2" class="btn-icon" />
+            <span class="btn-label">{{ friendlyThemeName }} <kbd>T</kbd></span>
+          </button>
+
+          <button
+            class="hub-btn tool-btn"
+            @click="printDeck"
+            title="Imprimir / Exportar a PDF (Tecla P o Ctrl+P)"
+          >
+            <Printer :size="15" :stroke-width="2" class="btn-icon" />
+            <span class="btn-label">PDF <kbd>P</kbd></span>
+          </button>
+
+          <button
+            class="hub-btn tool-btn"
+            :class="{ 'is-active': deckStore.isFullscreen }"
+            @click="deckStore.toggleFullscreen()"
+            title="Pantalla Completa (Tecla F)"
+          >
+            <component :is="deckStore.isFullscreen ? Minimize2 : Maximize2" :size="15" :stroke-width="2" class="btn-icon" />
+            <span class="btn-label"><kbd>F</kbd></span>
+          </button>
+
+          <button
+            class="hub-btn tool-btn icon-only"
+            @click="toggleMinimize"
+            title="Minimizar barra de controles (Tecla H)"
+          >
+            <ChevronDown :size="15" :stroke-width="2" />
+          </button>
+        </div>
+      </template>
 
       <!-- Integrated Mini Progress Bar -->
       <div class="hub-progress">
@@ -91,9 +211,9 @@
       </div>
     </nav>
 
-    <!-- Quick Jump Slide Drawer / Dropdown -->
+    <!-- Quick Jump Slide Drawer / Dropdown (Only in normal presentation mode) -->
     <transition name="hub-fade">
-      <div v-if="showJumpList" class="hub-jump-menu">
+      <div v-if="showJumpList && !deckStore.isOverviewOpen && !deckStore.isNotesOpen" class="hub-jump-menu">
         <div class="jump-header">
           <span>Índice de Diapositivas</span>
           <button class="jump-close" @click="showJumpList = false" title="Cerrar"><X :size="14" /></button>
@@ -115,7 +235,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import { useDeckStore } from '../stores/deck';
 import {
   ChevronLeft,
@@ -126,11 +246,20 @@ import {
   Palette,
   Maximize2,
   Minimize2,
-  X
+  X,
+  Printer,
+  ChevronDown,
+  ChevronUp
 } from '@lucide/vue';
 
 const deckStore = useDeckStore();
 const showJumpList = ref(false);
+
+const isMinimized = computed(() => deckStore.isHubMinimized);
+
+function toggleMinimize() {
+  deckStore.toggleHubMinimized();
+}
 
 const friendlyThemeNames = {
   'swiss-grid': 'Suizo',
@@ -150,7 +279,14 @@ const truncatedTitle = computed(() => {
   return t.length > 28 ? t.slice(0, 26) + '...' : t;
 });
 
-function toggleDropdown() {
+const counterTooltip = computed(() => {
+  if (deckStore.isOverviewOpen) return 'Modo Resumen General (Malla)';
+  if (deckStore.isNotesOpen) return 'Modo Notas del Orador Activo';
+  return `Diapositiva ${deckStore.currentSlide} - Clic para ver índice rápido`;
+});
+
+function handleCounterClick() {
+  if (deckStore.isOverviewOpen || deckStore.isNotesOpen) return;
   showJumpList.value = !showJumpList.value;
 }
 
@@ -159,8 +295,36 @@ function jumpTo(slideNum) {
   showJumpList.value = false;
 }
 
+function printDeck() {
+  showJumpList.value = false;
+  deckStore.toggleOverview(false);
+  deckStore.toggleNotes(false);
+  window.print();
+}
+
+function handleOutsideClick(e) {
+  if (showJumpList.value && !e.target.closest('.hub-counter') && !e.target.closest('.hub-jump-menu')) {
+    showJumpList.value = false;
+  }
+}
+
+// Ensure jump dropdown closes immediately whenever modes change
+watch(
+  () => [deckStore.isOverviewOpen, deckStore.isNotesOpen],
+  ([overview, notes]) => {
+    if (overview || notes) {
+      showJumpList.value = false;
+    }
+  }
+);
+
 onMounted(() => {
   deckStore.scanAndInit();
+  document.addEventListener('click', handleOutsideClick);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleOutsideClick);
 });
 </script>
 
@@ -175,6 +339,12 @@ onMounted(() => {
   flex-direction: column;
   align-items: center;
   user-select: none;
+  transition: bottom 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Elevated when speaker notes drawer is open so it sits right above it */
+.deck-hub-container.is-notes-mode {
+  bottom: calc(48vh + 14px);
 }
 
 .deck-hub {
@@ -194,6 +364,12 @@ onMounted(() => {
   font-size: 13px;
   overflow: hidden;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.deck-hub.is-compact {
+  padding: 5px 10px;
+  gap: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
 .deck-hub:hover {
@@ -222,12 +398,15 @@ onMounted(() => {
   justify-content: center;
   padding: 4px 10px;
   border-radius: 12px;
-  cursor: pointer;
   transition: background 0.2s ease;
   min-width: 80px;
 }
 
-.hub-counter:hover {
+.hub-counter.is-clickable {
+  cursor: pointer;
+}
+
+.hub-counter.is-clickable:hover {
   background: rgba(255, 255, 255, 0.1);
 }
 
@@ -246,6 +425,15 @@ onMounted(() => {
   overflow: hidden;
   text-overflow: ellipsis;
   margin-top: -2px;
+}
+
+.counter-mode-badge {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--accent-red, #d6001c);
+  text-transform: uppercase;
+  margin-top: -1px;
 }
 
 /* Hub Buttons */
@@ -294,6 +482,11 @@ onMounted(() => {
   line-height: 1;
 }
 
+.hub-btn.icon-only {
+  padding: 5px 7px;
+  justify-content: center;
+}
+
 .tool-btn kbd {
   background: rgba(0, 0, 0, 0.35);
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -314,6 +507,16 @@ onMounted(() => {
   background: rgba(255, 255, 255, 0.25);
   border-color: rgba(255, 255, 255, 0.4);
   color: #ffffff;
+}
+
+.min-toggle-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f8fafc;
+}
+
+.close-mode-btn {
+  background: rgba(214, 0, 28, 0.25);
+  border-color: var(--accent-red, #d6001c);
 }
 
 /* Bottom Progress Bar inside Hub */
@@ -433,6 +636,12 @@ onMounted(() => {
 @media (max-width: 900px) {
   .btn-label {
     display: none;
+  }
+}
+
+@media print {
+  .deck-hub-container {
+    display: none !important;
   }
 }
 </style>

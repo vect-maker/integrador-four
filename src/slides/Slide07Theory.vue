@@ -21,8 +21,8 @@
 
                         <div class="grid-3">
                             <div class="card reveal">
-                                <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
-                                    <Network :size="13" style="color: var(--accent-red);" />
+                                <div class="card-label" style="display: flex; align-items: center; gap: 8px;">
+                                    <Network :size="20" style="color: var(--accent-red); flex-shrink: 0;" />
                                     <span>Heterogeneidad Espaciotemporal</span>
                                 </div>
                                 <div class="card-title">Xu et al. / Moran's I</div>
@@ -35,8 +35,8 @@
                             </div>
 
                             <div class="card reveal">
-                                <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
-                                    <CloudRain :size="13" style="color: var(--accent-blue);" />
+                                <div class="card-label" style="display: flex; align-items: center; gap: 8px;">
+                                    <CloudRain :size="20" style="color: var(--accent-blue); flex-shrink: 0;" />
                                     <span>Doble Incidencia Climática</span>
                                 </div>
                                 <div class="card-title">Precipitación &amp; Velocidad</div>
@@ -50,8 +50,8 @@
                             </div>
 
                             <div class="card reveal">
-                                <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
-                                    <TrendingDown :size="13" style="color: var(--accent-red);" />
+                                <div class="card-label" style="display: flex; align-items: center; gap: 8px;">
+                                    <TrendingDown :size="20" style="color: var(--accent-red); flex-shrink: 0;" />
                                     <span>Riesgos de Tarificación</span>
                                 </div>
                                 <div class="card-title">Efectos Adversos del Surge Pricing</div>

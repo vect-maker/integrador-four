@@ -21,8 +21,8 @@
 
         <!-- Mermaid Roadmap Diagram -->
         <div class="card reveal" style="padding: 14px 20px; margin-bottom: 16px; background: var(--card-bg);">
-          <div class="card-label" style="margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
-            <Workflow :size="13" style="color: var(--accent-red);" />
+          <div class="card-label" style="margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+            <Workflow :size="20" style="color: var(--accent-red); flex-shrink: 0;" />
             <span>Fases Secuenciales del Proceso Metodológico</span>
           </div>
           <MermaidDiagram :code="methodologyDiagram" max-width="100%" />
@@ -31,8 +31,8 @@
         <div class="grid-4">
                             <div class="card reveal">
                                 <div class="card-number">A</div>
-                                <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
-                                    <Binary :size="13" style="color: var(--accent-red);" />
+                                <div class="card-label" style="display: flex; align-items: center; gap: 8px;">
+                                    <Binary :size="20" style="color: var(--accent-red); flex-shrink: 0;" />
                                     <span>Enfoque</span>
                                 </div>
                                 <div class="card-title">Enfoque Mixto</div>
@@ -43,8 +43,8 @@
 
                             <div class="card reveal">
                                 <div class="card-number">B</div>
-                                <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
-                                    <Compass :size="13" style="color: var(--accent-red);" />
+                                <div class="card-label" style="display: flex; align-items: center; gap: 8px;">
+                                    <Compass :size="20" style="color: var(--accent-red); flex-shrink: 0;" />
                                     <span>Tipo &amp; Alcance</span>
                                 </div>
                                 <div class="card-title">Descriptivo &amp; Propositivo</div>
@@ -55,8 +55,8 @@
 
                             <div class="card reveal">
                                 <div class="card-number">C</div>
-                                <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
-                                    <Eye :size="13" style="color: var(--accent-red);" />
+                                <div class="card-label" style="display: flex; align-items: center; gap: 8px;">
+                                    <Eye :size="20" style="color: var(--accent-red); flex-shrink: 0;" />
                                     <span>Diseño</span>
                                 </div>
                                 <div class="card-title">No Experimental</div>
@@ -67,12 +67,12 @@
 
                             <div class="card accent-card reveal">
                                 <div class="card-number" style="color: var(--accent-red);">D</div>
-                                <div class="card-label" style="color: var(--accent-red); display: flex; align-items: center; gap: 6px;">
-                                    <Car :size="13" />
+                                <div class="card-label" style="color: var(--accent-red); display: flex; align-items: center; gap: 8px;">
+                                    <Car :size="20" style="flex-shrink: 0;" />
                                     <span>Unidad de Análisis</span>
                                 </div>
                                 <div class="card-title">El Viaje Individual</div>
-                                <div class="card-text" style="color: #e2e8f0;">
+                                <div class="card-text">
                                     El ciclo atómico de solicitud, abordaje, trayecto y tarifa cobrada en cada cuadrante territorial del municipio de Managua, georreferenciado temporal y espacialmente.
                                 </div>
                             </div>

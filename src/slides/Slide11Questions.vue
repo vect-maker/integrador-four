@@ -14,7 +14,7 @@
 
                     <div class="slide-body" style="justify-content: center; align-items: center; text-align: center;">
                         <div class="section-tag reveal" style="justify-content: center; display: inline-flex; align-items: center; gap: 8px;">
-                            <HelpCircle :size="14" style="color: var(--accent-red);" />
+                            <HelpCircle :size="20" style="color: var(--accent-red); flex-shrink: 0;" />
                             <span>SESIÓN DE PREGUNTAS Y DEFENSA</span>
                         </div>
                         <h2 class="slide-title reveal" style="font-size: 58px; max-width: 1300px; margin: 0 auto 20px auto;">

@@ -1,5 +1,5 @@
 <template>
-  <section class="slide title-slide-layout active visible is-active active visible" data-slide="1" data-title="01. Portada: Caso Movi Go">
+  <section class="slide title-slide-layout is-active" data-slide="1" data-title="01. Portada: Caso Movi Go">
 <div class="title-axis">
                     <span>CIENCIAS BÁSICAS Y TECNOLOGÍA</span>
                     <span>12°08′11″ N &nbsp; 86°15′05″ O</span>
@@ -31,24 +31,24 @@
 
                 <div class="title-aside">
                     <div class="card reveal" style="border-left: 6px solid var(--accent-red); margin-bottom: 16px;">
-                        <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
-                            <Activity :size="13" style="color: var(--accent-red);" />
+                        <div class="card-label" style="display: flex; align-items: center; gap: 8px;">
+                            <Activity :size="20" style="color: var(--accent-red); flex-shrink: 0;" />
                             <span>Dimensión Operativa</span>
                         </div>
                         <div class="card-title" style="font-size: 20px;">Flota &amp; Deadhead</div>
                         <div class="card-text">Reducción de tiempos muertos y recorridos en vacío mediante asignación dinámica.</div>
                     </div>
                     <div class="card reveal" style="border-left: 6px solid var(--border-bold); margin-bottom: 16px;">
-                        <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
-                            <MapPin :size="13" style="color: var(--ink-primary);" />
+                        <div class="card-label" style="display: flex; align-items: center; gap: 8px;">
+                            <MapPin :size="20" style="color: var(--ink-primary); flex-shrink: 0;" />
                             <span>Dimensión Territorial</span>
                         </div>
                         <div class="card-title" style="font-size: 20px;">Matrices OD &amp; Moran</div>
                         <div class="card-text">Discretización urbana en zonas operativas y detección de clusters espaciales.</div>
                     </div>
                     <div class="card reveal" style="border-left: 6px solid var(--accent-blue);">
-                        <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
-                            <CloudRain :size="13" style="color: var(--accent-blue);" />
+                        <div class="card-label" style="display: flex; align-items: center; gap: 8px;">
+                            <CloudRain :size="20" style="color: var(--accent-blue); flex-shrink: 0;" />
                             <span>Dimensión Climática</span>
                         </div>
                         <div class="card-title" style="font-size: 20px;">API Clima & Tráfico</div>
@@ -58,26 +58,26 @@
 
                 <div class="title-bottom">
                     <div class="reveal">
-                        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); text-transform: uppercase; display: flex; align-items: center; gap: 4px;">
-                            <GraduationCap :size="12" /> Carrera
+                        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); text-transform: uppercase; display: flex; align-items: center; gap: 6px;">
+                            <GraduationCap :size="16" /> <span>Carrera</span>
                         </div>
                         <div style="font-weight: 800; font-size: 16px;">Ingeniería en Ciencia de Datos</div>
                     </div>
                     <div class="reveal">
-                        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); text-transform: uppercase; display: flex; align-items: center; gap: 4px;">
-                            <Calendar :size="12" /> Nivel Académico
+                        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); text-transform: uppercase; display: flex; align-items: center; gap: 6px;">
+                            <Calendar :size="16" /> <span>Nivel Académico</span>
                         </div>
                         <div style="font-weight: 800; font-size: 16px;">Segundo Año • 2026</div>
                     </div>
                     <div class="reveal">
-                        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); text-transform: uppercase; display: flex; align-items: center; gap: 4px;">
-                            <Database :size="12" /> Metodología / Stack
+                        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); text-transform: uppercase; display: flex; align-items: center; gap: 6px;">
+                            <Database :size="16" /> <span>Metodología / Stack</span>
                         </div>
                         <div style="font-weight: 800; font-size: 16px;">API REST • dbt • Inferencia • Optimización</div>
                     </div>
                     <div class="reveal">
-                        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); text-transform: uppercase; display: flex; align-items: center; gap: 4px;">
-                            <Map :size="12" /> Ubicación de Análisis
+                        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); text-transform: uppercase; display: flex; align-items: center; gap: 6px;">
+                            <Map :size="16" /> <span>Ubicación de Análisis</span>
                         </div>
                         <div style="font-weight: 800; font-size: 16px;">Municipio de Managua</div>
                     </div>

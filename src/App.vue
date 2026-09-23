@@ -91,4 +91,18 @@ onMounted(async () => {
   overflow: hidden;
   position: relative;
 }
+
+@media print {
+  .deck-root {
+    width: 1920px !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    display: block !important;
+    overflow: visible !important;
+    position: static !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+}
 </style>

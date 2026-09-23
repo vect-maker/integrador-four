@@ -370,6 +370,11 @@ aside.notes,
     color: var(--ink-secondary);
 }
 
+.card-text strong {
+    color: var(--ink-primary);
+    font-weight: 700;
+}
+
 /* Swiss List */
 .swiss-list {
     list-style: none;
@@ -663,44 +668,172 @@ body[data-preview="1"] .progress-bar {
     display: none !important;
 }
 
+@page {
+    size: 20in 11.25in;
+    margin: 0;
+}
+
 @media print {
+    *,
+    *::before,
+    *::after {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+
     html,
     body {
-        width: 1920px;
-        height: auto;
-        overflow: visible;
-        background: #fff;
+        display: block !important;
+        width: 1920px !important;
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+        background: var(--slide-bg, #ffffff) !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    #app,
+    .deck-root {
+        display: block !important;
+        width: 1920px !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+        position: static !important;
+        background: none !important;
+        transform: none !important;
     }
 
     .deck {
-        position: static;
-        width: auto;
-        height: auto;
+        position: static !important;
+        width: 1920px !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
         transform: none !important;
-        background: none;
-        box-shadow: none;
+        background: none !important;
+        box-shadow: none !important;
+        display: block !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
 
     .slide {
-        position: relative;
+        position: relative !important;
+        inset: auto !important;
         display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
         pointer-events: auto !important;
-        width: 1920px;
-        height: 1080px;
-        break-after: page;
-        page-break-after: always;
+        width: 1920px !important;
+        height: 1080px !important;
+        min-width: 1920px !important;
+        max-width: 1920px !important;
+        min-height: 1080px !important;
+        max-height: 1080px !important;
+        break-after: page !important;
+        page-break-after: always !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
         transform: none !important;
+        overflow: hidden !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
+        background: var(--slide-bg) !important;
     }
 
     .slide:last-child {
-        break-after: auto;
-        page-break-after: auto;
+        break-after: auto !important;
+        page-break-after: auto !important;
     }
 
+    /* Slide 01: Specific Grid Layout */
+    .slide.title-slide-layout {
+        display: grid !important;
+        grid-template-columns: 90px 1.25fr 0.75fr !important;
+        grid-template-rows: 80px 1fr 100px !important;
+        width: 1920px !important;
+        height: 1080px !important;
+        min-width: 1920px !important;
+        max-width: 1920px !important;
+        min-height: 1080px !important;
+        max-height: 1080px !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+        background: var(--slide-bg) !important;
+    }
+
+    /* Slides 02 to 11: Standard Slide Canvas */
+    .slide-canvas {
+        width: 1920px !important;
+        height: 1080px !important;
+        min-width: 1920px !important;
+        max-width: 1920px !important;
+        min-height: 1080px !important;
+        max-height: 1080px !important;
+        box-sizing: border-box !important;
+        padding: 44px 64px 38px 64px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        overflow: hidden !important;
+        background: var(--slide-bg) !important;
+    }
+
+    .slide-header {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        border-bottom: 2px solid var(--border-bold) !important;
+        padding-bottom: 12px !important;
+        flex-shrink: 0 !important;
+    }
+
+    .slide-body {
+        flex: 1 1 auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        margin: 20px 0 14px 0 !important;
+        position: relative !important;
+        min-height: 0 !important;
+    }
+
+    .slide-footer {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        border-top: 2px solid var(--border-bold) !important;
+        padding-top: 10px !important;
+        flex-shrink: 0 !important;
+    }
+
+    /* Force all elements with reveal transitions to be immediately and fully visible */
+    .reveal,
+    .slide .reveal,
+    .slide.is-active .reveal {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+        visibility: visible !important;
+    }
+
+    /* Hide HUD, Hub, Progress bar, Drawers and Overlays */
+    .deck-hub-container,
     .deck-hud,
-    .progress-bar {
+    .progress-bar,
+    .deck-progress-container,
+    .notes-drawer-backdrop,
+    .overview-overlay,
+    .notes,
+    aside.notes,
+    .speaker-notes {
         display: none !important;
     }
 }

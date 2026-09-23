@@ -21,8 +21,8 @@
 
                         <div class="grid-4">
                             <div class="card reveal">
-                                <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
-                                    <Share2 :size="13" style="color: var(--accent-red);" />
+                                <div class="card-label" style="display: flex; align-items: center; gap: 8px;">
+                                    <Share2 :size="20" style="color: var(--accent-red); flex-shrink: 0;" />
                                     <span>Asignación &amp; Despacho</span>
                                 </div>
                                 <div class="card-title">Alonso-Mora et al. (2017)</div>
@@ -35,8 +35,8 @@
                             </div>
 
                             <div class="card reveal">
-                                <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
-                                    <RotateCw :size="13" style="color: var(--ink-primary);" />
+                                <div class="card-label" style="display: flex; align-items: center; gap: 8px;">
+                                    <RotateCw :size="20" style="color: var(--ink-primary); flex-shrink: 0;" />
                                     <span>Reposicionamiento</span>
                                 </div>
                                 <div class="card-title">Jiao et al. (2021)</div>
@@ -49,8 +49,8 @@
                             </div>
 
                             <div class="card reveal">
-                                <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
-                                    <CloudRain :size="13" style="color: var(--accent-blue);" />
+                                <div class="card-label" style="display: flex; align-items: center; gap: 8px;">
+                                    <CloudRain :size="20" style="color: var(--accent-blue); flex-shrink: 0;" />
                                     <span>Tarifa &amp; Clima</span>
                                 </div>
                                 <div class="card-title">Zha (2018) / Liu (2021)</div>
@@ -63,12 +63,12 @@
                             </div>
 
                             <div class="card accent-card reveal">
-                                <div class="card-label" style="display: flex; align-items: center; gap: 6px;">
-                                    <Building2 :size="13" style="color: var(--accent-red);" />
+                                <div class="card-label" style="display: flex; align-items: center; gap: 8px;">
+                                    <Building2 :size="20" style="color: var(--accent-red); flex-shrink: 0;" />
                                     <span>Marco Institucional</span>
                                 </div>
                                 <div class="card-title">Plan Maestro JICA (2017)</div>
-                                <div class="card-text" style="font-size: 15px; color: #e2e8f0;">
+                                <div class="card-text" style="font-size: 15px;">
                                     Diagnóstico de Managua: el <strong>26% de los viajes urbanos</strong> se realizan en taxi selectivo. Confirma la centralidad del modo para la accesibilidad de la capital y la pertinencia de optimizarlo con datos.
                                 </div>
                                 <div style="margin-top: 14px; font-family: var(--font-mono); font-size: 12px; color: var(--accent-red); font-weight: 700;">

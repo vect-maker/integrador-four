@@ -21,8 +21,8 @@
 
         <!-- Mermaid Architecture Pipeline Diagram -->
         <div class="card reveal" style="padding: 16px 20px; margin-bottom: 20px; background: var(--card-bg);">
-          <div class="card-label" style="margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
-            <Layers :size="13" style="color: var(--accent-red);" />
+          <div class="card-label" style="margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+            <Layers :size="20" style="color: var(--accent-red); flex-shrink: 0;" />
             <span>Linaje y Flujo de Transformación de Datos (ELT)</span>
           </div>
           <MermaidDiagram :code="pipelineDiagram" max-width="100%" />
@@ -30,8 +30,8 @@
 
         <div class="grid-2 reveal">
           <div class="card subtle-card" style="padding: 18px 24px;">
-            <div class="card-label" style="display: flex; align-items: center; gap: 6px; margin-bottom: 8px;">
-              <RefreshCw :size="13" style="color: var(--accent-red);" />
+            <div class="card-label" style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+              <RefreshCw :size="20" style="color: var(--accent-red); flex-shrink: 0;" />
               <span>Ventajas del Paradigma ELT frente a ETL</span>
             </div>
             <div class="card-text">
@@ -39,8 +39,8 @@
             </div>
           </div>
           <div class="card subtle-card" style="padding: 18px 24px;">
-            <div class="card-label" style="display: flex; align-items: center; gap: 6px; margin-bottom: 8px;">
-              <ShieldCheck :size="13" style="color: var(--accent-blue);" />
+            <div class="card-label" style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+              <ShieldCheck :size="20" style="color: var(--accent-blue); flex-shrink: 0;" />
               <span>Gobierno y Linaje con dbt</span>
             </div>
             <div class="card-text">

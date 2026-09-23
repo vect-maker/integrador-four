@@ -42,6 +42,12 @@ export function useDeckShortcuts() {
   whenever(keys.o, () => deckStore.toggleOverview());
   whenever(keys.t, () => deckStore.cycleTheme());
   whenever(keys.f, () => deckStore.toggleFullscreen());
+  whenever(keys.h, () => deckStore.toggleHubMinimized());
+  whenever(keys.p, () => {
+    deckStore.toggleOverview(false);
+    deckStore.toggleNotes(false);
+    window.print();
+  });
 
   // Close overlays with Escape
   whenever(keys.escape, () => {

@@ -9,6 +9,7 @@ export const useDeckStore = defineStore('deck', () => {
   const isNotesOpen = ref(false);
   const isOverviewOpen = ref(false);
   const isFullscreen = ref(false);
+  const isHubMinimized = ref(false);
   const currentTheme = ref('swiss-grid');
   const availableThemes = ref([
     'swiss-grid',
@@ -133,11 +134,23 @@ export const useDeckStore = defineStore('deck', () => {
   }
 
   function toggleNotes(force) {
-    isNotesOpen.value = force !== undefined ? force : !isNotesOpen.value;
+    const nextVal = force !== undefined ? force : !isNotesOpen.value;
+    isNotesOpen.value = nextVal;
+    if (nextVal) {
+      isOverviewOpen.value = false;
+    }
   }
 
   function toggleOverview(force) {
-    isOverviewOpen.value = force !== undefined ? force : !isOverviewOpen.value;
+    const nextVal = force !== undefined ? force : !isOverviewOpen.value;
+    isOverviewOpen.value = nextVal;
+    if (nextVal) {
+      isNotesOpen.value = false;
+    }
+  }
+
+  function toggleHubMinimized(force) {
+    isHubMinimized.value = force !== undefined ? force : !isHubMinimized.value;
   }
 
   function toggleFullscreen() {
@@ -146,6 +159,7 @@ export const useDeckStore = defineStore('deck', () => {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen().then(() => {
         isFullscreen.value = true;
+        isHubMinimized.value = true; // Auto-minimize when entering presentation fullscreen
       }).catch(err => {
         console.warn('[Fullscreen Error]', err);
       });
@@ -189,6 +203,8 @@ export const useDeckStore = defineStore('deck', () => {
   }
 
   function openPresenter() {
+    isNotesOpen.value = false;
+    isOverviewOpen.value = false;
     openPresenterWindow({
       slides: slideTitles.value.map((title, i) => ({
         title,
@@ -287,6 +303,7 @@ export const useDeckStore = defineStore('deck', () => {
     isNotesOpen,
     isOverviewOpen,
     isFullscreen,
+    isHubMinimized,
     currentTheme,
     availableThemes,
     slideTitles,
@@ -314,6 +331,7 @@ export const useDeckStore = defineStore('deck', () => {
     toggleNotes,
     toggleOverview,
     toggleFullscreen,
+    toggleHubMinimized,
     cycleTheme,
     setTheme,
     openPresenter,
