@@ -1,0 +1,22 @@
+{
+  "name": "movigo-integrador-iv-presentation",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.9",
+    "vite": "^6.0.0"
+  },
+  "dependencies": {
+    "@vueuse/core": "^15.0.0",
+    "katex": "^0.18.7",
+    "mermaid": "^12.0.0",
+    "pinia": "^4.0.3",
+    "vue": "^3.5.43"
+  }
+}

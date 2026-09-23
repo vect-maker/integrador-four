@@ -1,0 +1,155 @@
+/* ===========================================
+   THEME PALETTES FOR MOVI GO PRESENTATION DECK
+   High-specificity data-theme rules for instantaneous reactivity
+   =========================================== */
+
+/* 1. Swiss Grid (Default Clean Red/White) */
+:root[data-theme="swiss-grid"],
+[data-theme="swiss-grid"] {
+  --bg: #ffffff;
+  --bg-soft: #f4f4f4;
+  --surface: #ffffff;
+  --surface-2: #f4f4f4;
+  --border: #111111;
+  --border-strong: #111111;
+  --text-1: #111111;
+  --text-2: #444444;
+  --text-3: #888888;
+  --accent: #d6001c;
+  --accent-2: #111111;
+  --accent-3: #888888;
+  --accent-ink: #ffffff;
+  --good: #0f8a2f;
+  --warn: #d38a00;
+  --bad: #d6001c;
+  --grad: linear-gradient(135deg, #d6001c, #111);
+  --grad-soft: linear-gradient(135deg, #f4f4f4, #fff);
+  --radius: 0;
+  --radius-sm: 0;
+  --radius-lg: 0;
+  --shadow: none;
+  --shadow-lg: none;
+  --font-sans: 'Inter', 'Helvetica Neue', Helvetica, 'Noto Sans SC', sans-serif;
+  --font-display: 'Archivo', 'Inter', 'Helvetica Neue', Helvetica, sans-serif;
+}
+
+/* 2. Tokyo Night (Cyberpunk Dark Violet) */
+:root[data-theme="tokyo-night"],
+[data-theme="tokyo-night"] {
+  --bg: #1a1b26;
+  --bg-soft: #16161e;
+  --surface: #24283b;
+  --surface-2: #2f334d;
+  --border: rgba(192, 202, 245, 0.18);
+  --border-strong: rgba(192, 202, 245, 0.4);
+  --text-1: #c0caf5;
+  --text-2: #a9b1d6;
+  --text-3: #565f89;
+  --accent: #7aa2f7;
+  --accent-2: #bb9af7;
+  --accent-3: #7dcfff;
+  --accent-ink: #0b1024;
+  --good: #9ece6a;
+  --warn: #e0af68;
+  --bad: #f7768e;
+  --grad: linear-gradient(135deg, #7aa2f7, #bb9af7 55%, #f7768e);
+  --grad-soft: linear-gradient(135deg, #24283b, #2f334d);
+  --radius: 10px;
+  --radius-sm: 6px;
+  --radius-lg: 16px;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 24px 62px rgba(0, 0, 0, 0.65);
+  --font-sans: 'Inter', 'Noto Sans SC', sans-serif;
+  --font-display: 'Archivo', 'Inter', sans-serif;
+}
+
+/* 3. Corporate Clean (Executive Professional Navy) */
+:root[data-theme="corporate-clean"],
+[data-theme="corporate-clean"] {
+  --bg: #ffffff;
+  --bg-soft: #f5f7fa;
+  --surface: #ffffff;
+  --surface-2: #f0f3f7;
+  --border: rgba(10, 37, 64, 0.14);
+  --border-strong: rgba(10, 37, 64, 0.35);
+  --text-1: #0a2540;
+  --text-2: #425466;
+  --text-3: #8898aa;
+  --accent: #1d4ed8;
+  --accent-2: #0a2540;
+  --accent-3: #64748b;
+  --accent-ink: #ffffff;
+  --good: #0e9f6e;
+  --warn: #d97706;
+  --bad: #dc2626;
+  --grad: linear-gradient(135deg, #0a2540, #1d4ed8);
+  --grad-soft: linear-gradient(135deg, #f0f4fb, #e4ecf7);
+  --radius: 6px;
+  --radius-sm: 4px;
+  --radius-lg: 10px;
+  --shadow: 0 1px 3px rgba(10, 37, 64, 0.08), 0 4px 12px rgba(10, 37, 64, 0.05);
+  --shadow-lg: 0 4px 12px rgba(10, 37, 64, 0.1), 0 16px 40px rgba(10, 37, 64, 0.08);
+  --font-sans: 'Inter', 'Noto Sans SC', sans-serif;
+  --font-display: 'Archivo', 'Inter', sans-serif;
+}
+
+/* 4. Academic Paper (Warm Editorial Ivory) */
+:root[data-theme="academic-paper"],
+[data-theme="academic-paper"] {
+  --bg: #fdfcf8;
+  --bg-soft: #f7f5ed;
+  --surface: #ffffff;
+  --surface-2: #f5f3ea;
+  --border: rgba(20, 20, 20, 0.16);
+  --border-strong: rgba(20, 20, 20, 0.4);
+  --text-1: #0a0a0a;
+  --text-2: #333333;
+  --text-3: #707070;
+  --accent: #1a3a7a;
+  --accent-2: #0a0a0a;
+  --accent-3: #8a1a1a;
+  --accent-ink: #ffffff;
+  --good: #1a5a2a;
+  --warn: #8a6a1a;
+  --bad: #8a1a1a;
+  --grad: linear-gradient(135deg, #1a3a7a, #0a0a0a);
+  --grad-soft: linear-gradient(135deg, #e8edf8, #f5f3ea);
+  --radius: 0px;
+  --radius-sm: 0px;
+  --radius-lg: 0px;
+  --shadow: none;
+  --shadow-lg: 0 1px 2px rgba(0, 0, 0, 0.1);
+  --font-sans: 'Playfair Display', Georgia, serif;
+  --font-display: 'Playfair Display', Georgia, serif;
+}
+
+/* 5. Engineering Whiteprint (Architectural Blueprint) */
+:root[data-theme="engineering-whiteprint"],
+[data-theme="engineering-whiteprint"] {
+  --bg: #ffffff;
+  --bg-soft: #f8fafc;
+  --surface: #ffffff;
+  --surface-2: #f4f7fb;
+  --border: rgba(10, 30, 70, 0.22);
+  --border-strong: #0a1e46;
+  --text-1: #0a1e46;
+  --text-2: #3a4a6a;
+  --text-3: #8090a8;
+  --accent: #0a1e46;
+  --accent-2: #1e5ac4;
+  --accent-3: #c42a10;
+  --accent-ink: #ffffff;
+  --good: #1a6a3a;
+  --warn: #c47a10;
+  --bad: #c42a10;
+  --grad: linear-gradient(135deg, #0a1e46, #1e5ac4);
+  --grad-soft: linear-gradient(135deg, #eaf0fb, #f4f7fb);
+  --radius: 0px;
+  --radius-sm: 0px;
+  --radius-lg: 0px;
+  --shadow: none;
+  --shadow-lg: 0 0 0 1px var(--border-strong);
+  --font-sans: 'Inter', 'Noto Sans SC', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+  --font-display: 'Space Mono', monospace;
+}
