@@ -1,12 +1,18 @@
 import { useMagicKeys, whenever } from '@vueuse/core';
 import { useDeckStore } from '../stores/deck';
+import { useTimerStore } from '../stores/timer';
 
 /**
  * Deck Shortcuts Composable
- * Handles all presentation keyboard navigation using @vueuse/core's useMagicKeys
+ * Handles presentation and presenter keyboard navigation using @vueuse/core's useMagicKeys
  */
-export function useDeckShortcuts() {
+export function useDeckShortcuts(options = {}) {
   const deckStore = useDeckStore();
+  const timerStore = useTimerStore();
+
+  const isPresenter = options.isPresenter ?? (
+    typeof window !== 'undefined' && window.location.pathname.startsWith('/presenter')
+  );
 
   const keys = useMagicKeys({
     passive: false,
@@ -36,22 +42,59 @@ export function useDeckShortcuts() {
   whenever(keys.Home, () => deckStore.firstSlide());
   whenever(keys.End, () => deckStore.lastSlide());
 
-  // Presentation Mode toggles
-  whenever(keys.s, () => deckStore.openPresenter());
-  whenever(keys.n, () => deckStore.toggleNotes());
-  whenever(keys.o, () => deckStore.toggleOverview());
+  // Theme cycle (T)
   whenever(keys.t, () => deckStore.cycleTheme());
+
+  // Fullscreen (F)
   whenever(keys.f, () => deckStore.toggleFullscreen());
-  whenever(keys.h, () => deckStore.toggleHubMinimized());
+
+  // Context-aware shortcuts: Presenter vs Display mode
   whenever(keys.p, () => {
-    deckStore.toggleOverview(false);
-    deckStore.toggleNotes(false);
-    window.print();
+    if (isPresenter) {
+      timerStore.toggle();
+    } else {
+      deckStore.toggleOverview(false);
+      deckStore.toggleNotes(false);
+      window.print();
+    }
+  });
+
+  whenever(keys.r, () => {
+    if (isPresenter) {
+      timerStore.reset();
+    }
+  });
+
+  // Display mode only overlays
+  whenever(keys.s, () => {
+    if (!isPresenter) {
+      deckStore.openPresenter();
+    }
+  });
+
+  whenever(keys.n, () => {
+    if (!isPresenter) {
+      deckStore.toggleNotes();
+    }
+  });
+
+  whenever(keys.o, () => {
+    if (!isPresenter) {
+      deckStore.toggleOverview();
+    }
+  });
+
+  whenever(keys.h, () => {
+    if (!isPresenter) {
+      deckStore.toggleHubMinimized();
+    }
   });
 
   // Close overlays with Escape
   whenever(keys.escape, () => {
-    deckStore.toggleOverview(false);
-    deckStore.toggleNotes(false);
+    if (!isPresenter) {
+      deckStore.toggleOverview(false);
+      deckStore.toggleNotes(false);
+    }
   });
 }

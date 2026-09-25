@@ -1,5 +1,5 @@
 <template>
-  <section class="slide title-slide-layout is-active" data-slide="1" data-title="01. Portada: Caso Movi Go">
+  <section class="slide title-slide-layout" data-slide="1" data-title="01. Portada: Caso Movi Go">
 <div class="title-axis">
                     <span>CIENCIAS BÁSICAS Y TECNOLOGÍA</span>
                     <span>12°08′11″ N &nbsp; 86°15′05″ O</span>

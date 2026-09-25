@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
-import { openPresenterWindow } from '../utils/presenter';
+import { slidesMetadata } from '../data/slides';
 
 export const useDeckStore = defineStore('deck', () => {
   // --- State ---
   const currentSlide = ref(1);
-  const totalSlides = ref(11);
+  const totalSlides = ref(slidesMetadata.length);
   const isNotesOpen = ref(false);
   const isOverviewOpen = ref(false);
   const isFullscreen = ref(false);
@@ -18,30 +18,21 @@ export const useDeckStore = defineStore('deck', () => {
     'academic-paper',
     'engineering-whiteprint'
   ]);
-  const slideTitles = ref([]);
-  const slideNotes = ref([]);
+
+  const slideTitles = ref(slidesMetadata.map(s => s.title));
+  const slideNotes = ref(slidesMetadata.map(s => s.notes));
   const isPreview = ref(typeof window !== 'undefined' && window.location.search.includes('preview'));
 
-  // BroadcastChannel for cross-window presenter synchronization
-  let bc = null;
-  const channelName = typeof window !== 'undefined'
-    ? 'html-ppt-presenter-' + window.location.pathname
-    : 'html-ppt-presenter';
+  // Registered outbound broadcaster functions
+  let broadcaster = null;
+  let onSlideChangeCallback = null;
 
-  if (typeof window !== 'undefined' && window.BroadcastChannel) {
-    try {
-      bc = new BroadcastChannel(channelName);
-      bc.onmessage = (e) => {
-        if (!e.data) return;
-        if (e.data.type === 'go' && typeof e.data.idx === 'number') {
-          goToSlide(e.data.idx + 1, true);
-        } else if (e.data.type === 'theme' && e.data.name) {
-          setTheme(e.data.name);
-        }
-      };
-    } catch (err) {
-      console.warn('[BroadcastChannel Error]', err);
-    }
+  function registerBroadcaster(b) {
+    broadcaster = b;
+  }
+
+  function onSlideChange(cb) {
+    onSlideChangeCallback = cb;
   }
 
   // --- Getters ---
@@ -58,6 +49,12 @@ export const useDeckStore = defineStore('deck', () => {
   const currentTitle = computed(() => {
     return slideTitles.value[currentIndex.value] || `Lámina ${currentSlide.value}`;
   });
+  const nextTitle = computed(() => {
+    if (hasNext.value) {
+      return slideTitles.value[currentIndex.value + 1] || `Lámina ${currentSlide.value + 1}`;
+    }
+    return 'Fin de la presentación';
+  });
   const currentNotesHtml = computed(() => {
     return slideNotes.value[currentIndex.value] || '';
   });
@@ -65,44 +62,36 @@ export const useDeckStore = defineStore('deck', () => {
   // --- Actions ---
 
   /**
-   * Navigate directly to a 1-based slide index
+   * Local user navigation action: changes slide and broadcasts to peer tabs
    */
-  function goToSlide(target, fromRemote = false) {
-    const clamped = Math.max(1, Math.min(totalSlides.value, target));
+  function goToSlide(target) {
+    const clamped = Math.max(1, Math.min(totalSlides.value, Number(target) || 1));
+    if (currentSlide.value === clamped) return;
+
     currentSlide.value = clamped;
 
-    if (typeof document !== 'undefined') {
-      const slides = document.querySelectorAll('.deck .slide');
-      slides.forEach((s, i) => {
-        const isActive = (i === clamped - 1);
-        s.classList.toggle('is-active', isActive);
-        s.classList.toggle('is-prev', i < clamped - 1);
-        if (isPreview.value) {
-          s.style.display = isActive ? '' : 'none';
-        }
-      });
-
-      // Trigger CSS animations on newly active slide
-      const activeEl = slides[clamped - 1];
-      if (activeEl) {
-        activeEl.querySelectorAll('[data-anim]').forEach((el) => {
-          const a = el.getAttribute('data-anim');
-          el.classList.remove('anim-' + a);
-          void el.offsetWidth;
-          el.classList.add('anim-' + a);
-        });
-      }
-
-      // Sync URL hash
-      const hashTarget = `#/${clamped}`;
-      if (window.location.hash !== hashTarget && !isPreview.value) {
-        history.replaceState(null, '', hashTarget);
-      }
+    // Notify registered router sync
+    if (onSlideChangeCallback) {
+      onSlideChangeCallback(clamped);
     }
 
-    // Broadcast to presenter window
-    if (!fromRemote && bc) {
-      bc.postMessage({ type: 'go', idx: clamped - 1 });
+    // Broadcast command to peer tabs
+    if (broadcaster?.sendGoToSlide) {
+      broadcaster.sendGoToSlide(clamped);
+    }
+  }
+
+  /**
+   * Remote peer update: changes slide WITHOUT re-broadcasting
+   */
+  function setSlideFromRemote(target) {
+    const clamped = Math.max(1, Math.min(totalSlides.value, Number(target) || 1));
+    if (currentSlide.value === clamped) return;
+
+    currentSlide.value = clamped;
+
+    if (onSlideChangeCallback) {
+      onSlideChangeCallback(clamped);
     }
   }
 
@@ -124,13 +113,6 @@ export const useDeckStore = defineStore('deck', () => {
 
   function lastSlide() {
     goToSlide(totalSlides.value);
-  }
-
-  function syncSlideFromExternal(index1Based) {
-    const clamped = Math.max(1, Math.min(totalSlides.value, index1Based));
-    if (currentSlide.value !== clamped) {
-      currentSlide.value = clamped;
-    }
   }
 
   function toggleNotes(force) {
@@ -159,7 +141,7 @@ export const useDeckStore = defineStore('deck', () => {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen().then(() => {
         isFullscreen.value = true;
-        isHubMinimized.value = true; // Auto-minimize when entering presentation fullscreen
+        isHubMinimized.value = true;
       }).catch(err => {
         console.warn('[Fullscreen Error]', err);
       });
@@ -180,85 +162,58 @@ export const useDeckStore = defineStore('deck', () => {
     setTheme(availableThemes.value[nextIdx]);
   }
 
-  function setTheme(themeName) {
-    currentTheme.value = themeName;
-    if (typeof document !== 'undefined') {
-      document.documentElement.setAttribute('data-theme', themeName);
-      if (document.body) {
-        document.body.setAttribute('data-theme', themeName);
-      }
-      try {
-        localStorage.setItem('deck-theme', themeName);
-      } catch (e) {}
-
-      let link = document.getElementById('theme-link');
-      if (link) {
-        link.href = `/assets/themes/${themeName}.css`;
-      }
+  function applyThemeDom(themeName) {
+    if (typeof document === 'undefined') return;
+    document.documentElement.setAttribute('data-theme', themeName);
+    if (document.body) {
+      document.body.setAttribute('data-theme', themeName);
     }
+    try {
+      localStorage.setItem('deck-theme', themeName);
+    } catch (e) {}
 
-    if (bc) {
-      bc.postMessage({ type: 'theme', name: themeName });
+    let link = document.getElementById('theme-link');
+    if (link) {
+      link.href = `/assets/themes/${themeName}.css`;
     }
   }
 
+  function setTheme(themeName) {
+    if (!availableThemes.value.includes(themeName)) return;
+    currentTheme.value = themeName;
+    applyThemeDom(themeName);
+
+    if (broadcaster?.sendSetTheme) {
+      broadcaster.sendSetTheme(themeName);
+    }
+  }
+
+  function setThemeFromRemote(themeName) {
+    if (!availableThemes.value.includes(themeName)) return;
+    currentTheme.value = themeName;
+    applyThemeDom(themeName);
+  }
+
+  /**
+   * Opens the presenter console in a separate tab or window with dedicated router URL
+   */
   function openPresenter() {
     isNotesOpen.value = false;
     isOverviewOpen.value = false;
-    openPresenterWindow({
-      slides: slideTitles.value.map((title, i) => ({
-        title,
-        notes: slideNotes.value[i] || ''
-      })),
-      currentSlide: currentSlide.value,
-      totalSlides: totalSlides.value,
-      currentTheme: currentTheme.value,
-      channelName
-    });
+    const url = `/presenter/${currentSlide.value}`;
+    window.open(url, 'html-ppt-presenter-window', 'width=1380,height=880,menubar=no,toolbar=no,resizable=yes');
   }
 
-  function scanAndInit() {
+  /**
+   * Opens or focuses the audience slide show in a separate window
+   */
+  function openDisplay() {
+    const url = `/${currentSlide.value}`;
+    window.open(url, 'html-ppt-display-window');
+  }
+
+  function initTheme() {
     if (typeof document === 'undefined') return;
-
-    // Detect slides and notes
-    const slides = document.querySelectorAll('.deck .slide');
-    if (slides.length) {
-      totalSlides.value = slides.length;
-      slideTitles.value = Array.from(slides).map((s, i) => {
-        return s.getAttribute('data-title') ||
-          (s.querySelector('h1,h2,h3') || {}).textContent?.trim() ||
-          `Lámina ${i + 1}`;
-      });
-
-      slideNotes.value = Array.from(slides).map((s) => {
-        const n = s.querySelector('.notes, aside.notes, .speaker-notes');
-        return n ? n.innerHTML : '';
-      });
-
-      // Preview mode parameter check: ?preview=N
-      const previewMatch = /[?&]preview=(\d+)/.exec(window.location.search || '');
-      if (previewMatch) {
-        const previewIdx = parseInt(previewMatch[1], 10);
-        goToSlide(previewIdx, true);
-        return;
-      }
-
-      // Check hash
-      const hashMatch = /^#\/(\d+)/.exec(window.location.hash || '');
-      if (hashMatch) {
-        const hashSlide = parseInt(hashMatch[1], 10);
-        if (hashSlide >= 1 && hashSlide <= totalSlides.value) {
-          goToSlide(hashSlide, true);
-        } else {
-          goToSlide(1, true);
-        }
-      } else {
-        // Initial slide 1 activation
-        goToSlide(1, true);
-      }
-    }
-
-    // Check saved theme or initial data-theme
     let initialTheme = 'swiss-grid';
     try {
       initialTheme = localStorage.getItem('deck-theme') ||
@@ -267,33 +222,12 @@ export const useDeckStore = defineStore('deck', () => {
     } catch (e) {
       initialTheme = document.documentElement.getAttribute('data-theme') || 'swiss-grid';
     }
-    setTheme(initialTheme);
+    currentTheme.value = initialTheme;
+    applyThemeDom(initialTheme);
+  }
 
-    // Check fullscreen
-    isFullscreen.value = !!document.fullscreenElement;
-    document.addEventListener('fullscreenchange', () => {
-      isFullscreen.value = !!document.fullscreenElement;
-    });
-
-    // Handle hash change from browser buttons
-    window.addEventListener('hashchange', () => {
-      const m = /^#\/(\d+)/.exec(window.location.hash || '');
-      if (m) {
-        const s = parseInt(m[1], 10);
-        if (s !== currentSlide.value) {
-          goToSlide(s, true);
-        }
-      }
-    });
-
-    // Expose for debugging and external interop
-    window.__deckStore = {
-      syncSlideFromExternal,
-      isNotesOpen,
-      isOverviewOpen,
-      currentTheme,
-      goToSlide
-    };
+  function scanAndInit() {
+    initTheme();
   }
 
   return {
@@ -319,22 +253,28 @@ export const useDeckStore = defineStore('deck', () => {
     hasPrev,
     hasNext,
     currentTitle,
+    nextTitle,
     currentNotesHtml,
 
     // Actions
     goToSlide,
+    setSlideFromRemote,
     nextSlide,
     prevSlide,
     firstSlide,
     lastSlide,
-    syncSlideFromExternal,
     toggleNotes,
     toggleOverview,
     toggleFullscreen,
     toggleHubMinimized,
     cycleTheme,
     setTheme,
+    setThemeFromRemote,
     openPresenter,
+    openDisplay,
+    registerBroadcaster,
+    onSlideChange,
+    initTheme,
     scanAndInit
   };
 });

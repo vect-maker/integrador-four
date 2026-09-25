@@ -319,7 +319,7 @@ watch(
 );
 
 onMounted(() => {
-  deckStore.scanAndInit();
+  deckStore.scanAndInit?.();
   document.addEventListener('click', handleOutsideClick);
 });
 
