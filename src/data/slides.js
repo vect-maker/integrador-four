@@ -117,27 +117,27 @@ export const slidesMetadata = [
     id: 9,
     title: '09. Arquitectura ELT & dbt Core',
     notes: `<p class="notes-meta">⏱ <strong>08:45 - 10:00</strong> | Duración: 1:15 min | <em>Fase: Pipeline ELT</em></p>
-      <p>En esta lámina observamos la <strong>Arquitectura de Datos Moderna</strong> que implementamos como base firme del proyecto:</p>
+      <p>En esta lámina observamos la <strong>Arquitectura de Datos Moderna</strong> que planteamos e implementaremos como base firme del proyecto:</p>
       <p>Sustituimos el ETL monolítico tradicional por un <strong>paradigma ELT</strong> (Extract-Load-Transform):</p>
       <p>1. <em>Extracción:</em> Script en Python con cliente HTTP asíncrono, paginando registros hasta consolidar el histórico completo.<br>
       2. <em>Raw Stage:</em> Ingesta sin pérdida de fidelidad en tablas staging de PostgreSQL.<br>
       3. <em>Transformación Modular con dbt Core:</em> Estructurada en capas <code>stg</code> (limpieza y casteo), <code>int</code> (enriquecimiento geográfico) y <code>fct</code>/<code>dim</code> (marts analíticos).<br>
       4. <em>Garantía de Calidad:</em> Suites de pruebas automatizadas (<code>dbt test</code>) verificando unicidad, no nulidad y consistencia referencial.</p>
       <p class="notes-tip">💡 <em>Tip de Defensa:</em> Si preguntan por qué dbt: asegura reproducibilidad analítica, linaje visual de dependencias y pruebas de calidad automáticas antes de alimentar cualquier modelo.</p>
-      <p class="notes-transition">👉 <em>Transición:</em> "Pasemos ahora a las conclusiones y próximos pasos del avance."</p>`
+      <p class="notes-transition">👉 <em>Transición:</em> "Pasemos ahora a la síntesis de la propuesta y la ruta de implementación."</p>`
   },
   {
     id: 10,
-    title: '10. Síntesis & Próximos Pasos',
-    notes: `<p class="notes-meta">⏱ <strong>10:00 - 11:00</strong> | Duración: 1:00 min | <em>Fase: Conclusiones y Próximos Pasos</em></p>
-      <p>En este avance de investigación consolidamos los cimientos técnicos, metodológicos y analíticos:</p>
-      <p>1. Disponemos de un <strong>Data Mart validado</strong> con registros procesados mediante el pipeline dbt sobre la base de la API REST.<br>
-      2. Establecimos el marco para el <strong>análisis espaciotemporal y contextual</strong> de la demanda y el clima.<br>
-      3. Formulamos las directrices para la <strong>evaluación de la dinámica tarifaria y optimización</strong>.</p>
-      <p>Nuestros <strong>próximos pasos hacia la entrega final</strong> son:</p>
-      <p>- Calibrar los ponderadores multiobjetivo mediante análisis de escenarios en Managua.<br>
-      - Evaluar el comportamiento de algoritmos prescriptivos y sensibilidad climática.<br>
-      - Finalizar el informe y tablero interactivo de control para la toma de decisiones.</p>
+    title: '10. Síntesis & Plan de Implementación',
+    notes: `<p class="notes-meta">⏱ <strong>10:00 - 11:00</strong> | Duración: 1:00 min | <em>Fase: Síntesis y Ruta de Implementación</em></p>
+      <p>En esta propuesta de investigación hemos definido las bases técnicas, metodológicas y analíticas que se van a implementar:</p>
+      <p>1. Se ha diseñado la <strong>arquitectura ELT</strong> con ingesta desde la API REST de Movi Go y transformación dimensional mediante dbt a implementarse en PostgreSQL.<br>
+      2. Se definieron las directrices para el <strong>análisis espaciotemporal y contextual</strong> de la demanda frente al clima.<br>
+      3. Se formuló el <strong>modelo de optimización multiobjetivo</strong> para apoyar la gestión operativa y tarifaria.</p>
+      <p>Los <strong>siguientes pasos de implementación</strong> contemplan:</p>
+      <p>- Desplegar el pipeline de datos y materializar los modelos analíticos en dbt.<br>
+      - Calibrar y simular los escenarios de asignación de flota en el contexto de Managua.<br>
+      - Desarrollar el informe final y la herramienta interactiva de soporte a decisiones.</p>
       <p class="notes-transition">👉 <em>Transición:</em> "Agradecemos su atención y quedamos a su entera disposición para la sesión de preguntas."</p>`
   },
   {
