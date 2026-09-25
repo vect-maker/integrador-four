@@ -122,6 +122,11 @@ const deckStore = useDeckStore();
   border-color: var(--accent-red, #d6001c);
 }
 
+.drawer-close-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--accent-red, #d6001c), 0 0 0 4px rgba(214, 0, 28, 0.4);
+}
+
 .drawer-close-btn kbd {
   background: rgba(0, 0, 0, 0.4);
   padding: 1px 6px;

@@ -21,15 +21,22 @@
           :disabled="!deckStore.hasPrev"
           @click="deckStore.prevSlide()"
           title="Diapositiva Anterior (← / Tecla Flecha Izquierda)"
+          aria-label="Diapositiva anterior"
         >
-          <ChevronLeft :size="16" :stroke-width="2.5" />
+          <ChevronLeft :size="16" :stroke-width="2.2" />
         </button>
 
         <div
           class="hub-counter"
           :class="{ 'is-clickable': !deckStore.isOverviewOpen && !deckStore.isNotesOpen }"
           :title="counterTooltip"
+          :aria-expanded="showJumpList"
+          aria-haspopup="listbox"
+          tabindex="0"
+          role="button"
           @click="handleCounterClick"
+          @keydown.enter="handleCounterClick"
+          @keydown.space.prevent="handleCounterClick"
         >
           <span class="counter-num">{{ deckStore.counterText }}</span>
           <span v-if="!isMinimized && !deckStore.isOverviewOpen && !deckStore.isNotesOpen" class="counter-title-hint">
@@ -48,8 +55,9 @@
           :disabled="!deckStore.hasNext"
           @click="deckStore.nextSlide()"
           title="Siguiente Diapositiva (→ / Espacio / Tecla Flecha Derecha)"
+          aria-label="Siguiente diapositiva"
         >
-          <ChevronRight :size="16" :stroke-width="2.5" />
+          <ChevronRight :size="16" :stroke-width="2.2" />
         </button>
       </div>
 
@@ -461,6 +469,11 @@ onUnmounted(() => {
   transform: translateY(-1px);
 }
 
+.hub-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--accent-red, #d6001c), 0 0 0 4px rgba(214, 0, 28, 0.4);
+}
+
 .hub-btn:active:not(:disabled) {
   transform: translateY(1px);
 }
@@ -471,8 +484,10 @@ onUnmounted(() => {
 }
 
 .nav-btn {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
   padding: 0;
   display: flex;
   align-items: center;
@@ -483,18 +498,19 @@ onUnmounted(() => {
 }
 
 .hub-btn.icon-only {
-  padding: 5px 7px;
+  padding: 5px 8px;
   justify-content: center;
 }
 
 .tool-btn kbd {
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 4px;
-  padding: 1px 5px;
+  padding: 2px 6px;
   font-size: 10px;
-  color: #cbd5e1;
+  color: #f8fafc;
   font-weight: 700;
+  letter-spacing: 0.02em;
 }
 
 .hub-btn.is-active {
