@@ -17,16 +17,16 @@
 #include "chapters/01_contexto.typ"
 #pagebreak()
 
-#include "chapters/02_problema.typ"
+#include "chapters/02_antecedentes.typ"
 #pagebreak()
 
-#include "chapters/03_justificacion.typ"
+#include "chapters/03_problema.typ"
 #pagebreak()
 
-#include "chapters/04_objetivos.typ"
+#include "chapters/04_justificacion.typ"
 #pagebreak()
 
-#include "chapters/05_antecedentes.typ"
+#include "chapters/05_objetivos.typ"
 #pagebreak()
 
 #include "chapters/06_marco_teorico.typ"
