@@ -1,6 +1,6 @@
 # Proyecto Integrador IV — MoviGo (Managua)
 
-Este repositorio contiene el proyecto integrador de Ingeniería en Ciencia de Datos enfocado en la **Eficacia y Calibración del Esquema de Tarificación Dinámica en el Transporte Selectivo MoviGo**, analizando sensibilidad de demanda, equilibrio numérico, mitigación de cancelaciones y equidad socio-espacial en Managua.
+Este repositorio contiene el proyecto integrador de Ingeniería en Ciencia de Datos enfocado en la **Evaluación y Calibración del Esquema de Tarificación Dinámica del Servicio de Transporte Selectivo MoviGo en el Municipio de Managua**, analizando sensibilidad de demanda, equilibrio numérico, mitigación de cancelaciones y equidad socio-espacial.
 
 ---
 
@@ -13,7 +13,7 @@ integrador-four/
 │   ├── template.typ        # Plantilla académica (márgenes, tipografía, portada)
 │   ├── references.bib      # Referencias bibliográficas BibTeX (@cachon2017, etc.)
 │   ├── data/               # Datos locales consumidos por el documento (ej. zonas.json)
-│   └── chapters/           # 8 capítulos modulares independientes
+│   └── chapters/           # 7 capítulos modulares independientes
 ├── slides/                 # Proyecto frontend de presentación interactiva (Vite + Vue 3)
 │   ├── index.html          # Entrada de la presentación
 │   ├── vite.config.js      # Configuración del servidor de desarrollo
@@ -36,10 +36,25 @@ typst watch main.typ informe_movigo.pdf
 typst compile main.typ informe_movigo.pdf
 ```
 
-### 2. Ejecutar la Presentación de Diapositivas (Vite + Vue 3)
+### 3. Automatización con `just` (Recomendado)
+El proyecto incluye un [`justfile`](./justfile) con atajos para todas las tareas frecuentes:
+
 ```bash
-cd slides
-npm install
-npm run dev
+just                  # Ver lista de todos los comandos disponibles
+
+# Documentación (Typst)
+just watch-doc        # Live reload del PDF (< 30ms)
+just build-doc        # Compilar el PDF una sola vez
+just info-doc         # Ver páginas y metadatos del PDF compilado
+
+# Datos y API
+just api-status       # Conteo en vivo de registros en los 7 endpoints
+just fetch-zones      # Actualizar document/data/zonas.json desde la API
+
+# Diapositivas (Vite + Vue)
+just slides-dev       # Iniciar servidor local de presentación
+just slides-build     # Compilar presentación para producción
+
+# Limpieza
+just clean            # Limpiar temporales y artefactos de compilación
 ```
-Accede desde tu navegador en `http://localhost:5173`.

@@ -1,4 +1,23 @@
+# ==============================================================================
+# Node.js / Vite (Presentación en slides/)
+# ==============================================================================
 node_modules/
 dist/
+.frontend-slides/
+
+# ==============================================================================
+# Typst (Documentación en document/)
+# ==============================================================================
+# Ignorar los PDFs compilados para no inflar el historial de Git con binarios
+*.pdf
+
+# Caché y artefactos del Language Server de Typst (Tinymist)
+.tinymist/
+*.preview.html
+
+# ==============================================================================
+# Sistema Operativo y Logs
+# ==============================================================================
 .DS_Store
+Thumbs.db
 *.log

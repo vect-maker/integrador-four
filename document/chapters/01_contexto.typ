@@ -35,33 +35,6 @@ Donde:
 
 Esta estructura tarifaria vuelve imperativo indagar si los valores del multiplicador efectivamente convergen hacia un *punto de equilibrio de mercado ($m^*$)* o si, por el contrario, operan en rangos de sobredimensión que provocan la pérdida recurrente de usuarios y servicios no concretados.
 
-== Dimensión Socio-Espacial y Heterogeneidad de Cuadrantes
-
-La estructura territorial de Managua es dispersa, policéntrica y marcadamente estratificada. La operación de MoviGo cubre 12 cuadrantes urbanos representativos, clasificados formalmente según su estrato socioeconómico:
-
-#let zonas = json("../data/zonas.json")
-
-#figure(
-  table(
-    columns: (auto, 2fr, 1fr, 1fr),
-    align: (center, left, center, right),
-    stroke: 0.5pt + luma(180),
-    fill: (col, row) => if row == 0 { rgb("#f1f5f9") } else { none },
-    table.header([*ID*], [*Cuadrante Urbano*], [*Estrato*], [*Bajada Bandera*]),
-    ..zonas.map(z => (
-      str(z.id_zona),
-      z.nombre_zona,
-      z.estrato_socioeconomico,
-      [C\$ #z.tarifa_base_bajada_bandera NIO]
-    )).flatten()
-  ),
-  caption: [Cuadrantes urbanos y tarifas de bajada de bandera en Managua (cargados dinámicamente desde la API REST).]
-) <tbl-zonas>
-
-Esta segmentación socioeconómica y territorial condiciona de manera directa el comportamiento del usuario:
-+ *Disparidad en la Elasticidad-Precio:* Los usuarios de sectores populares presentan una sensibilidad al precio sustancialmente más elástica que aquellos en cuadrantes corporativos o de estrato alto.
-+ *Condicionamiento de Medios de Pago:* Existe una relación estrecha entre el estrato de la zona y la adopción de modalidades de pago (`efectivo`, `tarjeta`, `billetera_digital`). Un incremento del multiplicador dinámico sobre viajes en efectivo puede desbordar el circulante disponible del pasajero al momento de la solicitud, motivando la cancelación inmediata.
-
 == Dimensión Climática y Choques Exógenos de Tráfico
 
 En Managua, el clima tropical de sabana impone episodios intensos de lluvias torrenciales y tormentas convectivas. Dada la topografía y el déficit histórico de drenaje pluvial de la capital, las precipitaciones generan inundaciones temporales en cauces viales y rotondas neurálgicas (*Rotonda Centroamérica, Metrocentro, Rotonda Rubén Darío, Pista Juan Pablo II*).
@@ -84,10 +57,10 @@ La optimización de estos programas bajo restricciones de presupuesto operativo 
 
 Metodológicamente, la investigación se apoya en un entorno de simulación transaccional de alta fidelidad que modela un año completo de operaciones de MoviGo, con *77,386 registros de viajes*, 19,375 pings de telemetría GPS, catálogos georreferenciados de zonas y conductores, y series meteorológicas continuas.
 
-Una condición rectora del proyecto es que *el acceso a los datos no se realiza mediante volcados directos de bases de datos ni sentencias SQL al servidor transaccional, sino única y exclusivamente consumiendo una API REST pública (`http://4.157.251.192:8000/movigo`)*.
+Una condición rectora del proyecto es que *el acceso a los datos no se realiza mediante volcados directos ni sentencias SQL al servidor transaccional, sino única y exclusivamente consumiendo una base de datos sintética expuesta a través de una API REST en una URL pública temporal provista para el curso* (cuyo repositorio de código fuente se referenciará e integrará en etapas posteriores).
 
 En consecuencia, el proceso analítico requiere:
 + Diseñar un pipeline de extracción paginada en Python (`httpx`/`requests`).
-+ Consolidar los registros en una base de datos relacional local en *PostgreSQL*.
-+ Desplegar un almacén dimensional (*Data Warehouse*) modelado y transformado mediante *dbt (Data Build Tool)*.
-+ Aplicar técnicas de inferencia estadística, métodos numéricos de búsqueda de raíces y algoritmos de optimización combinatoria sobre los Data Marts resultantes.
++ Consolidar los registros en una base de datos relacional local en *PostgreSQL* que actúe como réplica del entorno OLTP operativo.
++ Desplegar un almacén analítico (*Data Warehouse*) modelado y transformado mediante *dbt (Data Build Tool)*.
++ Aplicar técnicas de inferencia estadística, métodos numéricos y optimización sobre los datos transformados.

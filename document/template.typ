@@ -5,17 +5,22 @@
   title: "",
   subtitle: "",
   authors: (),
-  date: datetime.today().display("[day]/[month]/[year]"),
+  advisor: none,
+  date: none,
   course: "Integrador IV",
   career: "Ingeniería en Ciencia de Datos",
+  department: "Departamento de Tecnología",
   institution: "Área de Conocimiento de Ciencias Básicas y Tecnología",
+  university: "Universidad Nacional Autónoma de Nicaragua, Managua",
+  logo: "assets/unan-logo.jpg",
+  work_type: "Informe de Proyecto Integrador IV",
   location: "Managua, Nicaragua",
   abstract: none,
   body
 ) = {
   // Configuración general del documento
   set document(title: title, author: authors.map(a => if type(a) == str { a } else { a.name }))
-  
+
   set page(
     paper: "a4",
     margin: (top: 2.8cm, bottom: 2.8cm, left: 3.0cm, right: 2.5cm),
@@ -47,7 +52,7 @@
     size: 11pt,
     lang: "es"
   )
-  
+
   set par(
     justify: true,
     leading: 0.75em,
@@ -79,67 +84,76 @@
   show raw: set text(font: ("Liberation Mono", "DejaVu Sans Mono"), size: 9pt)
 
   // ==================== PORTADA ====================
+  let meses = ("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre")
+  let fecha_str = if date != none {
+    date
+  } else {
+    meses.at(datetime.today().month() - 1) + ", " + str(datetime.today().year())
+  }
+
   align(center)[
-    #text(size: 11pt, weight: "bold", font: "Liberation Sans")[#upper(institution)] \
-    #v(3pt)
-    #text(size: 10.5pt, font: "Liberation Sans", fill: luma(60))[Carrera de #career] \
-    #text(size: 10pt, font: "Liberation Sans", fill: luma(80))[Asignatura: #course]
-
-    #v(4.5cm)
-
-    #text(size: 20pt, weight: "bold", font: "Liberation Sans", fill: rgb("#0f172a"))[#title] \
-    #if subtitle != "" [
+    #if logo != none [
+      #image(logo, width: 6.0cm)
       #v(0.8em)
-      #text(size: 13pt, style: "italic", fill: rgb("#334155"))[#subtitle]
+    ] else [
+      #text(size: 12pt, weight: "bold", font: "Liberation Sans")[#upper(university)] \
+      #v(2pt)
+      #text(size: 10pt, weight: "bold", font: "Liberation Sans", fill: rgb("#1e3a8a"))[UNAN - MANAGUA] \
+      #v(4pt)
+    ]
+    #text(size: 11pt, weight: "bold", font: "Liberation Sans", fill: rgb("#0f172a"))[#upper(institution)] \
+    #v(3pt)
+    #text(size: 10pt, weight: "bold", font: "Liberation Sans", fill: rgb("#334155"))[#upper(department)] \
+    #v(3pt)
+    #text(size: 10pt, font: "Liberation Sans", fill: luma(60))[Carrera de #career] \
+    #v(0.6em)
+    #line(length: 50%, stroke: 0.6pt + rgb("#1e3a8a"))
+
+    #v(1.2fr)
+
+    #text(size: 11pt, weight: "bold", font: "Liberation Sans", fill: rgb("#1e293b"))[#upper(work_type)]
+
+    #v(1fr)
+
+    #text(size: 10pt, weight: "bold", font: "Liberation Sans", fill: rgb("#1e3a8a"))[TEMA:] \
+    #v(4pt)
+    #text(size: 15pt, weight: "bold", font: "Liberation Sans", fill: rgb("#0f172a"))[#title] \
+    #if subtitle != "" [
+      #v(0.6em)
+      #text(size: 11.5pt, style: "italic", fill: rgb("#334155"))[#subtitle]
     ]
 
-    #v(4.5cm)
+    #v(1.2fr)
 
     #grid(
-      columns: (1fr),
+      columns: if advisor != none { (1fr, 1fr) } else { (1fr) },
+      gutter: 20pt,
       align(center)[
-        #text(size: 11pt, weight: "semibold")[Autores / Investigadores:] \
+        #text(size: 10pt, weight: "bold", font: "Liberation Sans")[Autores:] \
         #v(4pt)
         #for author in authors [
-          #if type(author) == str [
-            #text(size: 11pt)[#author] \
-          ] else [
-            #text(size: 11pt)[#author.name] \
-            #if "email" in author [
-              #text(size: 9pt, fill: luma(90))[#author.email] \
-            ]
-          ]
+          #let aname = if type(author) == str { author } else { author.name }
+          #text(size: 10pt)[#aname] \
+        ]
+      ],
+      if advisor != none [
+        #align(center)[
+          #text(size: 10pt, weight: "bold", font: "Liberation Sans")[Docente Guía:] \
+          #v(4pt)
+          #text(size: 10pt)[#advisor]
         ]
       ]
     )
 
-    #v(2.5cm)
+    #v(1fr)
 
-    #text(size: 10pt, fill: luma(80))[#location] \
-    #text(size: 10pt, fill: luma(80))[#date]
+    #text(size: 10pt, font: "Liberation Sans", fill: luma(60))[#location] \
+    #v(2pt)
+    #text(size: 10pt, font: "Liberation Sans", fill: luma(60))[#fecha_str]
   ]
 
   pagebreak()
 
-  // ==================== RESUMEN / ABSTRACT ====================
-  if abstract != none [
-    #v(1cm)
-    #align(center)[
-      #text(size: 14pt, weight: "bold", font: "Liberation Sans")[Resumen Ejecutivo]
-    ]
-    #v(0.8cm)
-    #block(
-      width: 100%,
-      stroke: (left: 2.5pt + rgb("#3b82f6")),
-      inset: (left: 14pt, y: 8pt),
-      fill: rgb("#f8fafc"),
-      [
-        #set text(size: 10.5pt, style: "italic")
-        #abstract
-      ]
-    )
-    #v(1.5cm)
-  ]
 
   // ==================== ÍNDICE GENERAL ====================
   outline(

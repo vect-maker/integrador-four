@@ -22,8 +22,7 @@ document/
     ├── 04_objetivos.typ     # Objetivos general y específicos
     ├── 05_antecedentes.typ  # Estado del arte y literatura de surge pricing
     ├── 06_marco_teorico.typ # Teoría microeconómica, Kimball/dbt y métodos numéricos
-    ├── 07_matriz_descriptores.typ # Operacionalización de variables y tabla de descriptores
-    └── 08_metodologia.typ   # Pipeline ELT, pruebas de hipótesis y optimización
+    └── 07_metodologia.typ   # Pipeline ELT, pruebas de hipótesis y optimización
 ```
 
 ---
@@ -49,7 +48,7 @@ typst compile main.typ informe_movigo.pdf
 
 ## 💡 Ventajas de este Enfoque Code-First
 
-1. **Carga Directa de Datos:** En [`chapters/01_contexto.typ`](./chapters/01_contexto.typ), la tabla de cuadrantes se genera automáticamente leyendo [`data/zonas.json`](./data/zonas.json) mediante `#let zonas = json("../data/zonas.json")`.
+1. **Estructura Modular:** Capítulos separados e independientes organizados en `chapters/` para facilitar la colaboración.
 2. **Citas Automáticas:** Las referencias como `@cachon2017` o `@jica2017` se resuelven y formatean solas usando el archivo [`references.bib`](./references.bib).
 3. **Ecuaciones y Tipografía Profesional:** Todas las fórmulas matemáticas se compilan con alineación y números de ecuación automáticos.
 4. **Cero Fricción:** A diferencia de LaTeX, no requiere dependencias de varios gigabytes ni configuraciones complejas.
