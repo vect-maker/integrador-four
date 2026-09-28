@@ -1,39 +1,55 @@
-# Eficacia y Calibración de la Tarifa Dinámica en el Transporte Selectivo — MoviGo (Managua)
+# Proyecto Documental en Typst — MoviGo (Integrador IV)
 
-**Área de Conocimiento de Ciencias Básicas y Tecnología**  
-**Carrera:** Ingeniería en Ciencia de Datos  
-**Asignatura:** Integrador IV  
-**Tipo de Documento:** Propuesta y Avance de Investigación  
-**Período:** Segundo Año • Segundo Semestre 2026  
-**Sede:** Managua, Nicaragua  
+Este directorio contiene la versión **Code-First** del documento de investigación de MoviGo maquetada y programada en **Typst**. La estructura modular desacopla la plantilla visual, los datos, las referencias bibliográficas y los capítulos individuales.
 
 ---
 
-## Estructura Modular del Documento de Investigación
+## 📁 Estructura del Proyecto
 
-El documento de investigación se organiza en ocho archivos temáticos alineados con el **Enfoque A: Calibración de la Tarifa Dinámica, Sensibilidad de la Demanda, Mitigación de Cancelaciones y Equidad Socio-Espacial**:
-
-| No. | Archivo | Descripción del Contenido |
-| :---: | :--- | :--- |
-| **01** | [`01_contextualizacion.md`](./01_contextualizacion.md) | Contextualización de MoviGo, mecánica de la tarifa paramétrica y el multiplicador dinámico, estratificación de los 12 cuadrantes urbanos de Managua, choques de lluvia y acceso exclusivo vía API REST. |
-| **02** | [`02_antecedentes.md`](./02_antecedentes.md) | Revisión de literatura sobre mercados bilaterales de movilidad, tarificación dinámica (*surge pricing*), elasticidad y abandono del servicio, equidad socio-espacial, incentivos a conductores y Plan Maestro JICA 2017. |
-| **03** | [`03_planteamiento_del_problema.md`](./03_planteamiento_del_problema.md) | El dilema de calibración de la tarifa dinámica: sobredimensión de precios y cancelaciones de usuarios vs. subestimación y escasez de flota; asimetrías socioeconómicas por estrato y pregunta central de investigación. |
-| **04** | [`04_justificacion.md`](./04_justificacion.md) | Justificación práctica empresarial para MoviGo, relevancia metodológica (econometría + análisis numérico + optimización), arquitectura de datos DataOps y coherencia curricular con el Integrador IV. |
-| **05** | [`05_objetivos.md`](./05_objetivos.md) | Objetivo General focalizado en la evaluación de la tarifa dinámica, cancelaciones y equidad; y cuatro Objetivos Específicos secuenciales (*Consolidar*, *Determinar*, *Modelar*, *Diseñar*). |
-| **06** | [`06_marco_teorico.md`](./06_marco_teorico.md) | Teoría microeconómica de mercados bilaterales, modelado dimensional Kimball con dbt, econometría y supuestos Gauss-Markov, métodos de raíces (Newton-Raphson/Bisección) y problema de la mochila 0/1. |
-| **07** | [`07_matriz_de_descriptores.md`](./07_matriz_de_descriptores.md) | Matriz formal de operacionalización de variables, dimensiones, indicadores empíricos y articulación con las herramientas técnicas del proyecto. |
-| **08** | [`08_diseno_metodologico.md`](./08_diseno_metodologico.md) | Diseño cuantitativo no experimental, pipeline ELT (API REST &rarr; Python &rarr; PostgreSQL &rarr; dbt Core), esquema en estrella `fact_viajes`, batería de inferencia estadística, métodos numéricos y optimización prescriptiva. |
+```text
+document/
+├── main.typ                 # Archivo raíz y orquestador del documento
+├── template.typ             # Plantilla académica (portada, márgenes, estilos, callouts)
+├── references.bib           # Bibliografía en formato BibTeX (@cachon2017, etc.)
+├── README.md                # Esta guía de uso y compilación
+├── data/
+│   └── zonas.json           # Datos reales exportados desde la API REST (12 zonas)
+├── assets/                  # Directorio para imágenes, capturas y gráficos vectoriales
+└── chapters/                # Capítulos modulares del documento
+    ├── 01_contexto.typ      # Contextualización y mecánica tarifaria paramétrica
+    ├── 02_problema.typ      # Planteamiento del problema y dilema de calibración
+    ├── 03_justificacion.typ # Justificación práctica, científica y curricular
+    ├── 04_objetivos.typ     # Objetivos general y específicos
+    ├── 05_antecedentes.typ  # Estado del arte y literatura de surge pricing
+    ├── 06_marco_teorico.typ # Teoría microeconómica, Kimball/dbt y métodos numéricos
+    ├── 07_matriz_descriptores.typ # Operacionalización de variables y tabla de descriptores
+    └── 08_metodologia.typ   # Pipeline ELT, pruebas de hipótesis y optimización
+```
 
 ---
 
-## Síntesis Ejecutiva del Proyecto
+## 🚀 Cómo Compilar y Trabajar en Tiempo Real
 
-El proyecto investiga la eficacia, calibración y equidad del esquema de **tarificación dinámica (*surge pricing*)** de la plataforma de transporte selectivo **MoviGo** en el municipio de Managua. 
+### 1. Compilación Automática en Vivo (Live Reload)
+Para ver los cambios reflejados en tiempo real cada vez que guardas (`Ctrl + S`), ejecuta desde la terminal:
 
-A partir del consumo directo de una **API REST pública (`http://4.157.251.192:8000/movigo`)** que modela la operación anual de la empresa con **más de 77,000 registros transaccionales**, series telemétricas GPS, catálogos zonales y registros diarios de precipitación y congestión vial, la investigación resuelve el dilema entre maximización de ingresos, abastecimiento vehicular y retención de usuarios.
+```bash
+cd document
+typst watch main.typ informe_movigo.pdf
+```
 
-### Articulación Interdisciplinaria (Integrador IV):
-1. **Bases de Datos Analíticas & DataOps:** Extracción paginada en Python, auditoría con sumas de comprobación SHA-256 en Parquet, carga en PostgreSQL y transformación analítica con **dbt Core** (esquema dimensional Kimball centrado en `fact_viajes` con pruebas automáticas de calidad).
-2. **Estadística II (Econometría e Inferencia):** Modelación de la demanda diaria frente a precipitaciones e índice de congestión mediante regresión lineal múltiple con validación Gauss-Markov (Shapiro-Wilk, Breusch-Pagan, Durbin-Watson) y contrastes de hipótesis (Welch $t$, proporciones $z$, ANOVA por estratos y $\chi^2$ de medios de pago).
-3. **Métodos Numéricos:** Estimación del multiplicador de equilibrio $m^*$ resolviendo la función de exceso de demanda $f(m) = 0$ con **Bisección y Newton-Raphson**, diferenciación numérica centrada $\mathcal{O}(h^2)$ para aproximar la elasticidad-precio zonal e integración de Simpson 1/3 para el volumen diario continuo.
-4. **Optimización Prescriptiva (Investigación de Operaciones):** Formulación del **Problema de la Mochila Binaria (0/1 Knapsack)** sobre las campañas de bonos para choferes (`/movigo/campanas`) bajo un presupuesto de **C$ 120,000 NIO**, maximizando las horas de conexión vehicular como alternativa estructural al incremento excesivo de tarifas dinámicas.
+Typst compila en **menos de 30 milisegundos**. Abre `informe_movigo.pdf` en tu visor de PDFs preferido o en VS Code.
+
+### 2. Compilación Única (Para exportar la entrega final)
+```bash
+typst compile main.typ informe_movigo.pdf
+```
+
+---
+
+## 💡 Ventajas de este Enfoque Code-First
+
+1. **Carga Directa de Datos:** En [`chapters/01_contexto.typ`](./chapters/01_contexto.typ), la tabla de cuadrantes se genera automáticamente leyendo [`data/zonas.json`](./data/zonas.json) mediante `#let zonas = json("../data/zonas.json")`.
+2. **Citas Automáticas:** Las referencias como `@cachon2017` o `@jica2017` se resuelven y formatean solas usando el archivo [`references.bib`](./references.bib).
+3. **Ecuaciones y Tipografía Profesional:** Todas las fórmulas matemáticas se compilan con alineación y números de ecuación automáticos.
+4. **Cero Fricción:** A diferencia de LaTeX, no requiere dependencias de varios gigabytes ni configuraciones complejas.
