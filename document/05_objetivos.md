@@ -2,16 +2,16 @@
 
 ## 5.1 Objetivo General
 
-**Optimizar** la distribución operativa de la flota vehicular y el esquema de tarifa dinámica del servicio de transporte selectivo Movi Go en el municipio de Managua mediante la ingesta de datos transaccionales y meteorológicos vía API REST y su modelado y transformación con dbt, evaluando patrones espaciotemporales y estrategias de asignación bajo condiciones variables de demanda y clima urbano.
+**Evaluar** la eficacia del esquema de tarificación dinámica (*surge pricing*) de la plataforma MoviGo en el municipio de Managua y su impacto sobre la tasa de cancelación y la equidad socio-espacial, determinando puntos de equilibrio tarifario mediante métodos numéricos y formulando estrategias óptimas de asignación de incentivos a la flota bajo condiciones variables de demanda y clima urbano.
 
 ---
 
 ## 5.2 Objetivos Específicos
 
-1. **Estructurar** un pipeline de ingeniería de datos analítico mediante **dbt (Data Build Tool)** sobre PostgreSQL a partir de los registros transaccionales, telemétricos y meteorológicos extraídos de la API REST de Movi Go, garantizando la consolidación, estandarización y auditoría del histórico operativo del servicio.
+1. **Consolidar** un repositorio analítico multidimensional en PostgreSQL y dbt a partir de los registros transaccionales, telemétricos y meteorológicos extraídos de la API REST, garantizando la trazabilidad, estandarización y auditoría del histórico de viajes y tarifas de MoviGo.
 
-2. **Analizar** la distribución espaciotemporal de los flujos de demanda, los tiempos de espera y la duración de los trayectos frente a eventos meteorológicos, condiciones de tráfico y disparidades territoriales entre las zonas del municipio de Managua.
+2. **Determinar** la sensibilidad de la demanda, la variación de las tarifas y la probabilidad de cancelación de viajes frente a fluctuaciones en el multiplicador dinámico, el estrato socioeconómico de origen y perturbaciones meteorológicas y de congestión vial en Managua.
 
-3. **Evaluar** la dinámica del esquema de tarificación dinámica (*surge pricing*) y la sensibilidad de la oferta y la demanda vehicular ante variaciones en el multiplicador de precios bajo distintas franjas horarias y condiciones contextuales.
+3. **Modelar** numéricamente el equilibrio de mercado entre oferta y demanda vehicular y la elasticidad-precio del servicio mediante algoritmos de búsqueda de raíces (Bisección y Newton-Raphson) y esquemas de diferenciación finita.
 
-4. **Formular** modelos prescriptivos de optimización operativa para la asignación y el rebalanceo territorial de la flota vehicular, orientados a mitigar los recorridos improductivos en vacío (*deadhead*) y equilibrar los tiempos de servicio entre los cuadrantes urbanos de la capital.
+4. **Diseñar** un modelo prescriptivo de asignación presupuestaria de campañas de incentivos a conductores (problema de la mochila 0/1) que maximice las horas de conexión de la flota en periodos críticos como mecanismo complementario y no excluyente al incremento de tarifas dinámicas.

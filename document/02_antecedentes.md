@@ -1,57 +1,61 @@
 # 2. Antecedentes
 
-## 2.1 Asignación Dinámica y Reposicionamiento de Flotas
+## 2.1 Tarificación Dinámica y Modelos de Equilibrio en Mercados Bilaterales de Movilidad
 
-La literatura científica sobre servicios de movilidad bajo demanda (*ride-hailing*) identifica la asignación dinámica de solicitudes y el posicionamiento de vehículos como problemas centrales para la eficiencia del sistema. Alonso-Mora et al. (2017), mediante un modelo de asignación dinámica viaje-vehículo aplicado a datos reales de taxis de Nueva York, demostraron que la localización de la demanda y la disponibilidad de vehículos deben analizarse de forma conjunta para reducir tiempos de espera y mejorar el aprovechamiento de la flota.
+La literatura científica sobre plataformas de movilidad bajo demanda (*ride-hailing*) sitúa a los algoritmos de tarificación dinámica (*surge pricing*) como el mecanismo regulatorio primordial de los mercados bilaterales. En estos mercados, la plataforma debe balancear de forma simultánea la utilidad de los pasajeros y los ingresos de los conductores bajo condiciones de incertidumbre y fricción espacial.
 
-En una línea aplicada al reposicionamiento de vehículos desocupados, Jiao et al. (2021) desarrollaron y evaluaron un enfoque basado en aprendizaje por refuerzo para orientar la redistribución de unidades considerando el estado espaciotemporal del sistema. Estos trabajos constituyen antecedentes metodológicos fundamentales para Movi Go, permitiendo formular algoritmos de emparejamiento óptimo (como el **Algoritmo Húngaro** para despacho biyectivo) y modelos de flujo en red (como el **Algoritmo de Dijkstra** para rutas mínimas congestionadas).
+Cachon, Daniels y Lobel (2017) demostraron formalmente que los esquemas de precios dependientes del estado (*state-dependent surge pricing*) son superiores a las tarifas fijas convencionales, dado que permiten maximizar el bienestar social y la tasa de servicio durante periodos de sobrecarga. No obstante, advierten que la efectividad del mecanismo depende críticamente de la elasticidad de respuesta de ambos lados del mercado: un incremento tarifario que no logre movilizar conductores adicionales simplemente actúa como una barrera excluyente de demanda.
 
----
+En una línea convergente, Zha, Yin y Du (2018) formularon modelos de optimización bi-nivel para analizar el equilibrio de precios en redes urbanas congestionadas. Sus hallazgos revelaron que, si bien el multiplicador dinámico atrae vehículos hacia zonas con déficit de oferta, la fijación de precios excesivos induce desequilibrios espaciotemporales secundarios, empujando a los usuarios hacia modos de transporte alternativos o forzando la cancelación de servicios solicitados.
 
-## 2.2 Desequilibrio Espaciotemporal entre Oferta y Demanda
-
-El desequilibrio espaciotemporal entre oferta y demanda representa una de las principales dificultades operativas de los sistemas de transporte bajo solicitud. La demanda tiende a concentrarse en determinados sectores y periodos (ej. zonas comerciales o laborales en horas pico) mientras las unidades disponibles permanecen dispersas en otras zonas, lo que incrementa recorridos de aproximación, tiempos de espera y periodos de circulación sin pasajero (*deadhead miles*).
-
-Jiao et al. (2021) señalan que las plataformas digitales deben aprovechar información global y datos de oferta-demanda para orientar el reposicionamiento de vehículos, mientras que Alonso-Mora et al. (2017) evidencian que la asignación dinámica puede formularse como un problema de optimización sujeto a restricciones de tiempo, capacidad y localización. En el contexto de Movi Go, los pings de telemetría GPS (`/movigo/telemetria`) permiten medir con precisión métrica dónde se encuentran los vehículos desocupados respecto a las solicitudes entrantes.
+Asimismo, Castillo, Knoepfle y Weyl (2022), en su influyente estudio sobre el colapso del servicio en plataformas de movilidad (*surge pricing and wild goose chases*), demostraron que una tarificación insuficiente durante picos de demanda conduce a una escasez severa de unidades disponibles, provocando que los pocos conductores libres atiendan solicitudes excesivamente lejanas, lo que incrementa los tiempos de espera y eleva las cancelaciones mutuas.
 
 ---
 
-## 2.3 Modelación del Sistema Tarifario y Tarificación Dinámica (Surge Pricing)
+## 2.2 Elasticidad-Precio, Sensibilidad al Costo y Abandono del Viaje
 
-En relación con el componente tarifario, la investigación internacional sobre *ride-hailing* ha demostrado que la fijación de precios dinámicos (*surge pricing*) busca equilibrar oferta y demanda modificando incentivos para conductores y usuarios. Zha, Yin y Du (2018) analizaron la tarifa dinámica mediante modelos de equilibrio y programación bi-nivel, encontrando que los precios elevados pueden atraer más conductores a zonas de alta demanda, aunque a riesgo de contraer excesivamente las solicitudes si se sobrepasa la disposición a pagar.
+La respuesta empírica de los pasajeros ante variaciones en el multiplicador dinámico ha sido objeto de exhaustiva investigación microeconométrica. Cohen et al. (2016) estimaron la curva de demanda y el excedente del consumidor en servicios de transporte por app, identificando que la demanda global tiende a ser inelástica en trayectos cortos o rutinarios, pero se vuelve marcadamente elástica ($|\varepsilon| > 1$) ante multiplicadores superiores a $1.25\times$ o en franjas horarias no laborales.
 
-Por su parte, Battifarano y Qian (2019) desarrollaron un marco predictivo para estudiar multiplicadores tarifarios en tiempo real utilizando información de tráfico, entorno urbano y condiciones meteorológicas.
+Hall, Kendrick y Nosko (2015) aportaron evidencia empírica directa sobre la mecánica del *surge pricing*, demostrando que la pérdida de eficiencia en el servicio no se origina únicamente en la escasez de vehículos, sino en la tasa de abandono de los usuarios cuando la tarifa supera su umbral de tolerancia. Cuando el multiplicador se incrementa drásticamente, la probabilidad de que un usuario acepte la cotización inicial pero cancele el viaje minutos después ante la combinación de alta tarifa y tiempo de espera prolongado crece exponencialmente.
 
-A diferencia de aproximaciones teóricas que desconocen las fórmulas operativas, **Movi Go implementa de forma explícita un multiplicador dinámico continuo ($1.00\times$ a $2.80\times$, con picos de $3.20\times$)** acoplado al tráfico y al clima. La pertinencia de estos antecedentes radica en evaluar empíricamente si este multiplicador cumple su propósito equilibrador o si, por el contrario, induce cancelaciones y distorsiones espaciales en la red urbana de Managua.
-
----
-
-## 2.4 Incidencia Empírica de las Condiciones Meteorológicas
-
-La incidencia de las condiciones meteorológicas sobre la movilidad urbana cuenta con amplio respaldo empírico. Chen et al. (2017), mediante datos GPS y de taxímetro, determinaron que la precipitación modifica la distribución temporal y espacial de la demanda, con efectos diferentes según la intensidad de la lluvia y el periodo del día. Sun et al. (2020) encontraron que la lluvia puede alterar de manera sustancial la distribución espacial de pasajeros y vehículos, identificando cambios significativos en tiempos de búsqueda, velocidad y nivel de servicio.
-
-De forma específica para plataformas de transporte por aplicación, Liu, Jiang y Chen (2021) demostraron que la precipitación, el viento y la temperatura presentan efectos diferenciados según horario, día de la semana, distancia del viaje y localización. En el caso de Movi Go, la plataforma integra directamente en su API (`/movigo/clima`) series temporales de precipitación diaria en milímetros acopladas a un **índice de congestión vial (1.00 a 3.50)**, permitiendo validar formalmente estas relaciones mediante modelos de regresión lineal múltiple y pruebas de hipótesis.
+En el contexto de MoviGo, donde el multiplicador oscila de forma continua entre $1.00\times$ y $2.80\times$ (y hasta $3.20\times$), estos antecedentes justifican la necesidad de estimar la elasticidad zonal mediante métodos cuantitativos y aproximar el **multiplicador de equilibrio ($m^*$)** que minimice las cancelaciones sin desabastecer el cuadrante.
 
 ---
 
-## 2.5 Datos Georreferenciados en Movilidad y Ciencia de Datos
+## 2.3 Equidad Socio-Espacial y Heterogeneidad Territorial
 
-Otro antecedente relevante corresponde al uso de datos georreferenciados para estudiar el comportamiento del transporte selectivo. Chen et al. (2017) evidencian que los registros GPS permiten trabajar con variables como fecha y hora, longitud, latitud, velocidad, dirección y estado de ocupación del vehículo, y que su vinculación con datos operativos posibilita reconstruir unidades de viaje y analizar patrones espaciotemporales.
+La literatura reciente en economía del transporte y ciencias de la computación ha puesto en tela de juicio la neutralidad de los algoritmos de precios dinámicos respecto a la equidad socioeconómica y territorial (Pandey & Caliskan, 2021; Dillahunt et al., 2017).
 
-Para Movi Go, la existencia de los endpoints `/movigo/zonas` (coordenadas WGS84 de centroides y radios de cobertura) y `/movigo/telemetria` (pings con latitud, longitud, velocidad instantánea en km/h y estado: `disponible`, `ocupado`, `en_camino_recogida`) permite estructurar procesos avanzados de análisis espacial, matrices Origen-Destino, detección de cuellos de botella y algoritmos de ruteo óptimo.
+Diversos estudios señalan que los algoritmos de *surge pricing* tienden a concentrar los incrementos tarifarios en áreas con alta densidad de actividades comerciales y corporativas, pero pueden castigar desproporcionadamente a sectores residenciales periféricos o de estratos económicos bajos, donde la población carece de alternativas eficientes de movilidad masiva y depende del dinero en efectivo como principal medio de pago.
 
----
-
-## 2.6 Antecedentes Institucionales en Managua: Plan Maestro JICA (2017)
-
-En el contexto específico de Managua existe un antecedente institucional clave de planificación de la movilidad urbana. El Proyecto del Plan Maestro para el Desarrollo Urbano del Municipio de Managua, elaborado por la Agencia de Cooperación Internacional del Japón (JICA) y publicado en 2017, incorporó la planificación del transporte como uno de los ejes del desarrollo de la capital.
-
-En su diagnóstico, la encuesta de hogares estimó que **aproximadamente el 26 % de los viajes urbanos se realizaban en transporte selectivo (taxis)** (JICA, 2017). Este antecedente confirma la relevancia estratégica que tiene el transporte selectivo en Managua para la conectividad de la población y fundamenta la necesidad de optimizar su operación y tarificación mediante herramientas avanzadas de Ciencia de Datos.
+En Managua, donde los cuadrantes urbanos presentan una marcada segregación económica (desde zonas de alto poder adquisitivo como Santo Domingo o Las Colinas hasta sectores populares como el Mercado Oriental o Ciudad Jardín), estudiar la disparidad en las tarifas cobradas, las formas de pago adoptadas y la incidencia de cancelaciones resulta indispensable para evaluar si el algoritmo de MoviGo perpetúa brechas de accesibilidad urbana.
 
 ---
 
-## 2.7 Situación Operativa y Disponibilidad de Datos en Movi Go
+## 2.4 Perturbaciones Meteorológicas y Choques Exógenos de Demanda
 
-Movi Go cuenta con un entorno transaccional sintético rigurosamente modelado que refleja la operación anual de la empresa con **más de 65,000 registros históricos de viajes**, flota clasificada en 3 categorías (`movigo_estandar`, `movigo_comfort`, `movigo_moto`), catálogo de usuarios con hábitos de pago, campañas de bonos para choferes, registros climáticos y telemetría continua.
+El impacto del clima sobre la movilidad urbana y la demanda de transporte selectivo cuenta con una sólida fundamentación empírica. Chen et al. (2017), utilizando registros masivos de viajes y datos meteorológicos, evidenciaron que la precipitación altera de manera radical los patrones de generación y atracción de viajes, incrementando la demanda repentina y reduciendo la velocidad media de circulación.
 
-El reto de la presente investigación radica en transformar esta rica base de datos —expuesta mediante una API REST— en un modelo analítico estructurado en PostgreSQL/dbt y aplicar técnicas de inferencia estadística, métodos numéricos y optimización para resolver los desbalances observados de forma cuantitativa y reproducible.
+Liu, Jiang y Chen (2021) demostraron que los efectos de la lluvia sobre las plataformas de *ride-hailing* no son homogéneos: las tormentas intensas inducen picos extraordinarios en los multiplicadores dinámicos que no siempre se traducen en viajes completados, sino en un incremento sustancial de la tasa de cancelación por parte de conductores atrapados en cuellos de botella viales.
+
+Para el caso de MoviGo en Managua, la disponibilidad de series sincronizadas de precipitación (`precipitacion_mm`) y congestión vial (`indice_congestion` de 1.00 a 3.50) permite modelar formalmente la interacción entre choques meteorológicos, alzas tarifarias y fiabilidad del servicio.
+
+---
+
+## 2.5 Incentivos a Conductores como Mecanismo Complementario al Surge Pricing
+
+Frente a las externalidades negativas de transferir todo el costo de congestión al pasajero mediante el *surge pricing*, la investigación de operaciones ha propuesto esquemas de subsidios e incentivos directos a los conductores (Ma et al., 2020; Taylor, 2018).
+
+En lugar de elevar las tarifas al usuario hasta niveles prohibitivos en momentos de escasez, las plataformas diseñan programas de bonificación garantizada que compensan al conductor por conectarse en franjas horarias o zonas específicas. La formulación matemática de este dilema bajo un presupuesto empresarial finito se traduce en un **Problema de la Mochila Binaria (Knapsack 0/1)**, donde el objetivo es seleccionar la combinación óptima de campañas de bonos que maximice las horas-hombre de conexión activa.
+
+Este enfoque complementa la perspectiva analítica de MoviGo, transformando los datos del catálogo `/movigo/campanas` en una herramienta prescriptiva de optimización.
+
+---
+
+## 2.6 Antecedente Institucional en Managua: Plan Maestro JICA (2017)
+
+En el ámbito local, el antecedente institucional de mayor envergadura corresponde al *Proyecto del Plan Maestro para el Desarrollo Urbano del Municipio de Managua*, formulado por la Agencia de Cooperación Internacional del Japón (JICA) y la Alcaldía de Managua en 2017.
+
+El diagnóstico integral de movilidad de JICA reveló que **aproximadamente el 26% de los viajes motorizados diarios en Managua se realizan en transporte selectivo**, evidenciando un peso relativo significativamente mayor al observado en otras capitales de la región (JICA, 2017). Esta dependencia estructural obedece a la baja frecuencia, saturación y rigidez de rutas del transporte colectivo tradicional.
+
+Dicho antecedente ratifica que en Managua el transporte selectivo no constituye un servicio suntuario, sino una modalidad de movilidad cotidiana prioritaria. Por consiguiente, evaluar y calibrar la tarificación dinámica de MoviGo responde a una necesidad real de garantizar un servicio accesible, justo y sostenible para la capital nicaragüense.

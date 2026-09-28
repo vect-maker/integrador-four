@@ -1,171 +1,171 @@
 # 6. Marco Teórico
 
-## 6.1 Eficiencia del Servicio y Fundamentos Operacionales
+## 6.1 Mercados Bilaterales de Movilidad y Tarificación Dinámica (Surge Pricing)
 
-La optimización de un servicio de transporte selectivo requiere comprender que su eficiencia no depende únicamente del número de vehículos disponibles, sino de la capacidad de la empresa para ubicar su flota de acuerdo con el comportamiento territorial y temporal de la demanda, responder oportunamente a los cambios del entorno y establecer tarifas coherentes con las condiciones reales en las que se presta el servicio.
+Las plataformas de transporte selectivo bajo demanda (*ride-hailing*) operan bajo la estructura económica de los **mercados bilaterales (*two-sided markets*)** (Rochet & Tirole, 2003; Armstrong, 2006). En estos entornos, la plataforma actúa como intermediario tecnológico entre dos grupos de agentes interdependientes: los pasajeros que demandan traslados y los socios conductores independientes que suministran capacidad vehicular.
 
-En una organización como Movi Go, cuyo ámbito de análisis se concentra en el área metropolitana del municipio de Managua, estas relaciones adquieren especial importancia debido a que las solicitudes de transporte presentan variaciones marcadas según el cuadrante urbano, la hora del día, el día de la semana, la disponibilidad de vehículos, las condiciones meteorológicas y los niveles tarifarios aplicados.
+El desafío operativo cardinal de este modelo radica en la volatilidad espaciotemporal de la demanda frente a una oferta vehicular con rigideces de desplazamiento físico. Para coordinar ambos lados del mercado en tiempo real, las plataformas implementan algoritmos de **tarificación dinámica (*surge pricing*)** (Cachon et al., 2017).
 
-Desde esta perspectiva, la distribución territorial de la flota y la determinación de tarifas constituyen problemas estrechamente vinculados. Una concentración excesiva de vehículos en zonas con baja demanda produce tiempos ociosos y desplazamientos improductivos, mientras que una disponibilidad insuficiente en zonas de elevada demanda incrementa el tiempo de espera de los usuarios, aumenta las distancias de aproximación y dispara la tasa de cancelaciones del servicio.
+Desde la perspectiva teórica, el multiplicador dinámico cumple dos funciones primordiales:
+1. **Racionamiento de Demanda:** Eleva el costo del servicio en zonas o momentos saturados, incentivando a los usuarios con viajes postergables o elásticos a desistir de la solicitud.
+2. **Incentivo de Oferta:** Incrementa los ingresos esperados de los choferes, atrayendo unidades desocupadas hacia los focos de alta demanda.
 
-De manera paralela, una estructura tarifaria que no responda adecuadamente al comportamiento de la oferta, la demanda y las condiciones operativas puede afectar tanto la percepción del usuario como la sostenibilidad económica del conductor y de la plataforma. Por ello, la toma de decisiones requiere una base analítica que permita observar estas variables de manera conjunta y no como elementos independientes.
-
----
-
-## 6.2 Arquitectura de Datos y Paradigma ELT vía API REST
-
-La construcción de esta base analítica comienza con la adecuada administración de los datos generados por la operación. En el entorno de Movi Go, las transacciones operativas no residen en una base de datos directamente accesible mediante sentencias SQL, sino que se encuentran encapsuladas detrás de una **API REST (`/movigo`)** que expone 7 endpoints especializados con respuestas estructuradas en formato JSON bajo el envoltorio `PaginatedResponse`:
-
-```json
-{
-  "items": [...],
-  "count": 50,
-  "total": 65000,
-  "offset": 0,
-  "limit": 50
-}
-```
-
-La arquitectura de datos se diseña bajo un flujo de dos etapas principales:
-
-### Etapa 1: Ingesta y Reconstrucción Relacional (Python + pandas &rarr; PostgreSQL)
-Se implementa un cliente automatizado en Python (`httpx`/`requests`) que maneja paginación optimizada (`limit` de hasta 200 registros) para extraer las colecciones de:
-* `/movigo/zonas`: Cuadrantes urbanos, coordenadas WGS84, estrato y bajada de bandera.
-* `/movigo/usuarios`: Pasajeros y preferencias de pago.
-* `/movigo/conductores`: Socios conductores, categorías de vehículos y estado operativo.
-* `/movigo/campanas`: Programas de incentivos y presupuestos.
-* `/movigo/clima`: Series diarias de lluvia, temperatura y congestión vial.
-* `/movigo/viajes`: Histórico transaccional de más de 65,000 viajes anuales.
-* `/movigo/telemetria`: Pings GPS y velocidad instantánea.
-
-Estos datos se cargan en memoria mediante **pandas** para validar llaves foráneas e integridad referencial, volcándose posteriormente en tablas crudas (*raw layer*) dentro de un motor relacional **PostgreSQL**.
-
-### Etapa 2: Transformación y Modelado Analítico con dbt Core (ELT)
-Una vez centralizados los datos en PostgreSQL, se activa el paradigma **ELT (Extracción, Carga y Transformación)** utilizando **dbt (Data Build Tool)**. Esta herramienta orquesta las transformaciones en SQL de manera modular y versionada, transitando desde vistas de limpieza inicial (*staging*) hasta tablas dimensionales materializadas (*marts*).
+No obstante, cuando el multiplicador supera los umbrales de tolerancia económica de los usuarios o cuando la congestión vial impide que los vehículos lleguen a tiempo, el mecanismo puede colapsar, induciendo tasas severas de cancelación mutua y distorsiones territoriales (Castillo et al., 2022).
 
 ---
 
-## 6.3 Modelado Dimensional y Metodología Kimball
+## 6.2 Microeconomía de la Demanda: Elasticidad-Precio y Cancelación de Viajes
 
-El modelado dimensional según la metodología Kimball busca estructurar la información analítica de forma intuitiva y de alto rendimiento de consulta, separando los acontecimientos medibles del negocio del contexto descriptivo que los rodea.
+El comportamiento del pasajero ante la cotización de un viaje se rige por la **teoría de la demanda y la elasticidad-precio** (Varian, 2014). La elasticidad-precio de la demanda ($\varepsilon$) mide la variación porcentual en la cantidad demandada de viajes ($Q$) ante un cambio porcentual en la tarifa ($P$):
 
-En Movi Go, el proceso de negocio central es la solicitud y realización del viaje. La arquitectura del Data Warehouse se diseña con un **Esquema en Estrella (*Star Schema*)**:
+$$\varepsilon = \frac{\Delta Q / Q}{\Delta P / P} = \frac{\partial Q}{\partial P} \cdot \frac{P}{Q}$$
 
-### Tabla de Hechos: `fact_viajes`
-Grano atómico de una fila por cada viaje solicitado. Contiene las métricas cuantitativas clave:
-* `tarifa_base` (NIO)
-* `multiplicador_dinamico` (factor continuo $\ge 1.0$)
-* `tarifa_final` (NIO cobrados)
-* `distancia_km`
-* `duracion_minutos`
-* `tiempo_espera_recogida_min`
-* `propina` (NIO)
-* `calificacion_usuario` y `calificacion_conductor`
+En servicios de transporte urbano:
+* **Demanda Inelástica ($|\varepsilon| < 1$):** El usuario requiere movilizarse de forma imperativa (ej. emergencias, compromisos laborales estrictos en horas pico) y tolera incrementos moderados en la tarifa.
+* **Demanda Elástica ($|\varepsilon| > 1$):** El usuario posee alternativas viables o alta sensibilidad presupuestaria, reaccionando al incremento del multiplicador mediante el desistimiento inmediato o la **cancelación del viaje tras haber solicitado el servicio**.
 
-### Dimensiones Conformadas:
-* **`dim_zona_origen` / `dim_zona_destino`:** Atributos del cuadrante urbano, estrato socioeconómico (`alto`, `medio`, `popular`, `comercial`), latitud, longitud y radio de servicio.
-* **`dim_conductor`:** Nombre, categoría de servicio (`movigo_estandar`, `movigo_comfort`, `movigo_moto`), modelo de auto, año y calificación histórica.
-* **`dim_usuario`:** Identificador, método de pago preferido (`efectivo`, `tarjeta`, `billetera_digital`) y calificación.
-* **`dim_tiempo`:** Fecha, día de semana, hora del día y franja operativa (pico matutino, valle, pico vespertino, nocturno).
-* **`dim_clima`:** Precipitación en mm, temperatura en °C, índice de congestión y condición atmosférica.
+En MoviGo, la tarifa final se define paramétricamente mediante la fórmula:
 
----
-
-## 6.4 Llaves Subrogadas y Pruebas Automatizadas de Calidad
-
-Dentro del Data Warehouse se implementan **Llaves Subrogadas (*Surrogate Keys*)** generadas mediante funciones hash deterministas (MD5). Estas llaves desacoplan la identidad analítica de los identificadores operativos de la API, permitiendo la preservación del historial dimensional ante posibles cambios futuros en los sistemas de origen.
-
-La confiabilidad del almacén de datos se garantiza mediante pruebas de calidad (*dbt tests*) declaradas en esquemas YAML que validan:
-* **Unicidad y no nulidad:** De todas las llaves primarias y foráneas.
-* **Reglas de negocio:** `multiplicador_dinamico >= 1.00`, `distancia_km >= 0`, `duracion_minutos >= 0` y `tarifa_final > 0`.
-* **Consistencia referencial:** Verificación de integridad entre viajes, conductores y zonas de Managua.
-
----
-
-## 6.5 Heterogeneidad Espaciotemporal y Recorridos Improductivos (Deadhead Miles)
-
-La literatura sobre servicios bajo demanda demuestra que la heterogeneidad espacial y temporal es una característica intrínseca de la movilidad (Xu et al.; Alonso-Mora et al.). En Managua, las solicitudes no se distribuyen uniformemente: corredores comerciales como Metrocentro o Pista Juan Pablo II concentran viajes en horas específicas, mientras que cuadrantes populares o residenciales actúan principalmente como generadores en la mañana y atractores en la tarde.
-
-Cuando un vehículo debe recorrer una distancia considerable sin pasajero antes de iniciar un viaje, incurre en **recorridos en vacío (*deadhead miles*)**. Estos traslados generan costos improductivos de combustible y depreciación de la unidad sin generar ingresos. La telemetría GPS (`/movigo/telemetria`) permite calcular y monitorear la velocidad instantánea y el estado de la flota para minimizar estos tiempos muertos.
-
----
-
-## 6.6 Dinámica de la Tarifa Paramétrica y Surge Pricing
-
-Movi Go calcula sus tarifas mediante un modelo paramétrico formal:
-
-$$\text{TarifaBase} = \text{BajadaBandera} + (18 \times \text{distancia\_km}) + (4.5 \times \text{duracion\_minutos})$$
+$$\text{TarifaBase} = \text{BajadaBandera}_z + (18.0 \times \text{distancia\_km}) + (4.5 \times \text{duracion\_minutos})$$
 
 $$\text{TarifaFinal} = \text{TarifaBase} \times \text{multiplicador\_dinamico}$$
 
-El multiplicador dinámico (*surge pricing*) opera en un rango habitual de **$1.00\times$ a $2.80\times$**, con picos de tormenta de hasta **$3.20\times$**. Su propósito teórico es racionar la demanda en horas de saturación vial y atraer conductores hacia áreas con déficit de oferta. 
-
-Sin embargo, como advierte la investigación empírica en *Nature Communications*, si la tarifa dinámica no está calibrada con precisión respecto a la elasticidad-precio de los usuarios, puede generar desbalances severos, aumentando drásticamente la tasa de cancelaciones.
+Donde el multiplicador dinámico oscila habitualmente entre $1.00\times$ y $2.80\times$, con techos extraordinarios de $3.20\times$ durante tormentas. Cuando la tarifa final resultante excede el excedente del consumidor, o cuando el tiempo de espera estimado se dilata debido a la congestión, se desencadena la cancelación del viaje (`estado_viaje = 'cancelado_usuario'`), representando una pérdida económica neta tanto para la plataforma como para el conductor.
 
 ---
 
-## 6.7 Inferencia Estadística y Validación de Hipótesis (Estadística II)
+## 6.3 Equidad Socio-Espacial y Disparidad Territorial en Managua
 
-Sobre los Data Marts consolidados se despliegan modelos estadísticos rigurosos:
+La teoría de la justicia espacial y el acceso al transporte urbano postula que las tarifas y la disponibilidad de los servicios de movilidad no deben discriminar ni excluir a las poblaciones de menores recursos (Harvey, 1973; Martens, 2016).
 
-### 1. Regresión Lineal Múltiple de la Demanda:
-Se modela el volumen de viajes diarios en función de las perturbaciones exógenas:
+En el municipio de Managua, la estructura urbana se caracteriza por una marcada heterogeneidad y fragmentación espacial. MoviGo divide la capital en 12 cuadrantes operativos agrupados en cuatro estratos socioeconómicos:
+* **Alto:** Villa Fontana, Las Colinas, Santo Domingo (bajada de bandera de C$ 70 a C$ 80 NIO).
+* **Medio:** Los Robles, Altamira, Bolonia, Bello Horizonte, Linda Vista (bajada de bandera de C$ 48 a C$ 55 NIO).
+* **Comercial:** Metrocentro / Eje Corporativo UCA (bajada de bandera de C$ 60 NIO).
+* **Popular:** Ciudad Jardín, Mercado Oriental, Mercado Roberto Huembes (bajada de bandera de C$ 35 a C$ 40 NIO).
+
+El estrato del cuadrante no solo condiciona la tarifa inicial, sino también los métodos de pago dominantes: en cuadrantes populares predomina el uso de **efectivo**, mientras que en estratos altos predomina la **tarjeta de crédito/débito** y las **billeteras digitales**. Un aumento abrupto en el multiplicador dinámico tiene un impacto asimétrico: mientras un usuario con tarjeta puede absorber el cargo marginal, un usuario con efectivo en un mercado popular que dispone de un monto exacto se ve obligado a cancelar el viaje al verse sobrepasado su presupuesto líquido.
+
+---
+
+## 6.4 Arquitectura de Datos y Paradigma ELT vía API REST
+
+Para investigar empíricamente este fenómeno, se requiere una arquitectura analítica moderna capaz de transformar registros transaccionales dispersos en un repositorio estructurado para la toma de decisiones. 
+
+Dado que MoviGo expone sus datos exclusivamente mediante una **API REST pública (`/movigo`)**, la solución tecnológica se estructura bajo el paradigma **ELT (Extract, Load, Transform)**:
+
+```mermaid
+flowchart TD
+    API["API REST (/movigo)"] -->|"HTTP GET Paginado (Python)"| RAW[("PostgreSQL: Capa Cruda")]
+    RAW -->|"dbt Core (Vistas SQL)"| STG["Staging (stg_*)"]
+    STG -->|"Modelado Kimball + dbt Tests"| MARTS[("Marts Analíticos: fact_viajes + dim_*")]
+    MARTS -->|"Python (scipy, statsmodels)"| STATS["Inferencia Estadística y Econometría"]
+    MARTS -->|"Python (Newton-Raphson, Bisección)"| NUM["Métodos Numéricos: Equilibrio y Elasticidad"]
+    MARTS -->|"Python (PuLP, Programación Dinámica)"| OPT["Optimización Prescriptiva: Mochila de Incentivos"]
+```
+
+### 1. Ingesta y Carga Cruda (Python &rarr; PostgreSQL):
+Un script automatizado en Python (`httpx`/`requests`) consume los endpoints `/movigo/zonas`, `/movigo/usuarios`, `/movigo/conductores`, `/movigo/campanas`, `/movigo/clima`, `/movigo/viajes` y `/movigo/telemetria`. Implementa paginación sistemática (`limit=200`, `offset` incremental) y asegura la integridad relacional antes de persistir los datos crudos en PostgreSQL. Adicionalmente, genera archivos **Parquet** con hashes criptográficos **SHA-256** para auditoría y trazabilidad DataOps.
+
+### 2. Transformación Analítica con dbt Core:
+La orquestación del almacén de datos se delega en **dbt (Data Build Tool)**, permitiendo versionar las transformaciones en SQL modular, materializar tablas intermedias y desacoplar la capa de staging de la capa de entrega analítica.
+
+---
+
+## 6.5 Modelado Dimensional Kimball para Análisis de Tarifas y Cancelaciones
+
+El diseño dimensional sigue los principios de Ralph Kimball, definiendo la medición de los viajes como el proceso de negocio central a través de un **Esquema en Estrella (*Star Schema*)**:
+
+### Tabla de Hechos Atómica: `fact_viajes`
+Cada registro modela un viaje solicitado en la plataforma (> 77,000 registros anuales):
+* **Métricas Monetarias:** `tarifa_base`, `multiplicador_dinamico`, `tarifa_final`, `propina`.
+* **Métricas Temporales y de Espera:** `duracion_minutos`, `distancia_km`, `tiempo_espera_minutos` ($\text{fecha\_hora\_inicio} - \text{fecha\_hora\_solicitud}$).
+* **Métricas de Calidad y Resultado:** `estado_viaje` (`completado`, `cancelado_usuario`, `cancelado_conductor`, `no_asignado`), `calificacion_usuario`, `calificacion_conductor`.
+* **Llaves Foráneas a Dimensiones Conformadas.**
+
+### Dimensiones Conformadas:
+* **`dim_zona_origen` / `dim_zona_destino`:** Cuadrante urbano, estrato (`alto`, `medio`, `popular`, `comercial`), coordenadas WGS84, radio de cobertura y tarifa de bajada de bandera.
+* **`dim_tiempo`:** Fecha, hora, día de la semana, clasificación de franja horaria (pico matutino, valle, pico vespertino, nocturno).
+* **`dim_clima`:** Registro exógeno diario sincronizado: precipitación acumulada (mm), temperatura (°C), índice de congestión vial (1.00 a 3.50) y condición atmosférica.
+* **`dim_conductor`:** Categoría de servicio (`movigo_estandar`, `movigo_comfort`, `movigo_moto`), placa, modelo, calificación histórica y tasa de aceptación.
+* **`dim_usuario`:** Identificador, teléfono, método de pago habitual (`efectivo`, `tarjeta`, `billetera_digital`) y calificación media.
+
+### Integridad y Llaves Subrogadas Hash (MD5):
+Todas las dimensiones incorporan **Llaves Subrogadas (*Surrogate Keys*)** deterministas generadas mediante funciones hash MD5, desacoplando el almacén analítico de los IDs operativos de la API. La calidad de los datos se audita mediante pruebas automáticas (*dbt tests*) que verifican unicidad, no nulidad y reglas de dominio (`multiplicador_dinamico >= 1.0`, tarifas positivas y relaciones foráneas válidas).
+
+---
+
+## 6.6 Inferencia Estadística y Econometría del Servicio (Estadística II)
+
+Sobre el Data Mart consolidado se despliegan modelos estadísticos formales para contrastar el comportamiento de las tarifas y las cancelaciones:
+
+### 1. Regresión Lineal Múltiple de la Demanda Diaria:
+Se modela la relación entre el volumen de solicitudes diarias y los choques exógenos:
 
 $$\text{ViajesDiarios} = \beta_0 + \beta_1 (\text{Precipitacion}_{mm}) + \beta_2 (\text{IndiceCongestion}) + \epsilon$$
 
-evaluando la tabla ANOVA completa ($SCA$, $SCE$, $SCT$, grados de libertad y significancia del estadístico $F$).
+evaluando la significancia global del modelo mediante la tabla ANOVA completa ($SCA$, $SCE$, $SCT$, grados de libertad y estadístico $F$).
 
-### 2. Verificación de Supuestos Gauss-Markov:
-* **Normalidad de residuos:** Pruebas de Shapiro-Wilk y Jarque-Bera.
-* **Homocedasticidad:** Pruebas de Breusch-Pagan y White.
-* **Independencia de errores:** Estadístico de Durbin-Watson para descartar autocorrelación serial.
+### 2. Verificación de Supuestos Clásicos de Gauss-Markov:
+* **Normalidad de Residuos:** Pruebas formales de Shapiro-Wilk y Jarque-Bera.
+* **Homocedasticidad:** Pruebas de Breusch-Pagan y White para descartar varianza no constante.
+* **Independencia de Errores:** Estadístico de Durbin-Watson para verificar ausencia de autocorrelación serial temporal.
 
-### 3. Batería de Contrastes de Hipótesis Formales:
-* **Prueba $t$ de Welch:** Contrastar si el multiplicador dinámico ($> 1.25\times$) eleva de forma estadísticamente significativa la tarifa final respecto a la tarifa base ($p < 0.05$).
-* **Prueba $z$ de dos proporciones:** Verificar si la tasa de cancelación en horas pico (07:00–08:59 y 17:00–18:59) es significativamente superior a la observada en horas valle.
-* **ANOVA de un factor:** Determinar si la duración de los viajes difiere significativamente según el estrato socioeconómico del destino (`alto`, `medio`, `popular`, `comercial`).
-* **Prueba $\chi^2$ de Independencia:** Contrastar la asociación entre el método de pago preferido y el estrato socioeconómico de origen ($p < 0.01$).
+### 3. Batería de Pruebas de Hipótesis Formales:
+* **Prueba $t$ de Welch:** Evaluar si el multiplicador dinámico ($m > 1.25\times$) genera un incremento estadísticamente significativo en la tarifa final respecto a la tarifa base ($p < 0.05$).
+* **Prueba $z$ de Dos Proporciones:** Determinar si la tasa de cancelación en horas pico (07:00–08:59, 17:00–18:59) difiere significativamente de la tasa en horas valle ($p < 0.05$).
+* **ANOVA de un Factor:** Contrastar si la duración de los viajes y los multiplicadores aplicados difieren significativamente según el estrato socioeconómico de la zona de destino (`alto`, `medio`, `popular`, `comercial`).
+* **Prueba de Independencia Chi-Cuadrado ($\chi^2$):** Verificar la dependencia estadística entre el `metodo_pago` y el `estrato_socioeconomico` del cuadrante de origen ($p < 0.01$).
 
 ---
 
-## 6.8 Métodos Cuantitativos y Numéricos en Modelación de Transporte
+## 6.7 Métodos Numéricos en Equilibrio Tarifario y Elasticidad
 
-La matemática computacional y el análisis numérico proporcionan marcos metodológicos flexibles para explorar el comportamiento de la plataforma y calibrar tarifas dinámicas:
+El análisis numérico provee herramientas para calcular puntos de balance y derivar sensibilidades donde las funciones analíticas carecen de formas cerradas:
 
 ### 1. Búsqueda de Raíces para el Multiplicador de Equilibrio:
-Se define la función de exceso de demanda en el mercado de viajes:
+A partir de la función de exceso de demanda empírica $f(m) = \text{Demanda}(m) - \text{Oferta}(m)$, se busca el multiplicador de equilibrio $m^*$ que satisfaga:
 
-$$f(m) = \text{Demanda}(m) - \text{Oferta}(m) = 0$$
+$$f(m^*) = 0$$
 
-Como marco de resolución, se consideran métodos iterativos de búsqueda de raíces (como **Bisección** o esquemas tipo **Newton-Raphson**) para aproximar el multiplicador de equilibrio $m^*$, evaluando su convergencia y estabilidad numérica ante diferentes volatilidades de mercado.
+Se implementan y comparan los métodos iterativos de **Bisección** (robusto pero de convergencia lineal) y **Newton-Raphson** (convergencia cuadrática local mediante aproximación de la derivada):
+
+$$m_{k+1} = m_k - \frac{f(m_k)}{f'(m_k)}$$
+
+reportando número de iteraciones, tolerancia y velocidad de convergencia.
 
 ### 2. Diferenciación Numérica de la Elasticidad-Precio:
-Se aproxima la elasticidad-precio de la demanda mediante diferencias finitas centradas de orden $\mathcal{O}(h^2)$:
+Se aproxima numéricamente la derivada de la demanda respecto a la tarifa mediante el esquema de **diferencias finitas centradas de orden $\mathcal{O}(h^2)$**:
 
-$$f'(P) \approx \frac{Q(P + h) - Q(P - h)}{2h}, \quad \varepsilon = f'(P) \cdot \frac{P}{Q(P)}$$
+$$f'(P) \approx \frac{Q(P + h) - Q(P - h)}{2h}$$
 
-determinando si la demanda en los cuadrantes de Managua es elástica ($|\varepsilon| > 1$) o inelástica ($|\varepsilon| < 1$).
+calculando el coeficiente puntual de elasticidad $\varepsilon = f'(P) \cdot \frac{P}{Q(P)}$ para identificar franjas de inelasticidad y zonas de alta sensibilidad al precio.
 
 ### 3. Integración Numérica (Regla de Simpson 1/3):
-A partir de la función horaria continua de intensidad de viajes $q(t)$ a lo largo de las 24 horas del día, se aplica la **Regla de Simpson 1/3** para calcular el volumen total acumulado diario de viajes con alta precisión numérica.
+A partir de la curva horaria continua de intensidad de viajes $q(t)$ a lo largo de las 24 horas del día, se aplica la **Regla de Simpson 1/3** para calcular numéricamente el volumen diario acumulado de viajes:
+
+$$\int_a^b q(t) \, dt \approx \frac{\Delta t}{3} \left[ q(t_0) + 4 \sum_{i \text{ impar}} q(t_i) + 2 \sum_{j \text{ par}} q(t_j) + q(t_n) \right]$$
 
 ---
 
-## 6.9 Modelos de Optimización Prescriptiva (Investigación de Operaciones)
+## 6.8 Optimización Prescriptiva: El Problema de la Mochila (Knapsack 0/1) para Incentivos a la Flota
 
-La fase prescriptiva formula y evalúa modelos canónicos de optimización como alternativas estructuradas para resolver problemas operativos de la empresa:
+Como alternativa a la tarificación dinámica excesiva que expulsa a los usuarios vulnerables, la plataforma dispone de campañas de bonificación económica para socios conductores (`/movigo/campanas`). El objetivo empresarial es seleccionar la combinación óptima de programas que maximice las horas adicionales de conexión vehicular bajo una **restricción presupuestaria de C$ 120,000 NIO**.
 
-### 1. Algoritmo Húngaro (Despacho Óptimo Viaje-Conductor):
-Dado un conjunto de $n$ conductores disponibles (monitoreados mediante `/movigo/telemetria`) y $n$ solicitudes simultáneas de viaje, se construye la matriz de tiempos de llegada $C = [c_{ij}]$ y se resuelve el problema de asignación biyectiva que minimiza el tiempo global de respuesta:
+Matemáticamente, este dilema se formula como un **Problema de la Mochila Binaria (0/1 Knapsack)**:
 
-$$\min \sum_{i=1}^n \sum_{j=1}^n c_{ij} x_{ij} \quad \text{s.a.} \quad \sum_{j=1}^n x_{ij} = 1, \quad \sum_{i=1}^n x_{ij} = 1, \quad x_{ij} \in \{0, 1\}$$
+$$\max \sum_{k=1}^K v_k \cdot z_k$$
 
-### 2. Algoritmo de Dijkstra (Ruta Más Corta Bajo Congestión y Lluvia):
-La red vial de Managua se modela como un grafo dirigido y ponderado $G = (V, E)$, donde los pesos de los arcos combinan la distancia física y el índice de congestión vial afectado por precipitaciones. Se implementa Dijkstra para determinar la ruta óptima en condiciones ordinarias vs. episodios de lluvia torrencial.
+sujeto a:
 
-### 3. Problema de la Mochila (Knapsack 0/1 para Campañas de Incentivos):
-A partir del catálogo de campañas de bonos (`/movigo/campanas`), la plataforma debe seleccionar qué programas activar para maximizar las horas adicionales de conexión de choferes bajo una restricción de presupuesto máximo de **C$ 120,000 NIO**:
+$$\sum_{k=1}^K w_k \cdot z_k \le W_{\max}$$
 
-$$\max \sum_{k \in \mathcal{K}} v_k \cdot z_k \quad \text{s.a.} \quad \sum_{k \in \mathcal{K}} w_k \cdot z_k \le 120\,000, \quad z_k \in \{0, 1\}$$
+$$z_k \in \{0, 1\}, \quad \forall k \in \{1, \dots, K\}$$
 
-Donde $v_k$ representa las horas ganadas y $w_k$ el costo presupuestario de la campaña $k$.
+Donde:
+* $z_k$: Variable de decisión binaria ($1$ si se activa la campaña de incentivos $k$, $0$ en caso contrario).
+* $v_k$: Retorno esperado en **incremento de horas de conexión** de la flota (`incremento_horas_conexion`).
+* $w_k$: Costo presupuestario en Córdobas asignado al bono (`costo_presupuesto_nio`).
+* $W_{\max} = 120\,000$ NIO: Presupuesto total máximo disponible.
+
+Este modelo prescriptivo se resuelve mediante **Programación Dinámica**, demostrando cómo la optimización de incentivos a conductores permite equilibrar la oferta vehicular sin encarecer abusivamente la tarifa al pasajero.

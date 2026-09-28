@@ -1,76 +1,87 @@
 # 1. Contextualización de la Investigación
 
-## 1.1 El Transporte Selectivo como Sistema Dinámico Complejo
+## 1.1 El Transporte Selectivo por Aplicación y el Rol Central de la Tarifa Dinámica
 
-La movilidad urbana constituye un sistema dinámico en el que convergen decisiones de los usuarios, disponibilidad de vehículos, configuración territorial, condiciones de circulación, tiempos de desplazamiento, costos operativos y variaciones del entorno.
+La movilidad urbana moderna en ciudades intermedias y capitales latinoamericanas ha experimentado una transformación profunda con la llegada de las plataformas tecnológicas de transporte bajo demanda (*ride-hailing*). A diferencia del servicio de taxi convencional de tarifa fija o negociada de manera discrecional, las aplicaciones móviles operan como mercados bilaterales (*two-sided markets*) donde convergen usuarios que demandan movilidad inmediata y socios conductores que ofrecen su capacidad de transporte.
 
-En el caso del transporte selectivo por aplicación móvil (*ride-hailing*), estas relaciones adquieren especial relevancia porque la prestación del servicio depende de la capacidad de ubicar oportunamente las unidades en aquellos sectores donde se concentra o se desplaza la demanda, responder con tiempos razonables de atención y mantener un esquema tarifario que guarde correspondencia con las condiciones reales de operación. Por ello, la distribución territorial de la flota y la definición de tarifas no pueden analizarse como procesos aislados, sino como componentes interdependientes de un mismo sistema de movilidad.
+En este ecosistema, la **tarificación dinámica (*surge pricing*)** constituye el mecanismo económico y operativo rector. Cuando la demanda de viajes supera la disponibilidad inmediata de vehículos en un sector, o cuando el entorno vial se deteriora por congestión o fenómenos climáticos, la plataforma eleva temporalmente las tarifas a través de un multiplicador continuo. Teóricamente, este mecanismo cumple un doble propósito equilibrador:
+1. **Racionar la demanda:** Desalentar los viajes prescindibles entre usuarios con menor disposición o capacidad de pago.
+2. **Estimular la oferta:** Atraer conductores hacia los cuadrantes con déficit de vehículos mediante la promesa de mayores ingresos por servicio.
 
-La presente investigación se sitúa en el área metropolitana del municipio de Managua y toma como unidad de análisis el servicio de transporte selectivo de la plataforma **Movi Go**. La empresa opera en la capital ofreciendo tres categorías de servicio diferenciadas:
-* **`movigo_estandar`**: Vehículos convencionales para traslados urbanos diarios.
-* **`movigo_comfort`**: Vehículos de mayor gama, espacio y confort.
-* **`movigo_moto`**: Motocicletas para traslados individuales rápidos y económicos.
+Sin embargo, en mercados urbanos marcados por disparidades socioeconómicas y limitaciones de infraestructura, la aplicación descalibrada de la tarifa dinámica introduce fricciones severas: incrementos abruptos en el precio final pueden inducir tasas críticas de cancelación de viajes por parte de pasajeros sensibles al costo, generar exclusión territorial en cuadrantes populares y provocar que los conductores rechacen o cancelen servicios en zonas congestionadas.
 
-El interés central consiste en estudiar la forma en que la flota se distribuye espacialmente y cómo esa distribución se relaciona con la demanda del servicio, las tarifas dinámicas aplicadas, las perturbaciones climáticas y la saturación de los principales corredores viales de Managua (*Metrocentro, Rotonda Centroamérica, Rotonda Rubén Darío, Pista Juan Pablo II*).
+La presente investigación se sitúa en el municipio de **Managua, Nicaragua**, y toma como unidad de análisis el servicio de transporte selectivo de la plataforma **MoviGo**. La plataforma opera en el área metropolitana de la capital conectando a pasajeros con una flota categorizada en tres modalidades:
+* **`movigo_estandar`**: Vehículos sedán convencionales para movilidad diaria.
+* **`movigo_comfort`**: Vehículos de gama superior con mayores prestaciones de comodidad y espacio.
+* **`movigo_moto`**: Unidades de dos ruedas para traslados individuales ágiles y de menor costo.
 
-La investigación adopta un enfoque integral en el que las condiciones operativas, territoriales y climáticas interactúan entre sí y modifican el comportamiento del servicio en distintos momentos, zonas y escenarios.
-
----
-
-## 1.2 Dimensión Operativa
-
-Desde la dimensión operativa, el funcionamiento de un servicio de transporte selectivo está condicionado por variables tales como disponibilidad de unidades, tiempo de respuesta, duración de los viajes, distancia recorrida, permanencia sin pasajero, frecuencia de solicitudes, horarios de mayor o menor demanda, asignación de vehículos y utilización efectiva de la flota. Estas variables permiten aproximarse al desempeño del sistema y reconocer si la oferta vehicular guarda correspondencia con la demanda observada.
-
-En consecuencia, su análisis revela concentraciones de unidades en determinados sectores, zonas con baja cobertura relativa, recorridos improductivos (*deadhead miles*) o periodos en los que la distribución existente no responde de manera adecuada a las solicitudes de los usuarios, derivando en cancelaciones tanto por parte de pasajeros frustrados por la espera como por parte de conductores ante trayectos poco convenientes.
+El foco central del estudio radica en **evaluar la eficacia del esquema de tarificación dinámica de MoviGo**, analizando la sensibilidad y elasticidad de la demanda, las tasas de cancelación resultantes, la equidad socio-espacial entre cuadrantes urbanos y las estrategias de asignación de incentivos económicos como alternativa sostenible al aumento punitivo de tarifas.
 
 ---
 
-## 1.3 Dimensión Territorial
+## 1.2 Dimensión Tarifaria Paramétrica y Mecánica del Surge Pricing
 
-La dimensión territorial agrega un nivel de complejidad determinante. Managua presenta una estructura urbana extensa, policéntrica y heterogénea, con sectores residenciales, comerciales, institucionales, educativos, productivos y de servicios que generan patrones de movilidad asimétricos.
+MoviGo opera bajo una regla de tarificación compuesta y paramétrica que calcula en primer lugar una tarifa base regular en función del cuadrante de origen, la distancia recorrida y el tiempo transcurrido, sobre la cual se aplica el multiplicador dinámico:
 
-En este contexto, la demanda de transporte no se distribuye de manera uniforme en el espacio ni permanece constante durante el día. La localización de puntos de origen y destino, la conectividad vial, las distancias entre zonas, los tiempos de desplazamiento y la accesibilidad a determinados sectores condicionan la conveniencia de mantener o movilizar unidades hacia determinadas áreas.
-
-Asimismo, la segmentación socioeconómica de los cuadrantes urbanos (clasificados en estratos `alto`, `medio`, `popular` y `comercial`) influye directamente en las preferencias de medios de pago (`efectivo`, `tarjeta`, `billetera_digital`), en la tolerancia a la tarifa y en las dinámicas de generación y atracción de viajes.
-
----
-
-## 1.4 Dimensión Tarifaria y Tarifa Dinámica (Surge Pricing)
-
-El sistema tarifario constituye el mecanismo económico central para equilibrar la oferta y la demanda. Movi Go opera mediante un esquema paramétrico estructurado que calcula una tarifa base y le aplica un factor multiplicador dinámico:
-
-$$\text{TarifaBase} = \text{BajadaBandera} + (18 \times \text{distancia\_km}) + (4.5 \times \text{duracion\_minutos})$$
+$$\text{TarifaBase} = \text{BajadaBandera}_z + (18.0 \times \text{distancia\_km}) + (4.5 \times \text{duracion\_minutos})$$
 
 $$\text{TarifaFinal} = \text{TarifaBase} \times \text{multiplicador\_dinamico}$$
 
 Donde:
-* **Bajada de Bandera:** Tarifa inicial fija según el cuadrante urbano de partida, oscilando entre **C$ 30.0 y C$ 90.0 NIO**.
-* **Costo por Distancia:** C$ 18.0 NIO por kilómetro recorrido.
-* **Costo por Tiempo:** C$ 4.5 NIO por minuto de trayecto.
-* **Multiplicador Dinámico (*Surge Pricing*):** Factor continuo que oscila habitualmente entre **$1.00\times$ y $2.80\times$**, pudiendo alcanzar picos de hasta **$3.20\times$** durante episodios de tormenta y colapso vial.
+* **$\text{BajadaBandera}_z$:** Costo fijo de inicio de servicio asociado al cuadrante urbano de partida $z$, con valores que oscilan entre **C$ 35.0 y C$ 80.0 NIO**.
+* **Costo por Distancia:** Cargo paramétrico de **C$ 18.0 NIO** por cada kilómetro recorrido.
+* **Costo por Tiempo:** Cargo paramétrico de **C$ 4.5 NIO** por cada minuto transcurrido de trayecto.
+* **Multiplicador Dinámico ($m$):** Factor escalar continuo que oscila regularmente entre **$1.00\times$ (tarifa regular) y $2.80\times$ (alta demanda)**, alcanzando techos extraordinarios de hasta **$3.20\times$** durante episodios de tormenta y colapso circulatorio.
 
-Estudiar este sistema tarifario junto con la distribución territorial permite valorar si las reglas de cobro mantienen coherencia con los costos reales de desplazamiento, evaluar la elasticidad-precio de los usuarios ante aumentos del multiplicador y determinar puntos de equilibrio que eviten expulsar la demanda o provocar desabastecimiento de conductores.
-
----
-
-## 1.5 Dimensión Climática y Congestión Vial
-
-En Managua, las condiciones meteorológicas constituyen una variable exógena crítica. La capital experimenta lluvias torrenciales estacionales que provocan escorrentías urbanas e inundaciones temporales en cauces y pasos viales, reduciendo drásticamente la velocidad promedio de circulación vehicular.
-
-La plataforma Movi Go registra esta dinámica a través de series diarias donde se asocia la precipitación acumulada (`precipitacion_mm`), la temperatura ambiental (`temperatura_c`), la condición atmosférica (`despejado`, `nublado`, `lluvia_ligera`, `tormenta`) y un **índice de congestión vial** continuo que escala desde $1.00$ (flujo vehicular libre) hasta $3.50$ (colapso de la red vial por tormenta).
-
-Esta articulación permite evaluar objetivamente cómo los episodios de precipitación generan un efecto dual: expanden repentinamente la demanda de viajes al tiempo que reducen la velocidad de la flota y retienen a las unidades ocupadas por más tiempo.
+Esta estructura tarifaria vuelve imperativo indagar si los valores del multiplicador efectivamente convergen hacia un **punto de equilibrio de mercado ($m^*$)** o si, por el contrario, operan en rangos de sobredimensión que provocan la pérdida recurrente de usuarios y servicios no concretados.
 
 ---
 
-## 1.6 Perspectiva de Ciencia de Datos y Acceso a Datos vía API
+## 1.3 Dimensión Socio-Espacial y Heterogeneidad de Cuadrantes
 
-Desde la perspectiva de Ciencia de Datos, el proyecto se sustenta en un entorno transaccional sintético generado para simular la operación real de Movi Go durante un año completo, abarcando **más de 65,000 registros de viajes**, un directorio de usuarios y socios conductores categorizados, cuadrantes urbanos georreferenciados en coordenadas WGS84, campañas de bonos e incentivos, series climáticas y telemetría GPS continua de los vehículos.
+La estructura territorial de Managua es dispersa, policéntrica y marcadamente estratificada. La operación de MoviGo cubre 12 cuadrantes urbanos representativos, clasificados formalmente según su estrato socioeconómico:
 
-Un elemento metodológico y arquitectónico central de esta investigación es que **el acceso a los datos de origen no se realiza mediante consultas SQL directas a una base de datos relacional, sino única y exclusivamente a través de una API REST (`/movigo`)**. 
+* **Estrato Alto:** Villa Fontana (C$ 70 base), Las Colinas (C$ 75 base) y Santo Domingo (C$ 80 base).
+* **Estrato Medio:** Los Robles (C$ 55 base), Altamira (C$ 50 base), Bolonia (C$ 55 base), Bello Horizonte (C$ 48 base) y Linda Vista (C$ 50 base).
+* **Estrato Comercial:** Metrocentro / Eje Corporativo UCA (C$ 60 base).
+* **Estrato Popular:** Ciudad Jardín (C$ 40 base), Mercado Oriental (C$ 35 base) y Mercado Roberto Huembes (C$ 38 base).
 
-Por consiguiente, la estrategia de ingeniería de datos requiere:
-1. Desarrollar un **cliente de extracción en Python** (`httpx`/`requests`) que maneje paginación estructurada (`offset`, `limit` hasta 200 registros) y descargue los registros de los 7 endpoints de la plataforma.
-2. Cargar los datos extraídos en memoria estructurada con **pandas**, reconstruir y validar las relaciones entre tablas (llaves foráneas, consistencia de IDs de zonas y usuarios).
-3. Ingestar estas tablas en una base de datos relacional propia en **PostgreSQL** para consolidar la capa cruda (*raw/staging*).
-4. A partir de dicha base de datos, desplegar el pipeline ELT con **dbt** para estructurar el modelo dimensional analítico (*Data Warehouse*) y ejecutar los análisis estadísticos, los métodos numéricos y los modelos de optimización prescriptiva.
+Esta segmentación socioeconómica y territorial condiciona de manera directa el comportamiento del usuario:
+1. **Disparidad en la Elasticidad-Precio:** Los usuarios de sectores populares presentan una sensibilidad al precio sustancialmente más elástica que aquellos en cuadrantes corporativos o de estrato alto.
+2. **Condicionamiento de Medios de Pago:** Existe una relación estrecha entre el estrato de la zona y la adopción de modalidades de pago (`efectivo`, `tarjeta`, `billetera_digital`). Un incremento del multiplicador dinámico sobre viajes en efectivo puede desbordar el circulante disponible del pasajero al momento de la solicitud, motivando la cancelación inmediata.
+
+---
+
+## 1.4 Dimensión Climática y Choques Exógenos de Tráfico
+
+En Managua, el clima tropical de sabana impone episodios intensos de lluvias torrenciales y tormentas convectivas. Dada la topografía y el déficit histórico de drenaje pluvial de la capital, las precipitaciones generan inundaciones temporales en cauces viales y rotondas neurálgicas (*Rotonda Centroamérica, Metrocentro, Rotonda Rubén Darío, Pista Juan Pablo II*).
+
+La plataforma MoviGo registra esta dinámica en sus series meteorológicas diarias mediante cuatro variables fundamentales:
+* Precipitación acumulada (`precipitacion_mm`).
+* Temperatura media ambiental (`temperatura_c`).
+* Condición del cielo (`despejado`, `nublado`, `lluvia_ligera`, `tormenta`).
+* **Índice de Congestión Vial:** Indicador continuo que escala desde $1.00$ (flujo vehicular libre) hasta $3.50$ (colapso de la red circulatoria).
+
+Los días de tormenta generan un choque simultáneo en el mercado: la demanda de viajes se dispara al buscar los peatones refugio en vehículos selectivos, mientras que la oferta de conductores se contrae o avanza a velocidades drásticamente reducidas. En respuesta, el algoritmo de MoviGo activa multiplicadores extremos ($2.50\times - 3.20\times$). Evaluar si esta respuesta tarifaria equilibra el sistema o exacerba la insatisfacción y la cancelación constituye una prioridad investigativa.
+
+---
+
+## 1.5 Alternativa Operativa: Campañas de Incentivos y Subsidios de Oferta
+
+Frente a la limitación de apoyarse exclusivamente en la tarificación dinámica punitiva para resolver el déficit de vehículos, MoviGo dispone de un portafolio de **campañas de incentivos y bonos para socios conductores** (`/movigo/campanas`). Estos programas buscan inyectar horas activas de conexión en franjas y zonas críticas (`meta_viajes`, `hora_pico_lluvia`, `zona_alta_demanda`) sin traspasar íntegramente el sobrecosto al usuario final.
+
+La optimización de estos programas bajo restricciones de presupuesto operativo (problema de la mochila binaria) emerge como la contraparte prescriptiva natural al análisis tarifario: resolver la escasez de oferta mediante incentivos planificados en lugar de subidas desproporcionadas del multiplicador dinámico.
+
+---
+
+## 1.6 Perspectiva de Ciencia de Datos y Acceso Exclusivo vía API REST
+
+Metodológicamente, la investigación se apoya en un entorno de simulación transaccional de alta fidelidad que modela un año completo de operaciones de MoviGo, con **77,386 registros de viajes**, 19,375 pings de telemetría GPS, catálogos georreferenciados de zonas y conductores, y series meteorológicas continuas.
+
+Una condición rectora del proyecto es que **el acceso a los datos no se realiza mediante volcados directos de bases de datos ni sentencias SQL al servidor transaccional, sino única y exclusivamente consumiendo una API REST pública (`http://4.157.251.192:8000/movigo`)**.
+
+En consecuencia, el proceso analítico requiere:
+1. Diseñar un pipeline de extracción paginada en Python (`httpx`/`requests`).
+2. Consolidar los registros en una base de datos relacional local en **PostgreSQL**.
+3. Desplegar un almacén dimensional (*Data Warehouse*) modelado y transformado mediante **dbt (Data Build Tool)**.
+4. Aplicar técnicas de inferencia estadística, métodos numéricos de búsqueda de raíces y algoritmos de optimización combinatoria sobre los Data Marts resultantes.
