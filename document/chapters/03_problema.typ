@@ -9,7 +9,7 @@ En los servicios de transporte selectivo por aplicación móvil (_ride-hailing_)
 Sin embargo, en la práctica operacional de la plataforma *MoviGo* en el municipio de Managua, este mecanismo enfrenta un dilema crítico de calibración:
 
 + *Sobredimensión del Multiplicador:* Si el algoritmo eleva la tarifa de forma desproporcionada ante un pico de demanda o una lluvia repentina, se sobrepasa la elasticidad-precio y la disposición a pagar de los usuarios, disparando la *tasa de cancelación por parte del usuario* y generando abandono de la plataforma @hall2015.
-+ *Subestimación del Multiplicador:* Por el contrario, si la tarifa se mantiene baja o estática durante periodos de alta saturación vial, los conductores desocupados no encuentran incentivo económico suficiente para desplazarse hacia los puntos críticos. Esto genera una escasez prolongada de vehículos, tiempos excesivos de espera y una elevada *tasa de cancelación por parte del conductor*, quien rechaza atender traslados lejanos o poco remunerativos @castillo2022.
++ *Subestimación del Multiplicador:* Por el contrario, si la tarifa se mantiene baja o estática durante periodos de alta saturación vial, los conductores desocupados no encuentran incentivo económico suficiente para desplazarse hacia los puntos críticos. Esto genera una escasez prolongada de vehículos, tiempos excesivos de espera y una elevada *tasa de cancelación por parte del conductor*, quien rechaza atender traslados lejanos o poco remunerativos @castillo2017.
 
 El problema central no radica en la existencia de la tarifa dinámica, sino en la *ausencia de una calibración cuantitativa del multiplicador de equilibrio ($m^*$)* que iguale la oferta y la demanda sin generar externalidades operativas destructivas:
 
