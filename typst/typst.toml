@@ -1,0 +1,13 @@
+[package]
+name = "movigo-integrador"
+version = "0.1.0"
+entrypoint = "document.typ"
+authors = [
+  "Br. Miranda Pérez, José Daniel",
+  "Br. Aguilar Rodríguez, Kendall Ezequiel",
+  "Br. Oyarzo Morales, Ricardo Alberto",
+  "Br. Medrano Dávila, Luis David",
+]
+description = "Evaluación del Esquema de Tarificación Dinámica del Servicio MoviGo en Managua"
+discipline = "computer-science"
+keywords = ["ride-hailing", "surge-pricing", "typst", "dbt", "managua"]

@@ -1,0 +1,9 @@
+{
+  "lsp": {
+    "tinymist": {
+      "settings": {
+        "exportPdf": "never"
+      }
+    }
+  }
+}

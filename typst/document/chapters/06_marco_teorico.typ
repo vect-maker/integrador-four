@@ -1,3 +1,6 @@
+#show bibliography: none
+#bibliography("../../references.bib")
+
 = Marco Teórico
 
 == Mercados Bilaterales de Movilidad y Tarificación Dinámica (Surge Pricing)

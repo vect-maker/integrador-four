@@ -15,12 +15,12 @@ build-all: build-doc build-slides
 
 # Compilar el documento de investigación a PDF
 build-doc:
-    typst compile --root typst typst/document.typ typst/document.pdf
+    typst compile typst/document.typ typst/document.pdf
     @echo "✅ Documento generado en typst/document.pdf"
 
 # Compilar el documento en modo observador en tiempo real (Live Reload, < 30ms)
 watch-doc:
-    typst watch --root typst typst/document.typ typst/document.pdf
+    typst watch typst/document.typ typst/document.pdf
 
 # Mostrar metadatos y páginas del documento
 info-doc:
@@ -28,12 +28,12 @@ info-doc:
 
 # Compilar las diapositivas a PDF (16:9)
 build-slides:
-    typst compile --root typst typst/slides.typ typst/slides.pdf
+    typst compile typst/slides.typ typst/slides.pdf
     @echo "✅ Diapositivas generadas en typst/slides.pdf"
 
 # Compilar diapositivas en modo observador en tiempo real (Live Reload)
 watch-slides:
-    typst watch --root typst typst/slides.typ typst/slides.pdf
+    typst watch typst/slides.typ typst/slides.pdf
 
 # Mostrar metadatos y páginas de las diapositivas
 info-slides:

@@ -19,7 +19,7 @@ Y en tercer lugar, la *dimensión tarifaria*: un esquema de precios estático no
 👉 _Transición:_ "Veamos qué respaldo encontramos en la literatura científica para modelar este acoplamiento."
 ]
 
-#let zonas = json("/data/zonas.json")
+#let zonas = json("../data/zonas.json")
 
 #text(size: 9.5pt, fill: text-muted)[
   La movilidad bajo demanda no responde a causas aisladas: la ubicación oportuna de unidades, la razonabilidad tarifaria y el entorno urbano configuran un sistema complejo en Managua.

@@ -19,7 +19,7 @@ Tercero: *Vulnerabilidad ante Eventos Pluviales*. Las lluvias torrenciales en Ma
 👉 _Transición:_ "Para dar una respuesta rigurosa y cuantificable a este problema, estructuramos nuestros objetivos."
 ]
 
-#let zonas = json("/data/zonas.json")
+#let zonas = json("../data/zonas.json")
 
 #grid(
   columns: (1.2fr, 1fr),

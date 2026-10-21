@@ -1,3 +1,6 @@
+#show bibliography: none
+#bibliography("../../references.bib")
+
 = Justificación
 
 == Justificación Práctica: Sostenibilidad Económica y Retención de Clientes para MoviGo

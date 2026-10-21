@@ -1,3 +1,6 @@
+#show bibliography: none
+#bibliography("../../references.bib")
+
 = Contextualización de la Investigación
 
 == Sistema de Movilidad Urbana y el Rol del Transporte Selectivo por Plataforma

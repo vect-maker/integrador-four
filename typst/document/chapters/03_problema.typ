@@ -1,4 +1,6 @@
 #import "../template.typ": callout
+#show bibliography: none
+#bibliography("../../references.bib")
 
 = Planteamiento del Problema
 

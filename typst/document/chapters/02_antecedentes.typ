@@ -1,3 +1,6 @@
+#show bibliography: none
+#bibliography("../../references.bib")
+
 = Antecedentes de la Investigación
 
 == Asignación Dinámica, Reposicionamiento y Distribución Espaciotemporal de la Flota

@@ -12,7 +12,7 @@
   department: "Departamento de Tecnología",
   institution: "Área de Conocimiento de Ciencias Básicas y Tecnología",
   university: "Universidad Nacional Autónoma de Nicaragua, Managua",
-  logo: "/assets/unan-logo.jpg",
+  logo: "../assets/unan-logo.jpg",
   work_type: "Informe de Proyecto Integrador IV",
   location: "Managua, Nicaragua",
   abstract: none,
