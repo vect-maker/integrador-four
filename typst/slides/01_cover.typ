@@ -1,6 +1,6 @@
 #import "@preview/touying:0.6.1": *
-#import "../template.typ": *
-#import "../metadata.typ": authors, tutor, career, location
+#import "template.typ": *
+#import "/metadata.typ": authors, tutor, career, location
 
 == 01. Portada: Caso Movi Go
 
@@ -32,7 +32,7 @@ Trabajamos sobre una base de más de *65,000 registros* modelados a través de l
           columns: (1fr, auto),
           align: (left + horizon, right + horizon),
           text(size: 8pt, weight: "bold", fill: brand-red)[CASO DE ESTUDIO: MOVI GO • TRANSPORTE SELECTIVO],
-          image("../assets/unan-logo.jpg", width: 3.2cm)
+          image("/assets/unan-logo.jpg", width: 3.2cm)
         )
         #v(2pt)
         #text(size: 14pt, weight: "bold", fill: brand-dark)[Optimización territorial de la flota y del _sistema tarifario_ en Managua]

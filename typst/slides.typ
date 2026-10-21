@@ -1,7 +1,7 @@
 #import "@preview/touying:0.6.1": *
 #import themes.metropolis: *
-#import "template.typ": *
-#import "metadata.typ": title-presentation, subtitle-presentation, authors, tutor, career, university, institutional-motto
+#import "slides/template.typ": *
+#import "metadata.typ": title-presentation, subtitle-presentation, authors, tutor, career, university
 
 #show: metropolis-theme.with(
   aspect-ratio: "16-9",

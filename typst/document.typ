@@ -1,4 +1,4 @@
-#import "template.typ": project, callout
+#import "document/template.typ": project, callout
 #import "metadata.typ": title, authors, tutor, course, career, institution, location
 
 #show: project.with(
@@ -11,27 +11,26 @@
   location: location,
 )
 
-#include "chapters/01_contexto.typ"
+#include "document/chapters/01_contexto.typ"
 #pagebreak()
 
-#include "chapters/02_antecedentes.typ"
+#include "document/chapters/02_antecedentes.typ"
 #pagebreak()
 
-#include "chapters/03_problema.typ"
+#include "document/chapters/03_problema.typ"
 #pagebreak()
 
-#include "chapters/04_justificacion.typ"
+#include "document/chapters/04_justificacion.typ"
 #pagebreak()
 
-#include "chapters/05_objetivos.typ"
+#include "document/chapters/05_objetivos.typ"
 #pagebreak()
 
-#include "chapters/06_marco_teorico.typ"
+#include "document/chapters/06_marco_teorico.typ"
 #pagebreak()
 
-#include "chapters/07_metodologia.typ"
+#include "document/chapters/07_metodologia.typ"
 #pagebreak()
-
 
 #bibliography(
   "references.bib",

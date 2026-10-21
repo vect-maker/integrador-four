@@ -1,5 +1,5 @@
 #import "@preview/touying:0.6.1": *
-#import "../template.typ": *
+#import "template.typ": *
 
 == 06. Matriz de Variables y Descriptores
 

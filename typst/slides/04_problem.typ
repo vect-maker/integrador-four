@@ -1,5 +1,5 @@
 #import "@preview/touying:0.6.1": *
-#import "../template.typ": *
+#import "template.typ": *
 
 == 04. Problema: Desbalance Espacial
 
@@ -19,7 +19,7 @@ Tercero: *Vulnerabilidad ante Eventos Pluviales*. Las lluvias torrenciales en Ma
 👉 _Transición:_ "Para dar una respuesta rigurosa y cuantificable a este problema, estructuramos nuestros objetivos."
 ]
 
-#let zonas = json("/document/data/zonas.json")
+#let zonas = json("/data/zonas.json")
 
 #grid(
   columns: (1.2fr, 1fr),
@@ -52,7 +52,7 @@ Tercero: *Vulnerabilidad ante Eventos Pluviales*. Las lluvias torrenciales en Ma
           text(size: 7.5pt)[#str(z.tarifa_base_bajada_bandera) C\$]
         )).flatten()
       )
-      #text(size: 7.5pt, fill: text-muted)[(Datos extraídos de `document/data/zonas.json`)]
+      #text(size: 7.5pt, fill: text-muted)[(Datos extraídos de `data/zonas.json`)]
     ]
   ]
 )
