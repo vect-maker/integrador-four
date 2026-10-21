@@ -8,7 +8,7 @@ Este directorio contiene los capítulos modulares y la plantilla académica del 
 
 ```text
 document/
-├── template.typ             # Plantilla académica (portada, márgenes, estilos, callouts)
+├── template.typ             # Plantilla académica (portada, márgenes, estilos, formato APA 7)
 └── chapters/                # Capítulos modulares del documento
     ├── 01_contexto.typ      # Contextualización y mecánica tarifaria paramétrica
     ├── 02_antecedentes.typ  # Estado del arte y literatura de surge pricing

@@ -66,11 +66,11 @@ El diseño dimensional sigue los principios de Ralph Kimball, definiendo el cicl
 
 A partir de la base de datos analítica estructurada mediante dbt, la investigación contempla el abordaje de tres pilares cuantitativos complementarios, cuyos modelos y algoritmos específicos se encuentran en fase de estudio y definición:
 
-=== 1. Fundamentos de Inferencia y Econometría en Transporte
+=== Inferencia y Econometría en Transporte
 La literatura en economía del transporte sustenta que la demanda de movilidad y las decisiones de cancelación no responden de forma aislada a las tarifas, sino que están condicionadas por perturbaciones exógenas como la congestión vial y las precipitaciones meteorológicas. Los modelos econométricos permiten aislar el efecto marginal de cada factor contextual, verificar supuestos de estabilidad de varianza e independencia residual, y contrastar hipótesis estadísticas sobre la existencia de disparidades en el servicio según el cuadrante urbano o la franja horaria.
 
-=== 2. Fundamentos de Equilibrio de Mercado y Análisis Numérico
+=== Equilibrio de Mercado y Análisis Numérico
 En los sistemas de transporte bajo demanda, la condición teórica de equilibrio se define a través de la función de exceso de demanda, la cual busca identificar el multiplicador tarifario que balancee las solicitudes entrantes con la disponibilidad efectiva de unidades. Dado que las funciones reales de oferta y demanda suelen carecer de soluciones analíticas cerradas debido a la no linealidad del tráfico y la dispersión geográfica, el análisis numérico proporciona herramientas iterativas para aproximar raíces de equilibrio y estimar coeficientes de sensibilidad marginal (elasticidad) a partir de observaciones discretas.
 
-=== 3. Fundamentos de Optimización y Asignación de Recursos
+=== Optimización y Asignación de Recursos
 Como alternativa a trasladar todo el costo de congestión al usuario mediante incrementos tarifarios continuos, la investigación de operaciones provee marcos de optimización de recursos limitados. Estos modelos permiten formular problemas de asignación presupuestaria orientados a maximizar el impacto de programas de incentivos o bonificaciones para conductores, buscando fortalecer la oferta en zonas y periodos críticos sin comprometer la accesibilidad económica de los pasajeros.

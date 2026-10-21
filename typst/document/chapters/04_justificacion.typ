@@ -39,7 +39,7 @@ Un algoritmo de tarifa dinámica descalibrado actúa como una barrera económica
 
 == Coherencia Curricular y Formativa (Integrador IV)
 
-El presente estudio satisface plenamente las exigencias académicas y formativas del *Integrador IV* de la carrera de Ingeniería en Ciencia de Datos, articulando los conocimientos de las cinco asignaturas del semestre en torno a un único hilo conductor coherente:
+El presente estudio satisface plenamente las exigencias académicas y formativas del *Integrador IV* de la carrera de Ingeniería en Ciencias de Datos, articulando los conocimientos de las cinco asignaturas del semestre en torno a un único hilo conductor coherente:
 
 - *Bases de Datos Analíticas:* Arquitectura ELT, diseño dimensional en estrella (`fact_viajes`) y materialización con *dbt Core* sobre PostgreSQL.
 - *Programación en Scripting:* Ingesta automatizada de la API REST, paginación, serialización Parquet y control de integridad DataOps.

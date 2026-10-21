@@ -1,5 +1,3 @@
-#import "../template.typ": callout
-
 = Diseño Metodológico
 
 El diseño metodológico describe la secuencia técnica y computacional concebida para la recolección, ingesta, transformación y estructuración de los datos del servicio MoviGo, así como el marco general para los análisis cuantitativos posteriores orientados a evaluar la tarifa dinámica.
@@ -38,13 +36,3 @@ A partir de la base de datos analítica consolidada y transformada mediante dbt,
 + *Modelación e Inferencia Estadística:* Orientada a evaluar la sensibilidad de la demanda ante fluctuaciones en la tarifa, examinar la incidencia de choques meteorológicos sobre el volumen de viajes y contrastar si existen variaciones significativas en la propensión a la cancelación según el estrato socioeconómico o la franja horaria.
 + *Métodos Numéricos y Sensibilidad:* Orientada a estudiar el comportamiento de la elasticidad-precio y explorar puntos de equilibrio tarifario que equilibren las solicitudes de pasajeros y la disponibilidad de vehículos.
 + *Optimización Operativa:* Orientada a formular y evaluar esquemas de asignación eficiente de recursos o incentivos presupuestarios dirigidos a socios conductores para fortalecer la oferta vehicular en zonas o periodos con alta demanda.
-
-#v(1em)
-
-#callout(
-  title: "Nota Metodológica sobre Fases Posteriores de Investigación",
-  color: "amber",
-  [
-    Las formulaciones matemáticas definitivas, algoritmos numéricos de cálculo, pruebas de hipótesis exactas y modelos de optimización prescriptiva específicos se encuentran actualmente en fase de formulación e investigación exploratoria. Dichos modelos serán definidos, calibrados y documentados en detalle en entregas futuras del proyecto, una vez que la base de datos analítica esté completamente materializada mediante dbt y se disponga de los resultados del análisis exploratorio de datos (EDA).
-  ]
-)

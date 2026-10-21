@@ -1,15 +1,54 @@
-#import "document/template.typ": project, callout
-#import "metadata.typ": title, authors, tutor, course, career, institution, location
+#import "document/template.typ": project, badge
+#import "metadata.typ": (
+  title,
+  authors,
+  tutor,
+  course,
+  career,
+  department,
+  area,
+  institution,
+  university,
+  campus,
+  location,
+  date,
+  institutional-motto,
+)
+#import "document/content/abstract.typ": (
+  resumen-es,
+  palabras-clave-es,
+)
 
 #show: project.with(
   title: title,
   authors: authors,
-  advisor: tutor,
+  tutor: tutor,
+  date: date,
   course: course,
   career: career,
+  department: department,
+  area: area,
   institution: institution,
+  university: university,
+  campus: campus,
   location: location,
+  institutional-motto: institutional-motto,
 )
+
+// ==========================================
+// RESUMEN
+// ==========================================
+= Resumen
+
+#resumen-es
+
+*Palabras clave:* #palabras-clave-es.join(", ").
+
+#pagebreak()
+
+// ==========================================
+// CAPÍTULOS DE LA INVESTIGACIÓN
+// ==========================================
 
 #include "document/chapters/01_contexto.typ"
 #pagebreak()
@@ -32,8 +71,14 @@
 #include "document/chapters/07_metodologia.typ"
 #pagebreak()
 
+// ==========================================
+// REFERENCIAS (NORMA APA 7MA EDICIÓN)
+// ==========================================
+= Referencias
+
 #bibliography(
   "references.bib",
-  title: [Referencias Bibliográficas],
-  style: "ieee"
+  style: "apa",
+  title: none,
+  full: true
 )

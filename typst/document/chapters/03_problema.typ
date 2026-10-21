@@ -1,4 +1,3 @@
-#import "../template.typ": callout
 #show bibliography: none
 #bibliography("../../references.bib")
 
@@ -6,7 +5,7 @@
 
 == El Dilema de Calibración de la Tarifa Dinámica en Mercados de Movilidad
 
-En los servicios de transporte selectivo por aplicación móvil (_ride-hailing_), la fijación de precios dinámicos (_surge pricing_) opera como el mecanismo regulador fundamental para coordinar la oferta vehicular dispersa con una demanda volátil en tiempo real. La teoría económica postula que el multiplicador tarifario debe actuar como una señal de mercado que racione las solicitudes no urgentes y atraiga conductores hacia los sectores con escasez de unidades disponibles @cachon2017 @zha2018.
+En los servicios de transporte selectivo por aplicación móvil (_ride-hailing_), la fijación de precios dinámicos (_surge pricing_) opera como el mecanismo regulador fundamental para coordinar la oferta vehicular dispersa con una demanda volátil en tiempo real. La teoría económica postula que el multiplicador tarifario debe actuar como una señal de mercado que racione las solicitudes no urgentes y atraiga conductores hacia los sectores con escasez de unidades disponibles @cachon2017; @zha2018.
 
 Sin embargo, en la práctica operacional de la plataforma *MoviGo* en el municipio de Managua, este mecanismo enfrenta un dilema crítico de calibración:
 
@@ -55,12 +54,6 @@ Sin un pipeline automatizado de ingeniería de datos (ingesta en Python, almacen
 
 == Formulación del Problema Central de Investigación
 
-A partir de las problemáticas descritas, el problema central de investigación se sintetiza en la siguiente formulación:
+A partir de las problemáticas descritas, el problema central de investigación se sintetiza en la siguiente interrogante formulada:
 
-#callout(
-  title: "Pregunta Central de Investigación",
-  color: "blue",
-  [
-    ¿De qué manera incide el esquema de tarificación dinámica (_surge pricing_) de la plataforma MoviGo en la sensibilidad de la demanda, las tasas de cancelación de viajes y la equidad socio-espacial en el municipio de Managua, y cómo pueden determinarse puntos de equilibrio tarifario mediante métodos numéricos y optimizarse la asignación presupuestaria de incentivos a la flota para mitigar el abandono del servicio bajo condiciones variables de tráfico y lluvia?
-  ]
-)
+¿De qué manera incide el esquema de tarificación dinámica (_surge pricing_) de la plataforma MoviGo en la sensibilidad de la demanda, las tasas de cancelación de viajes y la equidad socio-espacial en el municipio de Managua, y cómo pueden determinarse puntos de equilibrio tarifario mediante métodos numéricos y optimizarse la asignación presupuestaria de incentivos a la flota para mitigar el abandono del servicio bajo condiciones variables de tráfico y lluvia?

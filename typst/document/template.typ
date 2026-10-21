@@ -1,181 +1,177 @@
-// Plantilla Académica e Investigativa para Typst
-// Proyecto Integrador IV - Ingeniería en Ciencia de Datos
+// Plantilla Académica e Investigativa bajo Formato APA 7ma Edición
+// Universidad Nacional Autónoma de Nicaragua, Managua (UNAN-Managua)
+// Proyecto Integrador IV - Carrera de Ingeniería en Ciencias de Datos
 
 #let project(
   title: "",
-  subtitle: "",
   authors: (),
   advisor: none,
+  tutor: none,
   date: none,
   course: "Integrador IV",
-  career: "Ingeniería en Ciencia de Datos",
-  department: "Departamento de Tecnología",
+  career: "Carrera de Ingeniería en Ciencias de Datos",
+  department: "Tecnología",
+  area: "Área de Conocimiento de Ciencias Básicas y Tecnología",
   institution: "Área de Conocimiento de Ciencias Básicas y Tecnología",
   university: "Universidad Nacional Autónoma de Nicaragua, Managua",
+  campus: "Recinto Universitario «Rubén Darío»",
   logo: "../assets/unan-logo.jpg",
-  work_type: "Informe de Proyecto Integrador IV",
-  location: "Managua, Nicaragua",
-  abstract: none,
+  work_type: "Trabajo de investigación derivado de producto integrador de componentes curriculares",
+  location: "Managua, octubre de 2026",
+  institutional-motto: "«2026: Por una Educación al Servicio del Pueblo, ¡Viva Sandino!»",
   body
 ) = {
-  // Configuración general del documento
-  set document(title: title, author: authors.map(a => if type(a) == str { a } else { a.name }))
+  let doc_tutor = if tutor != none { tutor } else { advisor }
 
+  // 1. Metadatos del Documento
+  set document(
+    title: title,
+    author: authors.map(a => if type(a) == str { a } else if "formal-name" in a { a.formal-name } else { a.name }),
+    date: date,
+  )
+
+  // 2. Configuración de Página (Norma APA 7: Carta US-Letter, Márgenes de 2.54 cm en los cuatro lados)
   set page(
-    paper: "a4",
-    margin: (top: 2.8cm, bottom: 2.8cm, left: 3.0cm, right: 2.5cm),
-    header: context {
-      // Ocultar encabezado en la primera página (portada)
-      if counter(page).get().first() > 1 [
-        #grid(
-          columns: (1fr, auto),
-          align(left)[#text(size: 8.5pt, fill: luma(100), font: "Liberation Sans", style: "italic")[#title]],
-          align(right)[#text(size: 8.5pt, fill: luma(100), font: "Liberation Sans")[#course]]
-        )
-        #line(length: 100%, stroke: 0.4pt + luma(180))
-      ]
-    },
+    paper: "us-letter",
+    margin: (top: 2.54cm, bottom: 2.54cm, left: 2.54cm, right: 2.54cm),
     footer: context {
-      if counter(page).get().first() > 1 [
-        #line(length: 100%, stroke: 0.4pt + luma(180))
-        #v(2pt)
-        #align(center)[
-          #text(size: 9pt, fill: luma(80))[#counter(page).display()]
-        ]
-      ]
+      let i = counter(page).get().first()
+      if i > 1 {
+        align(right, text(size: 11pt)[#(i - 1)])
+      }
     }
   )
 
-  // Tipografía y espaciado
+  // 3. Tipografía y Estilo de Texto (APA 7: Fuente Serif 12pt, texto justificado, espaciado uniforme)
   set text(
-    font: ("Libertinus Serif", "Liberation Serif", "Noto Serif"),
-    size: 11pt,
+    font: "Liberation Serif",
+    size: 12pt,
     lang: "es"
   )
 
+  // Configuración global de bibliografía y citaciones (Norma APA 7ma Edición)
+  set bibliography(style: "apa")
+
+  // 4. Enlaces con estilo consistente
+  show link: it => text(fill: rgb("#1b58a6"), underline(it))
+
+  // 5. Párrafos
   set par(
     justify: true,
-    leading: 0.75em,
-    spacing: 1.2em,
-    first-line-indent: 0pt
+    leading: 0.65em,
+    spacing: 1.05em
   )
 
-  // Configuración de encabezados
-  set heading(numbering: "1.1")
-  show heading: it => {
-    set text(font: ("Liberation Sans", "Noto Sans", "Adwaita Sans"), fill: rgb("#111827"))
-    if it.level == 1 {
-      v(1.8em, weak: true)
-      text(weight: "bold", size: 16pt)[#it]
-      v(0.8em, weak: true)
-    } else if it.level == 2 {
-      v(1.4em, weak: true)
-      text(weight: "bold", size: 13pt)[#it]
-      v(0.6em, weak: true)
-    } else {
-      v(1.2em, weak: true)
-      text(weight: "semibold", size: 11.5pt)[#it]
-      v(0.5em, weak: true)
-    }
-  }
+  // 6. Figuras y Tablas
+  set figure(gap: 0.8em)
+  set figure.caption(separator: [. ])
 
-  // Estilo de enlaces y código
-  show link: set text(fill: rgb("#1d4ed8"))
-  show raw: set text(font: ("Liberation Mono", "DejaVu Sans Mono"), size: 9pt)
+  // 7. Listas
+  set list(spacing: 0.75em)
+  set enum(spacing: 0.75em)
 
-  // ==================== PORTADA ====================
-  let meses = ("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre")
-  let fecha_str = if date != none {
-    date
-  } else {
-    meses.at(datetime.today().month() - 1) + ", " + str(datetime.today().year())
-  }
+  // 8. Títulos y Encabezados según Norma APA 7ma Edición
+  // Nivel 1: Centrado, Negrita (16pt)
+  show heading.where(level: 1): it => block(
+    width: 100%,
+    above: 1.5em,
+    below: 0.9em,
+    align(center, text(weight: "bold", size: 16pt)[#it.body])
+  )
 
+  // Nivel 2: Alineado a la izquierda, Negrita (13pt)
+  show heading.where(level: 2): it => block(
+    above: 1.2em,
+    below: 0.6em,
+    text(weight: "bold", size: 13pt)[#it.body]
+  )
+
+  // Nivel 3: Alineado a la izquierda, Negrita (12pt)
+  show heading.where(level: 3): it => block(
+    above: 1.0em,
+    below: 0.4em,
+    text(weight: "bold", size: 12pt)[#it.body]
+  )
+
+  // ==========================================
+  // PORTADA / COVER PAGE (ESTILO INSTITUCIONAL UNAN-MANAGUA)
+  // ==========================================
   align(center)[
+    #text(size: 11pt, style: "italic")[
+      #institutional-motto
+    ]
+
+    #v(0.3cm)
     #if logo != none [
-      #image(logo, width: 6.0cm)
-      #v(0.8em)
-    ] else [
-      #text(size: 12pt, weight: "bold", font: "Liberation Sans")[#upper(university)] \
-      #v(2pt)
-      #text(size: 10pt, weight: "bold", font: "Liberation Sans", fill: rgb("#1e3a8a"))[UNAN - MANAGUA] \
-      #v(4pt)
-    ]
-    #text(size: 11pt, weight: "bold", font: "Liberation Sans", fill: rgb("#0f172a"))[#upper(institution)] \
-    #v(3pt)
-    #text(size: 10pt, weight: "bold", font: "Liberation Sans", fill: rgb("#334155"))[#upper(department)] \
-    #v(3pt)
-    #text(size: 10pt, font: "Liberation Sans", fill: luma(60))[Carrera de #career] \
-    #v(0.6em)
-    #line(length: 50%, stroke: 0.6pt + rgb("#1e3a8a"))
-
-    #v(1.2fr)
-
-    #text(size: 11pt, weight: "bold", font: "Liberation Sans", fill: rgb("#1e293b"))[#upper(work_type)]
-
-    #v(1fr)
-
-    #text(size: 10pt, weight: "bold", font: "Liberation Sans", fill: rgb("#1e3a8a"))[TEMA:] \
-    #v(4pt)
-    #text(size: 15pt, weight: "bold", font: "Liberation Sans", fill: rgb("#0f172a"))[#title] \
-    #if subtitle != "" [
-      #v(0.6em)
-      #text(size: 11.5pt, style: "italic", fill: rgb("#334155"))[#subtitle]
+      #image(logo, width: 5.2cm)
     ]
 
-    #v(1.2fr)
+    #v(0.3cm)
+    #text(weight: "bold", size: 12pt)[
+      #university \
+      #campus \
+      #area \
+      Departamento de #department \
+      #career \
+    ]
 
-    #grid(
-      columns: if advisor != none { (1.2fr, 1fr) } else { (1fr) },
-      gutter: 15pt,
-      align(center)[
-        #text(size: 10pt, weight: "bold", font: "Liberation Sans")[Autores:] \
-        #v(4pt)
-        #for author in authors [
-          #let aname = if type(author) == str { author } else { author.name }
-          #let aorcid = if type(author) == dictionary and "orcid" in author { author.orcid } else { none }
-          #text(size: 9.5pt)[#aname]
-          #if aorcid != none [
-            #text(size: 8pt, fill: luma(80))[ \ (ORCID: #link("https://orcid.org/" + aorcid)[#aorcid])]
-          ]
-          \
-          #v(2pt)
-        ]
-      ],
-      if advisor != none [
-        #align(center)[
-          #text(size: 10pt, weight: "bold", font: "Liberation Sans")[Tutor / Docente Guía:] \
-          #v(4pt)
-          #let adv_name = if type(advisor) == str { advisor } else { advisor.name }
-          #let adv_email = if type(advisor) == dictionary and "email" in advisor { advisor.email } else { none }
-          #let adv_orcid = if type(advisor) == dictionary and "orcid" in advisor { advisor.orcid } else { none }
-          #text(size: 9.5pt)[#adv_name] \
-          #if adv_email != none [
-            #text(size: 8.5pt, fill: luma(70))[#link("mailto:" + adv_email)[#adv_email]] \
-          ]
-          #if adv_orcid != none [
-            #text(size: 8pt, fill: luma(80))[(ORCID: #adv_orcid)]
-          ]
-        ]
-      ]
-    )
+    #v(0.2cm)
+    #text(size: 11pt, weight: "medium")[
+      #work_type
+    ]
 
-    #v(1fr)
+    #v(0.5cm)
+    #text(weight: "bold", size: 11pt)[Título:] \
+    #v(0.15cm)
+    #text(weight: "bold", size: 13pt)[
+      #title
+    ]
 
-    #text(size: 10pt, font: "Liberation Sans", fill: luma(60))[#location] \
-    #v(2pt)
-    #text(size: 10pt, font: "Liberation Sans", fill: luma(60))[#fecha_str]
+    #v(0.5cm)
+    #text(weight: "bold", size: 11pt)[Autor(es):] \
+    #v(0.2cm)
+    #block(width: 85%, align(left)[
+      #grid(
+        columns: (1fr),
+        row-gutter: 0.5em,
+        ..authors.map(a => [
+          #let aname = if type(a) == str { a } else { a.name }
+          #let aorcid = if type(a) == dictionary and "orcid" in a { a.orcid } else { none }
+          #aname #if aorcid != none and aorcid != "" [ -- (ORCID: #link("https://orcid.org/" + aorcid)[#aorcid])]
+        ])
+      )
+    ])
+
+    #v(0.5cm)
+    #text(weight: "bold", size: 11pt)[Tutor:] \
+    #v(0.15cm)
+    #let adv_name = if type(doc_tutor) == str { doc_tutor } else if type(doc_tutor) == dictionary and "name" in doc_tutor { doc_tutor.name } else { "" }
+    #let adv_orcid = if type(doc_tutor) == dictionary and "orcid" in doc_tutor { doc_tutor.orcid } else { none }
+    #text(size: 12pt)[#adv_name]#if adv_orcid != none and adv_orcid != "" [ -- #if adv_orcid.starts-with("00") [(ORCID: #link("https://orcid.org/" + adv_orcid)[#adv_orcid])] else [(ORCID: #adv_orcid)]]
+
+    #v(0.6cm)
+    #text(size: 11pt)[
+      #location
+    ]
   ]
 
   pagebreak()
 
-
-  // ==================== ÍNDICE GENERAL ====================
-  outline(
-    title: [Tabla de Contenidos],
-    indent: auto,
-    depth: 3
-  )
+  // ==========================================
+  // ÍNDICE GENERAL
+  // ==========================================
+  {
+    show outline.entry: it => {
+      set text(size: 9.5pt)
+      it
+    }
+    set par(leading: 0.45em)
+    outline(
+      title: [Índice],
+      depth: 2,
+      indent: 1.2em,
+    )
+  }
 
   pagebreak()
 
@@ -183,33 +179,29 @@
   body
 }
 
-// ==================== COMPONENTES REUTILIZABLES ====================
+// ==========================================
+// COMPONENTES COMPLEMENTARIOS REUTILIZABLES
+// ==========================================
 
-// Cuadro informativo o destacado
-#let callout(title: "", body, color: "blue") = {
-  let (border_col, bg_col) = if color == "blue" {
-    (rgb("#2563eb"), rgb("#eff6ff"))
-  } else if color == "green" {
-    (rgb("#16a34a"), rgb("#f0fdf4"))
-  } else if color == "amber" {
-    (rgb("#d97706"), rgb("#fffbeb"))
-  } else {
-    (rgb("#4b5563"), rgb("#f9fafb"))
-  }
+// Etiqueta o badge visual
+#let badge(txt, bg, fg) = box(
+  fill: bg,
+  radius: 2pt,
+  inset: (x: 3.5pt, y: 1.2pt),
+  baseline: 0%,
+  text(size: 6.5pt, weight: "bold", fill: fg)[#txt]
+)
 
-  block(
-    width: 100%,
-    stroke: (left: 3pt + border_col),
-    fill: bg_col,
-    radius: (right: 4pt),
-    inset: (x: 12pt, y: 10pt),
-    [
-      #if title != "" [
-        #text(weight: "bold", size: 10.5pt, fill: border_col, font: "Liberation Sans")[#title] \
-        #v(3pt)
-      ]
-      #set text(size: 10pt)
-      #body
+// Conector de flujo
+#let connector(label) = [
+  #align(center)[
+    #box(
+      fill: rgb("#f8fafc"),
+      stroke: 0.35pt + rgb("#cbd5e1"),
+      radius: 6pt,
+      inset: (x: 6pt, y: 1pt),
+    )[
+      #text(size: 6.5pt, weight: "medium", fill: rgb("#475569"))[#sym.arrow.b #label]
     ]
-  )
-}
+  ]
+]

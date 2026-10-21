@@ -2,6 +2,8 @@
 
 #let title = "Evaluación del Esquema de Tarificación Dinámica del Servicio de Transporte Selectivo MoviGo en el Municipio de Managua (2024)"
 
+#let title-short = "Evaluación del Esquema Tarifario de MoviGo en Managua"
+
 #let title-presentation = "Optimización Territorial de la Flota y Sistema Tarifario en Managua"
 
 #let subtitle-presentation = "Caso de Estudio: Movi Go • Transporte Selectivo"
@@ -49,14 +51,20 @@
   orcid: "Pendiente de confirmación",
 )
 
-#let course = "Integrador IV"
-#let career = "Ingeniería en Ciencia de Datos"
-#let department = "Departamento de Tecnología"
-#let area = "Área de Conocimiento de Ciencias Básicas y Tecnología"
-#let institution = area
+#let date = datetime(year: 2026, month: 10, day: 21)
+#let date-str = "Octubre de 2026"
+#let location = "Managua, octubre de 2026"
+
+// Institutional data for UNAN-Managua
 #let university = "Universidad Nacional Autónoma de Nicaragua, Managua"
 #let campus = "Recinto Universitario «Rubén Darío»"
-#let location = "Managua, Nicaragua"
-#let date-str = "Octubre de 2026"
+#let area = "Área de Conocimiento de Ciencias Básicas y Tecnología"
+#let department = "Tecnología"
+#let career = "Carrera de Ingeniería en Ciencias de Datos"
+#let degree-level = "Grado"
+#let course = "Integrador IV"
+#let institution = area
+
+// Institutional slogans
 #let institutional-motto = "«2026: Por una Educación al Servicio del Pueblo, ¡Viva Sandino!»"
 #let institutional-footer = "¡Universidad del Pueblo y para el Pueblo!"
