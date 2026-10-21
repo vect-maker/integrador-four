@@ -34,14 +34,14 @@ Para ver los cambios reflejados en tiempo real cada vez que guardas (`Ctrl + S`)
 
 ```bash
 cd document
-typst watch main.typ informe_movigo.pdf
+typst watch main.typ document.pdf
 ```
 
-Typst compila en **menos de 30 milisegundos**. Abre `informe_movigo.pdf` en tu visor de PDFs preferido o en VS Code.
+Typst compila en **menos de 30 milisegundos**. Abre `document.pdf` en tu visor de PDFs preferido o en VS Code.
 
 ### 2. Compilación Única (Para exportar la entrega final)
 ```bash
-typst compile main.typ informe_movigo.pdf
+typst compile main.typ document.pdf
 ```
 
 ---

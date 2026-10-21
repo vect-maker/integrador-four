@@ -1,17 +1,14 @@
 #import "template.typ": project, callout
+#import "metadata.typ": title, authors, tutor, course, career, institution, location
 
 #show: project.with(
-  title: "Evaluación del Esquema de Tarificación Dinámica del Servicio de Transporte Selectivo MoviGo en el Municipio de Managua (2024)",
-  authors: (
-    (name: "Aguilar Rodríguez, Kendall Ezequiel"),
-    (name: "Miranda Pérez, José Daniel"),
-    (name: "Oyarzo Morales, Ricardo Alberto"),
-    (name: "Medrano Dávila, Luis David"),
-  ),
-  course: "Integrador IV",
-  career: "Ingeniería en Ciencia de Datos",
-  institution: "Área de Conocimiento de Ciencias Básicas y Tecnología",
-  location: "Managua, Nicaragua"
+  title: title,
+  authors: authors,
+  advisor: tutor,
+  course: course,
+  career: career,
+  institution: institution,
+  location: location,
 )
 
 #include "chapters/01_contexto.typ"

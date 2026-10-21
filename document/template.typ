@@ -126,21 +126,36 @@
     #v(1.2fr)
 
     #grid(
-      columns: if advisor != none { (1fr, 1fr) } else { (1fr) },
-      gutter: 20pt,
+      columns: if advisor != none { (1.2fr, 1fr) } else { (1fr) },
+      gutter: 15pt,
       align(center)[
         #text(size: 10pt, weight: "bold", font: "Liberation Sans")[Autores:] \
         #v(4pt)
         #for author in authors [
           #let aname = if type(author) == str { author } else { author.name }
-          #text(size: 10pt)[#aname] \
+          #let aorcid = if type(author) == dictionary and "orcid" in author { author.orcid } else { none }
+          #text(size: 9.5pt)[#aname]
+          #if aorcid != none [
+            #text(size: 8pt, fill: luma(80))[ \ (ORCID: #link("https://orcid.org/" + aorcid)[#aorcid])]
+          ]
+          \
+          #v(2pt)
         ]
       ],
       if advisor != none [
         #align(center)[
-          #text(size: 10pt, weight: "bold", font: "Liberation Sans")[Docente Guía:] \
+          #text(size: 10pt, weight: "bold", font: "Liberation Sans")[Tutor / Docente Guía:] \
           #v(4pt)
-          #text(size: 10pt)[#advisor]
+          #let adv_name = if type(advisor) == str { advisor } else { advisor.name }
+          #let adv_email = if type(advisor) == dictionary and "email" in advisor { advisor.email } else { none }
+          #let adv_orcid = if type(advisor) == dictionary and "orcid" in advisor { advisor.orcid } else { none }
+          #text(size: 9.5pt)[#adv_name] \
+          #if adv_email != none [
+            #text(size: 8.5pt, fill: luma(70))[#link("mailto:" + adv_email)[#adv_email]] \
+          ]
+          #if adv_orcid != none [
+            #text(size: 8pt, fill: luma(80))[(ORCID: #adv_orcid)]
+          ]
         ]
       ]
     )

@@ -1,5 +1,5 @@
 # Justfile para el Proyecto Integrador IV — MoviGo
-# Automatización de tareas para Documentación (Typst), Presentación (Vite + Vue) y API REST.
+# Automatización de tareas para Documentación e Informe (Typst), Diapositivas (Typst) y API REST.
 
 # Mostrar lista de comandos disponibles
 default:
@@ -11,20 +11,41 @@ default:
 
 # Compilar el documento de investigación a PDF (una sola vez)
 build-doc:
-    typst compile document/main.typ document/informe_movigo.pdf
-    @echo "✅ Documento generado con éxito en document/informe_movigo.pdf"
+    typst compile document/main.typ document/document.pdf
+    @echo "✅ Documento generado con éxito en document/document.pdf"
 
 # Compilar en modo observador en tiempo real (Live Reload, < 30ms)
 watch-doc:
-    typst watch document/main.typ document/informe_movigo.pdf
+    typst watch document/main.typ document/document.pdf
 
 # Mostrar metadatos, páginas y tamaño del PDF generado
 info-doc:
-    @pdfinfo document/informe_movigo.pdf 2>/dev/null || echo "⚠️  No se encontró el PDF. Ejecuta 'just build-doc' primero."
+    @pdfinfo document/document.pdf 2>/dev/null || echo "⚠️  No se encontró el PDF. Ejecuta 'just build-doc' primero."
 
 # Listar todas las fuentes del sistema reconocidas por Typst
 fonts-doc:
     typst fonts
+
+# ==============================================================================
+# SLIDES (TYPST)
+# ==============================================================================
+
+# Compilar las diapositivas a PDF (16:9)
+build-slides:
+    typst compile --root . slides/main.typ slides/slides.pdf
+    @echo "✅ Diapositivas generadas con éxito en slides/slides.pdf"
+
+# Compilar diapositivas en modo observador en tiempo real (Live Reload)
+watch-slides:
+    typst watch --root . slides/main.typ slides/slides.pdf
+
+# Mostrar metadatos y páginas del PDF de diapositivas
+info-slides:
+    @pdfinfo slides/slides.pdf 2>/dev/null || echo "⚠️  No se encontró el PDF. Ejecuta 'just build-slides' primero."
+
+# Compilar tanto el documento como las diapositivas
+build-all: build-doc build-slides
+    @echo "🎉 Todo compilado con éxito (informe y diapositivas)."
 
 # ==============================================================================
 # API REST & DATOS (MOVIGO)
@@ -43,31 +64,10 @@ fetch-zones:
     @python3 -c "import urllib.request, json; data = json.loads(urllib.request.urlopen('http://4.157.251.192:8000/movigo/zonas?limit=50').read().decode('utf-8')); json.dump(data['items'], open('document/data/zonas.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=2); print('✅ Actualizado document/data/zonas.json con', len(data['items']), 'zonas urbanas')"
 
 # ==============================================================================
-# PRESENTACIÓN (SLIDES CON VITE + VUE 3)
-# ==============================================================================
-
-# Instalar dependencias de Node.js en la carpeta slides
-slides-install:
-    cd slides && npm install
-
-# Iniciar servidor local de desarrollo de las diapositivas
-slides-dev:
-    cd slides && npm run dev
-
-# Compilar las diapositivas para producción (generar carpeta dist)
-slides-build:
-    cd slides && npm run build
-
-# Previsualizar la compilación de producción de las diapositivas
-slides-preview:
-    cd slides && npm run preview
-
-# ==============================================================================
 # LIMPIEZA
 # ==============================================================================
 
-# Eliminar artefactos generados (PDFs temporales y builds de slides)
+# Eliminar artefactos generados (PDFs compilados)
 clean:
-    rm -f document/*.pdf
-    rm -rf slides/dist
+    rm -f document/*.pdf slides/*.pdf
     @echo "🧹 Limpieza completada"

@@ -6,19 +6,21 @@ Este repositorio contiene el proyecto integrador de Ingeniería en Ciencia de Da
 
 ## 📁 Estructura del Repositorio
 
+El proyecto está diseñado bajo un paradigma **Typst-first**, eliminando dependencias de Node.js y compilando tanto el informe académico como las diapositivas de defensa directamente con Typst:
+
 ```text
 integrador-four/
-├── document/               # Documento académico de investigación en Typst (Code-First)
+├── document/               # Documento académico de investigación en Typst
 │   ├── main.typ            # Archivo raíz y orquestador del documento
 │   ├── template.typ        # Plantilla académica (márgenes, tipografía, portada)
 │   ├── references.bib      # Referencias bibliográficas BibTeX (@cachon2017, etc.)
 │   ├── data/               # Datos locales consumidos por el documento (ej. zonas.json)
 │   └── chapters/           # 7 capítulos modulares independientes
-├── slides/                 # Proyecto frontend de presentación interactiva (Vite + Vue 3)
-│   ├── index.html          # Entrada de la presentación
-│   ├── vite.config.js      # Configuración del servidor de desarrollo
-│   ├── src/                # Componentes Vue, vistas de diapositivas y estilos
-│   └── package.json        # Dependencias (Vue 3, Pinia, KaTeX, Mermaid)
+├── slides/                 # Diapositivas de defensa de avance en Typst (Touying)
+│   ├── main.typ            # Entrada de la presentación (tema metropolis 16:9)
+│   ├── template.typ        # Componentes reutilizables (tarjetas, métricas, flujos)
+│   └── slides/             # 11 diapositivas modulares con notas de defensa y datos
+├── justfile                # Automatización de compilación y llamadas a API
 └── movigo_information.md   # Especificación de la API REST sintética de MoviGo
 ```
 
@@ -26,35 +28,30 @@ integrador-four/
 
 ## 🚀 Inicio Rápido
 
-### 1. Compilar el Documento de Investigación (Typst)
-```bash
-# Modo desarrollo con recarga en vivo:
-cd document
-typst watch main.typ informe_movigo.pdf
-
-# Compilación directa de entrega:
-typst compile main.typ informe_movigo.pdf
-```
-
-### 3. Automatización con `just` (Recomendado)
-El proyecto incluye un [`justfile`](./justfile) con atajos para todas las tareas frecuentes:
+### Automatización con `just` (Recomendado)
+El proyecto incluye un [`justfile`](./justfile) con atajos para todas las tareas:
 
 ```bash
 just                  # Ver lista de todos los comandos disponibles
 
-# Documentación (Typst)
-just watch-doc        # Live reload del PDF (< 30ms)
-just build-doc        # Compilar el PDF una sola vez
-just info-doc         # Ver páginas y metadatos del PDF compilado
+# Documento de Investigación (Typst)
+just build-doc        # Compilar el PDF del informe (document/document.pdf)
+just watch-doc        # Live reload del informe en tiempo real (< 30ms)
+just info-doc         # Ver páginas y metadatos del PDF del informe
+
+# Diapositivas de Presentación (Typst)
+just build-slides     # Compilar las diapositivas (slides/slides.pdf)
+just watch-slides     # Live reload de las diapositivas en tiempo real
+just info-slides      # Ver metadatos y páginas de las diapositivas
+
+# Todo en uno
+just build-all        # Compila tanto el informe como las diapositivas
 
 # Datos y API
+just api-check        # Verificar conectividad con la API REST pública
 just api-status       # Conteo en vivo de registros en los 7 endpoints
 just fetch-zones      # Actualizar document/data/zonas.json desde la API
 
-# Diapositivas (Vite + Vue)
-just slides-dev       # Iniciar servidor local de presentación
-just slides-build     # Compilar presentación para producción
-
 # Limpieza
-just clean            # Limpiar temporales y artefactos de compilación
+just clean            # Limpiar PDFs generados
 ```
