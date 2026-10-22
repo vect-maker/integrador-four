@@ -95,43 +95,6 @@ CREATE TABLE auditoria_viajes (
     usuario_db VARCHAR(50) NOT NULL DEFAULT CURRENT_USER
 );
 
--- Trigger de Auditoria para Viajes
-CREATE OR REPLACE FUNCTION fn_trg_auditar_viajes()
-RETURNS TRIGGER AS $$
-BEGIN
-    IF (OLD.estado_viaje IS DISTINCT FROM NEW.estado_viaje) THEN
-        INSERT INTO auditoria_viajes(id_viaje, estado_anterior, estado_nuevo, fecha_cambio, usuario_db)
-        VALUES (NEW.id_viaje, OLD.estado_viaje, NEW.estado_viaje, CURRENT_TIMESTAMP, CURRENT_USER);
-    END IF;
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER trg_auditar_viajes
-AFTER UPDATE ON viajes
-FOR EACH ROW
-EXECUTE FUNCTION fn_trg_auditar_viajes();
-
--- Funcion Almacenada: Liquidacion de Tarifa
-CREATE OR REPLACE FUNCTION fn_liquidar_tarifa_viaje(
-    p_tarifa_base DECIMAL(8,2),
-    p_distancia_km DECIMAL(6,2),
-    p_duracion_min DECIMAL(6,2),
-    p_multiplicador DECIMAL(4,2)
-)
-RETURNS DECIMAL(8,2) AS $$
-DECLARE
-    v_costo_km DECIMAL(8,2) := 18.00;
-    v_costo_minuto DECIMAL(8,2) := 4.50;
-    v_subtotal DECIMAL(8,2);
-    v_total DECIMAL(8,2);
-BEGIN
-    v_subtotal := p_tarifa_base + (p_distancia_km * v_costo_km) + (p_duracion_min * v_costo_minuto);
-    v_total := ROUND(v_subtotal * p_multiplicador, 2);
-    RETURN v_total;
-END;
-$$ LANGUAGE plpgsql;
-
 -- Indices analiticos
 CREATE INDEX idx_viajes_solicitud ON viajes(fecha_hora_solicitud);
 CREATE INDEX idx_viajes_origen ON viajes(id_zona_origen);

@@ -8,13 +8,19 @@ default:
 
 # Configurar entorno virtual con uv para LSP y linters (Python 3.14)
 setup-env:
-    uv venv --python 3.14 ../.venv
+    uv venv --python 3.14 --clear ../.venv
     uv pip install -r requirements.txt
     @echo "✅ Entorno virtual (.venv) listo con uv (Python 3.14)."
 
-# Run dbt commands (e.g. `just dbt debug`, `just dbt run`, `just dbt test`)
+# Run dbt commands via official dbt Labs container with Podman
 dbt *args="debug":
-    exec dbt {{ args }} --project-dir dbt --profiles-dir dbt
+    podman run --rm -it \
+        --env-file ../.env \
+        -e DBT_PROFILES_DIR=. \
+        -v .:/usr/app/dbt:z \
+        -w /usr/app/dbt \
+        ghcr.io/dbt-labs/dbt-postgres:latest \
+        {{ args }}
 
 # Run the complete database pipeline (apply raw schema and load Parquet data)
 load:

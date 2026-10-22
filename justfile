@@ -44,7 +44,7 @@ info-slides:
 
 # Crear entorno virtual local con uv (Python 3.14) para LSP y linters
 setup-env:
-    uv venv --python 3.14 .venv
+    uv venv --python 3.14 --clear .venv
     uv pip install -r pipeline/requirements.txt
     @echo "✅ Entorno virtual (.venv) listo con uv (Python 3.14) para soporte LSP y linters."
 
@@ -56,6 +56,12 @@ pipeline-fetch:
 pipeline-load:
     cd pipeline && python3 loader.py
 
-# Ejecutar comandos de dbt Core (ej. `just dbt debug`, `just dbt run`, `just dbt test`)
+# Ejecutar comandos de dbt mediante el contenedor oficial de dbt Labs con Podman
 dbt *args="debug":
-    exec dbt {{ args }} --project-dir pipeline/dbt --profiles-dir pipeline/dbt
+    podman run --rm -it \
+        --env-file .env \
+        -e DBT_PROFILES_DIR=. \
+        -v ./pipeline/dbt:/usr/app/dbt:z \
+        -w /usr/app/dbt \
+        ghcr.io/dbt-labs/dbt-postgres:latest \
+        {{ args }}
