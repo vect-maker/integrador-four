@@ -1,4 +1,3 @@
-import argparse
 import os
 import time
 from pathlib import Path
@@ -11,6 +10,7 @@ from sqlalchemy import Engine, create_engine, text
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent
+BATCH_SIZE = 2000
 
 PGHOST = os.getenv("PGHOST")
 PGPORT = os.getenv("PGPORT", "5432")
@@ -18,12 +18,11 @@ PGUSER = os.getenv("PGUSER")
 PGPASSWORD = os.getenv("PGPASSWORD")
 PGSSLMODE = os.getenv("PGSSLMODE", "require")
 
-# Admin/maintenance database used to manage other databases
+# Target database and schema to apply migrations and load raw data
 ADMIN_DB = os.getenv("PGADMIN_DATABASE", "postgres")
-# Target database to reset and apply schema migrations
-TARGET_DB = os.getenv("RAW_DB_NAME", "raw")
-# Target schema for raw staging tables
-TARGET_SCHEMA = os.getenv("RAW_SCHEMA", "raw_staging_movigo")
+TARGET_DB = os.getenv("RAW_DB_NAME", os.getenv("PGDATABASE", "raw"))
+TARGET_SCHEMA = os.getenv("RAW_SCHEMA", "public")
+RAW_DATA_DIR = Path(os.getenv("RAW_DATA_DIR", BASE_DIR / "data" / "raw"))
 
 
 def get_database_url(dbname: str) -> str:
@@ -68,58 +67,73 @@ def reset_database(target_db: str = TARGET_DB, admin_db: str = ADMIN_DB) -> None
     print(f"Database '{target_db}' created successfully.\n")
 
 
-def apply_migrations(
-    target_db: str = TARGET_DB, migration_file: Path | None = None
+def load_schema(
+    target_db: str = TARGET_DB, schema_file: Path | None = None
 ) -> None:
-    """Connect to the target database and execute the schema migration directly."""
+    """Connect to target database and execute the raw database schema DDL directly."""
     target_file = (
-        migration_file
-        if migration_file is not None
-        else BASE_DIR / "migrations" / "01_schema.sql"
+        schema_file
+        if schema_file is not None
+        else BASE_DIR / "raw_schema.sql"
     )
-    print(f"Connecting to target database '{target_db}'...")
+    print(f"Connecting to database '{target_db}' on {PGHOST}...")
     sql_content = target_file.read_text(encoding="utf-8")
     engine = get_engine(target_db)
     with engine.begin() as conn:
-        print(f"Applying schema migration from '{target_file}'...")
+        print(f"Applying schema DDL from '{target_file.name}'...")
         conn.execute(text(sql_content))
     engine.dispose()
-    print(f"Schema migration '{target_file}' applied successfully.\n")
+    print(f"Raw database schema from '{target_file.name}' applied successfully (tables reset).\n")
 
 
-def truncate_tables(target_db: str = TARGET_DB, schema: str = TARGET_SCHEMA) -> None:
-    """Truncate all raw staging tables in MoviGo to ensure an idempotent reload."""
-    tables = [
-        "telemetria_conductores",
-        "viajes",
-        "auditoria_viajes",
-        "clima_cuadrantes",
-        "campanas_incentivos",
-        "conductores",
-        "usuarios",
-        "zonas_urbanas",
-    ]
-    print(f"Truncating tables in database '{target_db}', schema '{schema}'...")
-    engine = get_engine(target_db)
-    with engine.begin() as conn:
-        table_list = ", ".join(f'"{schema}"."{t}"' for t in tables)
-        conn.execute(text(f"TRUNCATE TABLE {table_list} CASCADE;"))
-    engine.dispose()
-    print("Tables truncated successfully.\n")
+def _to_date_column(df: pd.DataFrame, column: str) -> None:
+    """Safely convert a DataFrame column to date objects for SQL DATE compatibility."""
+    if column in df.columns:
+        res = pd.to_datetime(pd.Series(df[column]), format="ISO8601")
+        if isinstance(res, pd.Series):
+            df[column] = res.dt.date
+        else:
+            df[column] = res.date
+
+
+def _to_datetime_column(df: pd.DataFrame, column: str) -> None:
+    """Safely convert a DataFrame column to ISO8601 datetimes."""
+    if column in df.columns:
+        df[column] = pd.to_datetime(pd.Series(df[column]), format="ISO8601")
+
+
+def prepare_dataframe(table_name: str, df: pd.DataFrame) -> pd.DataFrame:
+    """Drop pandas index artifacts and apply explicit date/timestamp/FK casts."""
+    index_cols = [c for c in df.columns if c.startswith("__index")]
+    if index_cols:
+        df = df.drop(columns=index_cols)
+
+    if table_name == "usuarios":
+        _to_date_column(df, "fecha_registro")
+    elif table_name == "campanas_incentivos":
+        _to_date_column(df, "fecha_inicio")
+        _to_date_column(df, "fecha_fin")
+    elif table_name == "clima_cuadrantes":
+        _to_date_column(df, "fecha")
+    elif table_name == "viajes":
+        _to_datetime_column(df, "fecha_hora_solicitud")
+        _to_datetime_column(df, "fecha_hora_inicio")
+        _to_datetime_column(df, "fecha_hora_fin")
+        if "id_conductor" in df.columns:
+            df["id_conductor"] = df["id_conductor"].astype("Int64")
+    elif table_name == "telemetria_conductores":
+        _to_datetime_column(df, "fecha_hora")
+
+    return df
 
 
 def load_parquet_data(
     target_db: str = TARGET_DB,
     data_dir: Path | None = None,
-    batch_size: int = 2000,
-    truncate: bool = True,
     schema: str = TARGET_SCHEMA,
 ) -> None:
     """Load Parquet files into the target database in batches respecting FK constraints."""
-    if truncate:
-        truncate_tables(target_db, schema)
-
-    data_path = data_dir if data_dir is not None else BASE_DIR / "data" / "raw"
+    data_path = data_dir if data_dir is not None else RAW_DATA_DIR
     engine = get_engine(target_db)
 
     # Tables to load in foreign-key dependency order
@@ -141,52 +155,8 @@ def load_parquet_data(
             continue
 
         print(f"Loading '{file_name}' into table '{schema}.{table_name}'...")
-        df = pd.read_parquet(file_path)
-
-        # Drop internal pandas index artifacts if present
-        clean_cols = [c for c in df.columns if not c.startswith("__index")]
-        df = df[clean_cols]
-
-        # Explicit date & timestamp casts for Postgres/psycopg compatibility
-        if table_name == "usuarios":
-            if "fecha_registro" in df.columns:
-                df["fecha_registro"] = pd.to_datetime(
-                    df["fecha_registro"], format="ISO8601"
-                ).dt.date
-        elif table_name == "campanas_incentivos":
-            if "fecha_inicio" in df.columns:
-                df["fecha_inicio"] = pd.to_datetime(
-                    df["fecha_inicio"], format="ISO8601"
-                ).dt.date
-            if "fecha_fin" in df.columns:
-                df["fecha_fin"] = pd.to_datetime(
-                    df["fecha_fin"], format="ISO8601"
-                ).dt.date
-        elif table_name == "clima_cuadrantes":
-            if "fecha" in df.columns:
-                df["fecha"] = pd.to_datetime(
-                    df["fecha"], format="ISO8601"
-                ).dt.date
-        elif table_name == "viajes":
-            if "fecha_hora_solicitud" in df.columns:
-                df["fecha_hora_solicitud"] = pd.to_datetime(
-                    df["fecha_hora_solicitud"], format="ISO8601"
-                )
-            if "fecha_hora_inicio" in df.columns:
-                df["fecha_hora_inicio"] = pd.to_datetime(
-                    df["fecha_hora_inicio"], format="ISO8601"
-                )
-            if "fecha_hora_fin" in df.columns:
-                df["fecha_hora_fin"] = pd.to_datetime(
-                    df["fecha_hora_fin"], format="ISO8601"
-                )
-            if "id_conductor" in df.columns:
-                df["id_conductor"] = df["id_conductor"].astype("Int64")
-        elif table_name == "telemetria_conductores":
-            if "fecha_hora" in df.columns:
-                df["fecha_hora"] = pd.to_datetime(
-                    df["fecha_hora"], format="ISO8601"
-                )
+        raw_df = pd.read_parquet(file_path)
+        df = prepare_dataframe(table_name, raw_df)
 
         start_time = time.time()
         df.to_sql(
@@ -195,7 +165,7 @@ def load_parquet_data(
             schema=schema,
             if_exists="append",
             index=False,
-            chunksize=batch_size,
+            chunksize=BATCH_SIZE,
             method="multi",
         )
         elapsed = time.time() - start_time
@@ -206,49 +176,14 @@ def load_parquet_data(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="Database schema and Parquet data loader for MoviGo using SQLAlchemy"
-    )
-    parser.add_argument(
-        "--schema-only",
-        action="store_true",
-        help="Reset DB and apply schema migrations only",
-    )
-    parser.add_argument(
-        "--data-only",
-        action="store_true",
-        help="Load Parquet data into existing schema only",
-    )
-    parser.add_argument(
-        "--batch-size",
-        type=int,
-        default=2000,
-        help="Batch chunk size for inserting data (default: 2000)",
-    )
-    parser.add_argument(
-        "--no-truncate",
-        action="store_true",
-        help="Do not truncate tables before loading data",
-    )
-    args = parser.parse_args()
-
-    if args.schema_only:
-        reset_database(TARGET_DB)
-        apply_migrations(TARGET_DB)
-    elif args.data_only:
-        load_parquet_data(
-            TARGET_DB,
-            batch_size=args.batch_size,
-            truncate=not args.no_truncate,
-        )
-    else:
-        reset_database(TARGET_DB)
-        apply_migrations(TARGET_DB)
-        load_parquet_data(
-            TARGET_DB,
-            batch_size=args.batch_size,
-            truncate=False,  # fresh DB doesn't need truncate
-        )
+    print(f"Iniciando pipeline de carga en BD '{TARGET_DB}' (esquema '{TARGET_SCHEMA}')...")
+    # Reinicia completamente la base de datos de destino
+    reset_database(TARGET_DB, ADMIN_DB)
+    # Ejecuta el DDL de definición del esquema en public
+    load_schema(TARGET_DB)
+    # Inserta los datos desde los archivos Parquet en orden de dependencias FK
+    load_parquet_data(TARGET_DB, schema=TARGET_SCHEMA)
+    print("🎉 Base de datos raw reiniciada, migrada y cargada con éxito.")
 
 
 if __name__ == "__main__":

@@ -35,4 +35,5 @@ pipeline/data/raw/*.parquet
 pipeline/dbt/target/
 pipeline/dbt/dbt_packages/
 pipeline/dbt/logs/
+pipeline/dbt/.user.yml
 

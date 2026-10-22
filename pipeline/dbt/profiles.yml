@@ -3,10 +3,11 @@ movigo_transformations:
   outputs:
     dev:
       type: postgres
-      host: "{{ env_var('PGHOST') }}"
-      user: "{{ env_var('PGUSER') }}"
-      password: "{{ env_var('PGPASSWORD') }}"
-      port: "{{ env_var('PGPORT', '5432') }}"
+      host: "{{ env_var('PGHOST', 'localhost') }}"
+      user: "{{ env_var('PGUSER', 'postgres') }}"
+      password: "{{ env_var('PGPASSWORD', '') }}"
+      port: "{{ env_var('PGPORT', '5432') | as_number }}"
       dbname: "{{ env_var('PGDATABASE', 'postgres') }}"
       schema: "{{ env_var('PGSCHEMA', 'dbt_dev') }}"
-      sslmode: "{{ env_var('PGSSLMODE', 'require') }}"
+      sslmode: "{{ env_var('PGSSLMODE', 'prefer') }}"
+

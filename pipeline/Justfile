@@ -1,29 +1,24 @@
 set dotenv-load
-export PATH := justfile_directory() + "/.venv/bin:" + env('PATH')
+export PATH := justfile_directory() + "/../.venv/bin:" + justfile_directory() + "/.venv/bin:" + env('PATH')
 set shell := ["bash", "-c"]
 
 # Default recipe: list available recipes
 default:
     @just --list
 
+# Configurar entorno virtual con uv para LSP y linters (Python 3.14)
+setup-env:
+    uv venv --python 3.14 ../.venv
+    uv pip install -r requirements.txt
+    @echo "✅ Entorno virtual (.venv) listo con uv (Python 3.14)."
+
 # Run dbt commands (e.g. `just dbt debug`, `just dbt run`, `just dbt test`)
 dbt *args="debug":
     exec dbt {{ args }} --project-dir dbt --profiles-dir dbt
 
-# Run the complete database pipeline (reset DB, schema migration, and load data)
+# Run the complete database pipeline (apply raw schema and load Parquet data)
 load:
     python loader.py
 
-# Load only Parquet data into the existing raw database schema
-load-data:
-    python loader.py --data-only
-
-# Reset database and apply schema migrations only
-load-schema:
-    python loader.py --schema-only
-
 fetch:
     python fetcher.py
-
-crear-entorno:
-    python -m venv .venv

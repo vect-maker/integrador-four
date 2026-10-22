@@ -1,5 +1,8 @@
 # Justfile para el Proyecto Integrador IV — MoviGo
-# Automatización de tareas para Documentación & Diapositivas (Typst), Datos y API REST.
+# Automatización de tareas para Documentación & Diapositivas (Typst), Datos, API REST y Pipeline ELT.
+
+set dotenv-load
+export PATH := justfile_directory() + "/.venv/bin:" + env('PATH')
 
 # Mostrar lista de comandos disponibles
 default:
@@ -39,55 +42,20 @@ watch-slides:
 info-slides:
     @pdfinfo typst/slides.pdf 2>/dev/null || echo "⚠️  No se encontró typst/slides.pdf. Ejecuta 'just build-slides' primero."
 
-# Listar todas las fuentes del sistema reconocidas por Typst
-fonts:
-    typst fonts
-
-# ==============================================================================
-# API REST & DATOS (MOVIGO)
-# ==============================================================================
-
-# Verificar conectividad con la API REST pública de MoviGo
-api-check:
-    @curl -s -o /dev/null -w "Estado HTTP: %{http_code}\n" http://4.157.251.192:8000/docs && echo "✅ API REST accesible en http://4.157.251.192:8000" || echo "❌ No se pudo conectar a la API"
-
-# Consultar el recuento total de registros en los endpoints de MoviGo
-api-status:
-    @python3 -c "import urllib.request, json; base = 'http://4.157.251.192:8000/movigo'; [print(f'• /{ep:<12} -> {json.loads(urllib.request.urlopen(f\"{base}/{ep}?limit=1\").read().decode(\"utf-8\")).get(\"total\", 0):>6} registros') for ep in ['zonas', 'usuarios', 'conductores', 'campanas', 'clima', 'viajes', 'telemetria']]"
-
-# Actualizar el catálogo de zonas compartidas typst/data/zonas.json desde la API en vivo
-fetch-zones:
-    @python3 -c "import urllib.request, json; data = json.loads(urllib.request.urlopen('http://4.157.251.192:8000/movigo/zonas?limit=50').read().decode('utf-8')); json.dump(data['items'], open('typst/data/zonas.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=2); print('✅ Actualizado typst/data/zonas.json con', len(data['items']), 'zonas urbanas')"
-
-# ==============================================================================
-# PIPELINE ELT (MOVIGO & DBT)
-# ==============================================================================
+# Crear entorno virtual local con uv (Python 3.14) para LSP y linters
+setup-env:
+    uv venv --python 3.14 .venv
+    uv pip install -r pipeline/requirements.txt
+    @echo "✅ Entorno virtual (.venv) listo con uv (Python 3.14) para soporte LSP y linters."
 
 # Ejecutar extracción de datos desde los 7 endpoints de MoviGo a Parquet
 pipeline-fetch:
     cd pipeline && python3 fetcher.py
 
-# Ejecutar pipeline completo en BD: reinicio, migración DDL y carga de datos Parquet
+# Ejecutar pipeline en BD: carga del esquema DDL (destroy block) y datos Parquet
 pipeline-load:
     cd pipeline && python3 loader.py
-
-# Crear esquema y aplicar migraciones DDL en PostgreSQL
-pipeline-schema:
-    cd pipeline && python3 loader.py --schema-only
-
-# Cargar archivos Parquet a PostgreSQL respetando integridad referencial
-pipeline-data:
-    cd pipeline && python3 loader.py --data-only
 
 # Ejecutar comandos de dbt Core (ej. `just dbt debug`, `just dbt run`, `just dbt test`)
 dbt *args="debug":
     exec dbt {{ args }} --project-dir pipeline/dbt --profiles-dir pipeline/dbt
-
-# ==============================================================================
-# LIMPIEZA
-# ==============================================================================
-
-# Eliminar artefactos generados (PDFs compilados)
-clean:
-    rm -f typst/document.pdf typst/slides.pdf
-    @echo "🧹 Limpieza completada"

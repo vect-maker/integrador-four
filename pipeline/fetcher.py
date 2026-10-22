@@ -8,7 +8,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-BASE_URL = os.getenv("MOVIGO_API_URL", "http://4.157.251.192:8000/movigo")
+BASE_URL = os.getenv("API_URL")
+if not BASE_URL:
+    raise ValueError("Environment variable 'API_URL' is required. Please set it in your .env file.")
+
+BASE_URL = BASE_URL.rstrip("/")
 MAX_LIMIT = int(os.getenv("MAX_LIMIT", "200"))
 RAW_FOLDER = Path(os.getenv("RAW_DATA_DIR", "./data/raw"))
 
@@ -64,13 +68,11 @@ def main():
 
     for endpoint, filename in endpoints:
         print(f"\nIniciando extracción para: /{endpoint}")
-        try:
-            df = get_data(f"/{endpoint}")
-            dest_file = RAW_FOLDER / filename
-            df.to_parquet(dest_file, index=False)
-            print(f"✅ Guardado /{endpoint} en '{dest_file}' ({len(df):,} filas)")
-        except Exception as e:
-            print(f"❌ Error al extraer /{endpoint}: {e}")
+        df = get_data(f"/{endpoint}")
+        dest_file = RAW_FOLDER / filename
+        df.to_parquet(dest_file, index=False)
+        print(f"✅ Guardado /{endpoint} en '{dest_file}' ({len(df):,} filas)")
+
 
 
 if __name__ == "__main__":
