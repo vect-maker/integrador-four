@@ -1,7 +1,7 @@
-name: 'antojitos_transformations'
+name: 'movigo_transformations'
 version: '1.0.0'
 
-profile: 'antojitos_transformations'
+profile: 'movigo_transformations'
 
 model-paths: ["models"]
 analysis-paths: ["analyses"]
@@ -15,6 +15,5 @@ clean-targets:
   - "dbt_packages"
 
 models:
-  antojitos_transformations:
+  movigo_transformations:
     +materialized: view
-

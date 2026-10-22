@@ -1,4 +1,4 @@
-antojitos_transformations:
+movigo_transformations:
   target: dev
   outputs:
     dev:
@@ -8,5 +8,5 @@ antojitos_transformations:
       password: "{{ env_var('PGPASSWORD') }}"
       port: "{{ env_var('PGPORT', '5432') }}"
       dbname: "{{ env_var('PGDATABASE', 'postgres') }}"
-      schema: "{{ env_var('PGSCHEMA', 'public') }}"
+      schema: "{{ env_var('PGSCHEMA', 'dbt_dev') }}"
       sslmode: "{{ env_var('PGSSLMODE', 'require') }}"

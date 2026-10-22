@@ -2,78 +2,69 @@ version: 2
 
 sources:
   - name: raw
-    description: "Read-only raw OLTP tables loaded from Antojitos Express into PostgreSQL"
+    description: "Tablas transaccionales OLTP / raw staging de MoviGo (Managua) en PostgreSQL"
     database: "{{ env_var('RAW_DB_NAME', 'raw') }}"
-    schema: "{{ env_var('RAW_SCHEMA', 'public') }}"
+    schema: "{{ env_var('RAW_SCHEMA', 'raw_staging_movigo') }}"
     tables:
-      - name: zonas
-        description: "Delivery zones with geographical and base delivery fee configuration"
+      - name: zonas_urbanas
+        description: "Cuadrantes y sectores urbanos de Managua con coordenadas y tarifas base de bajada de bandera"
         columns:
           - name: id_zona
-            description: "Primary key for delivery zones"
+            description: "Identificador único de la zona urbana"
             tests:
               - unique
               - not_null
 
-      - name: repartidores
-        description: "Delivery drivers, vehicle types, ratings, and current status"
+      - name: usuarios
+        description: "Directorio de usuarios pasajeros registrados en la plataforma MoviGo"
         columns:
-          - name: id_repartidor
-            description: "Primary key for drivers"
+          - name: id_usuario
+            description: "Identificador único del pasajero"
             tests:
               - unique
               - not_null
 
-      - name: categorias_platillo
-        description: "Dish categories and margin percentage"
+      - name: conductores
+        description: "Flota de socios conductores registrados, tipo de vehículo y métricas de desempeño"
         columns:
-          - name: id_categoria
-            description: "Primary key for dish categories"
+          - name: id_conductor
+            description: "Identificador único del socio conductor"
             tests:
               - unique
               - not_null
 
-      - name: platillos
-        description: "Menu items, pricing, ingredient costs, prep time, and oven requirements"
+      - name: campanas_incentivos
+        description: "Campañas de bonos e incentivos económicos para oferta de conductores"
         columns:
-          - name: id_platillo
-            description: "Primary key for dishes"
+          - name: id_campana
+            description: "Identificador único de la campaña de incentivo"
             tests:
               - unique
               - not_null
 
-      - name: promociones
-        description: "Marketing campaigns, campaign budgets, expected returns, and discount percentages"
-        columns:
-          - name: id_promocion
-            description: "Primary key for promotions"
-            tests:
-              - unique
-              - not_null
-
-      - name: clima_diario
-        description: "Daily weather conditions in Managua (precipitation, temp, weather condition)"
+      - name: clima_cuadrantes
+        description: "Series temporales de meteorología (precipitación, temp) e índice de congestión vial"
         columns:
           - name: fecha
-            description: "Primary key date for weather records"
+            description: "Fecha calendario del registro climático"
             tests:
               - unique
               - not_null
 
-      - name: ordenes
-        description: "Customer orders with payment methods, status, delivery notes, and fees"
+      - name: viajes
+        description: "Transacciones de viajes solicitados y ejecutados con cálculo de tarifa dinámica"
         columns:
-          - name: id_orden
-            description: "Primary key for orders"
+          - name: id_viaje
+            description: "Identificador único del viaje"
             tests:
               - unique
               - not_null
 
-      - name: detalle_ordenes
-        description: "Line items per order linking to platillos, quantities, and subtotals"
+      - name: telemetria_conductores
+        description: "Pings de posicionamiento GPS vehicular y velocidad instantánea en ruta"
         columns:
-          - name: id_detalle
-            description: "Primary key for order line items"
+          - name: id_telemetria
+            description: "Identificador único del ping telemétrico"
             tests:
               - unique
               - not_null

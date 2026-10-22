@@ -60,6 +60,30 @@ fetch-zones:
     @python3 -c "import urllib.request, json; data = json.loads(urllib.request.urlopen('http://4.157.251.192:8000/movigo/zonas?limit=50').read().decode('utf-8')); json.dump(data['items'], open('typst/data/zonas.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=2); print('✅ Actualizado typst/data/zonas.json con', len(data['items']), 'zonas urbanas')"
 
 # ==============================================================================
+# PIPELINE ELT (MOVIGO & DBT)
+# ==============================================================================
+
+# Ejecutar extracción de datos desde los 7 endpoints de MoviGo a Parquet
+pipeline-fetch:
+    cd pipeline && python3 fetcher.py
+
+# Ejecutar pipeline completo en BD: reinicio, migración DDL y carga de datos Parquet
+pipeline-load:
+    cd pipeline && python3 loader.py
+
+# Crear esquema y aplicar migraciones DDL en PostgreSQL
+pipeline-schema:
+    cd pipeline && python3 loader.py --schema-only
+
+# Cargar archivos Parquet a PostgreSQL respetando integridad referencial
+pipeline-data:
+    cd pipeline && python3 loader.py --data-only
+
+# Ejecutar comandos de dbt Core (ej. `just dbt debug`, `just dbt run`, `just dbt test`)
+dbt *args="debug":
+    exec dbt {{ args }} --project-dir pipeline/dbt --profiles-dir pipeline/dbt
+
+# ==============================================================================
 # LIMPIEZA
 # ==============================================================================
 

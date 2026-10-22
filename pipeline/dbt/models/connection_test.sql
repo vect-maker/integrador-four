@@ -1,1 +1,1 @@
-select 1 as id, 'hello from dbt v2' as message
+select 1 as id, 'MoviGo ELT pipeline connection test' as message
