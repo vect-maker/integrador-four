@@ -21,3 +21,18 @@ dist/
 .DS_Store
 Thumbs.db
 *.log
+
+# ==============================================================================
+# Pipeline ELT (Python & dbt)
+# ==============================================================================
+.venv/
+*/.venv/
+__pycache__/
+*/__pycache__/
+*.py[cod]
+.env
+pipeline/data/raw/*.parquet
+pipeline/dbt/target/
+pipeline/dbt/dbt_packages/
+pipeline/dbt/logs/
+
