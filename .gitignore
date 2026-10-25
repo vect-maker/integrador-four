@@ -37,3 +37,12 @@ pipeline/dbt/dbt_packages/
 pipeline/dbt/logs/
 pipeline/dbt/.user.yml
 
+# ==============================================================================
+# DuckDB (Bases de datos locales y snapshots analíticos)
+# ==============================================================================
+*.duckdb
+*.duckdb.wal
+*.duckdb.tmp
+pipeline/data/*.duckdb
+data/*.duckdb
+

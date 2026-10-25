@@ -65,3 +65,23 @@ dbt *args="debug":
         -w /usr/app/dbt \
         ghcr.io/dbt-labs/dbt-postgres:latest \
         {{ args }}
+
+# ==============================================================================
+# ANALÍTICA LOCAL Y EXPLORACIÓN OLAP (DUCKDB)
+# ==============================================================================
+
+# Crear o refrescar snapshot local en DuckDB a partir de Azure PostgreSQL (marts)
+duckdb-snapshot:
+    @bash pipeline/snapshot_duckdb.sh
+
+# Hidratar datasets agregados CSV en typst/data a partir de DuckDB
+hydrate-data:
+    @bash pipeline/hydrate_paper_data.sh
+
+# Abrir CLI interactivo en el snapshot local de DuckDB
+duckdb:
+    duckdb pipeline/data/analytics.duckdb
+
+# Ejecutar una consulta SQL en el snapshot local de DuckDB
+duckdb-sql query:
+    duckdb -dark-mode pipeline/data/analytics.duckdb -c "{{ query }}"
