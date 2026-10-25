@@ -83,9 +83,13 @@ dbt *args="debug":
 duckdb-snapshot:
     @bash pipeline/snapshot_duckdb.sh
 
-# Ejecutar script econométrico MCO (statsmodels, ANOVA, JSON y gráfico SVG)
+# Ejecutar script econométrico MCO (statsmodels, ANOVA, JSON e imágenes PNG)
 run-econometrics:
     @.venv/bin/python pipeline/analysis/01_econometrics.py
+
+# Ejecutar búsqueda de raíces numéricas (Bisección vs Newton-Raphson, JSON e imágenes PNG)
+run-numerical:
+    @.venv/bin/python pipeline/analysis/02_numerical_methods.py
 
 # Hidratar datasets agregados en typst/data a partir de DuckDB y análisis
 hydrate-data:

@@ -287,9 +287,9 @@ flowchart LR
 - [x] Verify clean compilation with `just build-all` (0 errors in `document.pdf` and `slides.pdf`).
 
 ### Milestone 1: Python Computational Suite (`pipeline/analysis/`)
-- [x] Create and verify `pipeline/analysis/01_econometrics.py` (OLS multiple linear regression, ANOVA table, JSON metrics and dual-panel SVG plot).
-- [ ] Create `pipeline/analysis/02_numerical_methods.py` (Bisection vs. Newton-Raphson, convergence comparison, SVG error trajectory).
-- [ ] Create `pipeline/analysis/03_optimization.py` (12-node Managua road graph, Dijkstra normal vs. storm travel times, SVG network map).
+- [x] Create and verify `pipeline/analysis/01_econometrics.py` (OLS multiple linear regression, ANOVA table, JSON metrics and PNG plots).
+- [x] Create and verify `pipeline/analysis/02_numerical_methods.py` (Bisection vs. Newton-Raphson, convergence comparison, JSON and PNG plots).
+- [ ] Create `pipeline/analysis/03_optimization.py` (12-node Managua road graph, Dijkstra normal vs. storm travel times, SVG/PNG network map).
 - [ ] Execute each script and verify zero errors.
 
 ### Milestone 2: Automated Hydration Integration
