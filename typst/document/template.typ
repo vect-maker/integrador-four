@@ -62,9 +62,28 @@
     spacing: 1.05em
   )
 
-  // 6. Figuras y Tablas
+  // 6. Figuras, Tablas y Código
   set figure(gap: 0.8em)
   set figure.caption(separator: [. ])
+
+  // Estilo para bloques de código (raw multilínea)
+  show raw.where(block: true): it => block(
+    fill: rgb("#f8fafc"),
+    stroke: 0.4pt + rgb("#cbd5e1"),
+    inset: (x: 10pt, y: 8pt),
+    radius: 3pt,
+    width: 100%,
+    text(font: ("Liberation Mono", "DejaVu Sans Mono"), size: 8.5pt, it)
+  )
+
+  // Estilo para código inline
+  show raw.where(block: false): it => box(
+    fill: rgb("#f1f5f9"),
+    radius: 2pt,
+    inset: (x: 2.5pt, y: 0pt),
+    baseline: 0%,
+    text(font: ("Liberation Mono", "DejaVu Sans Mono"), size: 9pt, it)
+  )
 
   // 7. Listas
   set list(spacing: 0.75em)
