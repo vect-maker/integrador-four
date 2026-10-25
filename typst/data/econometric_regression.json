@@ -1,0 +1,77 @@
+{
+  "description": "Regresion Lineal Multiple (MCO) - Tasa de Cancelacion vs Multiplicador Tarifario y Precipitacion",
+  "sample_size": 366,
+  "dependent_variable": "tasa_cancelacion_pct",
+  "independent_variables": [
+    "multiplicador_promedio",
+    "precipitacion_mm"
+  ],
+  "coefficients": {
+    "intercept": {
+      "estimate": -22.3038,
+      "std_error": 6.6437,
+      "t_stat": -3.357,
+      "p_value": 0.00087082,
+      "ci_95": [
+        -35.3687,
+        -9.2389
+      ]
+    },
+    "multiplicador": {
+      "estimate": 21.8247,
+      "std_error": 5.7055,
+      "t_stat": 3.825,
+      "p_value": 0.00015378,
+      "ci_95": [
+        10.6048,
+        33.0446
+      ]
+    },
+    "precipitacion_mm": {
+      "estimate": -0.4291,
+      "std_error": 0.1846,
+      "t_stat": -2.325,
+      "p_value": 0.020647,
+      "ci_95": [
+        -0.7921,
+        -0.0661
+      ]
+    }
+  },
+  "metrics": {
+    "r_squared": 0.6285,
+    "adj_r_squared": 0.6265,
+    "residual_std_error": 1.775,
+    "f_statistic": 307.106,
+    "f_p_value": 8.7112e-79,
+    "aic": 1461.69,
+    "bic": 1473.4
+  },
+  "anova": {
+    "regression": {
+      "ss": 1935.2321,
+      "df": 2,
+      "ms": 967.616,
+      "f": 307.106,
+      "p_value": 8.7112e-79
+    },
+    "residuals": {
+      "ss": 1143.7242,
+      "df": 363,
+      "ms": 3.1508
+    },
+    "total": {
+      "ss": 3078.9563,
+      "df": 365
+    }
+  },
+  "diagnostics": {
+    "durbin_watson": 1.806,
+    "jarque_bera": {
+      "statistic": 5.383,
+      "p_value": 0.0678,
+      "skewness": 0.296,
+      "kurtosis": 3.06
+    }
+  }
+}

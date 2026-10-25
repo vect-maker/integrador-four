@@ -279,12 +279,15 @@ flowchart LR
 ### Milestone 0: Setup & Objective Alignment
 - [x] Create central roadmap at `doc/paper_completion_roadmap.md`.
 - [x] Create comprehensive implementation plan artifact `plan_paper_completion_milestones.md`.
-- [ ] Install python packages via uv: `uv pip install -r pipeline/requirements.txt`.
-- [ ] Harmonize Objetivo Específico 4 in `typst/document/chapters/05_objetivos.typ` (Dijkstra graph routing).
-- [ ] Harmonize Phase 4 in `typst/document/chapters/07_metodologia.typ`.
+- [x] Install python packages via uv: `uv pip install -r pipeline/requirements.txt` (`scipy`, `statsmodels`, `matplotlib`, `networkx`).
+- [x] Harmonize Objetivo Específico 2 in `typst/document/chapters/05_objetivos.typ` (multiple linear regression OLS & ANOVA).
+- [x] Harmonize Objetivo Específico 4 in `typst/document/chapters/05_objetivos.typ` (Dijkstra graph routing).
+- [x] Harmonize Section *Optimización en Redes y Teoría de Grafos* in `typst/document/chapters/06_marco_teorico.typ`.
+- [x] Harmonize Phase 2 (MCO & ANOVA) and Phase 4 (Dijkstra on road network) in `typst/document/chapters/07_metodologia.typ`.
+- [x] Verify clean compilation with `just build-all` (0 errors in `document.pdf` and `slides.pdf`).
 
 ### Milestone 1: Python Computational Suite (`pipeline/analysis/`)
-- [ ] Create `pipeline/analysis/01_econometrics.py` (OLS multiple linear regression, ANOVA table, SVG scatter/fit plot).
+- [x] Create and verify `pipeline/analysis/01_econometrics.py` (OLS multiple linear regression, ANOVA table, JSON metrics and dual-panel SVG plot).
 - [ ] Create `pipeline/analysis/02_numerical_methods.py` (Bisection vs. Newton-Raphson, convergence comparison, SVG error trajectory).
 - [ ] Create `pipeline/analysis/03_optimization.py` (12-node Managua road graph, Dijkstra normal vs. storm travel times, SVG network map).
 - [ ] Execute each script and verify zero errors.
@@ -326,7 +329,20 @@ flowchart LR
 
 ---
 
-## 5. Verification Commands Matrix
+## 5. Work Tracking Across Sessions
+
+| Session / Date | Focus Area | Milestone | Status | Key Deliverables & Milestones |
+| :--- | :--- | :--- | :--- | :--- |
+| **Session 1** (Completed) | Setup, Roadmap & Objective Alignment | **M0** | ✅ **Completed** | Dependencies installed, `doc/paper_completion_roadmap.md`, objectives aligned in Ch. 5, 6, 7; verified with `just build-all`. |
+| **Session 2** (Next) | Computational Modeling Suite in Python | **M1** | ⏳ Scheduled | `01_econometrics.py`, `02_numerical_methods.py`, `03_optimization.py` |
+| **Session 3** | Automated Hydration, Tables & Data Bindings | **M2, M3** | ⏳ Scheduled | `just hydrate-data`, JSONs, SVGs, `data_bindings.typ`, modular tables |
+| **Session 4** | Chapter 8 Drafting (Resultados y Discusión) | **M4** | ⏳ Scheduled | `08_resultados.typ` (Sections 8.1, 8.2, 8.3, 8.4) |
+| **Session 5** | Chapter 9, Master PDF QA & Final Verification | **M5, M6** | ⏳ Scheduled | `09_conclusiones.typ`, `document.pdf` compiled cleanly |
+| **Session 6** | Defense Slides Synchronization | **M7** | ⏳ Scheduled | `slides.pdf` updated with real empirical results |
+
+---
+
+## 6. Verification Commands Matrix
 
 ```bash
 # 1. Verify dependencies

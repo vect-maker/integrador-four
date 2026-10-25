@@ -74,7 +74,11 @@ dbt *args="debug":
 duckdb-snapshot:
     @bash pipeline/snapshot_duckdb.sh
 
-# Hidratar datasets agregados CSV en typst/data a partir de DuckDB
+# Ejecutar script econométrico MCO (statsmodels, ANOVA, JSON y gráfico SVG)
+run-econometrics:
+    @.venv/bin/python pipeline/analysis/01_econometrics.py
+
+# Hidratar datasets agregados en typst/data a partir de DuckDB y análisis
 hydrate-data:
     @bash pipeline/hydrate_paper_data.sh
 
