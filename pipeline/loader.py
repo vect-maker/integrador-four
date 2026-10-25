@@ -20,8 +20,8 @@ PGSSLMODE = os.getenv("PGSSLMODE", "require")
 
 # Target database and schema to apply migrations and load raw data
 ADMIN_DB = os.getenv("PGADMIN_DATABASE", "postgres")
-TARGET_DB = os.getenv("RAW_DB_NAME", os.getenv("PGDATABASE", "raw"))
-TARGET_SCHEMA = os.getenv("RAW_SCHEMA", "public")
+TARGET_DB = os.getenv("RAW_DB_NAME", os.getenv("PGDATABASE", "postgres"))
+TARGET_SCHEMA = os.getenv("RAW_SCHEMA", "raw")
 RAW_DATA_DIR = Path(os.getenv("RAW_DATA_DIR", BASE_DIR / "data" / "raw"))
 
 
@@ -40,35 +40,24 @@ def get_engine(dbname: str) -> Engine:
     return create_engine(get_database_url(dbname))
 
 
-def reset_database(target_db: str = TARGET_DB, admin_db: str = ADMIN_DB) -> None:
-    """Drop target database if it exists, then create a clean one."""
-    print(f"Connecting to admin database '{admin_db}' on {PGHOST}...")
-    engine = get_engine(admin_db)
+def reset_schema(
+    target_db: str = TARGET_DB, target_schema: str = TARGET_SCHEMA
+) -> None:
+    """Drop target schema if it exists and create a clean one."""
+    print(f"Connecting to database '{target_db}' on {PGHOST} to reset schema '{target_schema}'...")
+    engine = get_engine(target_db)
     with engine.connect().execution_options(isolation_level="AUTOCOMMIT") as conn:
-        print(f"Terminating any active connections to '{target_db}'...")
-        conn.execute(
-            text(
-                """
-                SELECT pg_terminate_backend(pid)
-                FROM pg_stat_activity
-                WHERE datname = :target_db AND pid <> pg_backend_pid();
-                """
-            ),
-            {"target_db": target_db},
-        )
-
-        print(f"Dropping database '{target_db}' if it exists...")
-        conn.execute(text(f'DROP DATABASE IF EXISTS "{target_db}" WITH (FORCE);'))
-
-        print(f"Creating fresh database '{target_db}'...")
-        conn.execute(text(f'CREATE DATABASE "{target_db}";'))
-
+        print(f"Resetting schema '{target_schema}' (DROP CASCADE + CREATE)...")
+        conn.execute(text(f'DROP SCHEMA IF EXISTS "{target_schema}" CASCADE;'))
+        conn.execute(text(f'CREATE SCHEMA "{target_schema}";'))
     engine.dispose()
-    print(f"Database '{target_db}' created successfully.\n")
+    print(f"Schema '{target_schema}' recreated successfully.\n")
 
 
 def load_schema(
-    target_db: str = TARGET_DB, schema_file: Path | None = None
+    target_db: str = TARGET_DB,
+    target_schema: str = TARGET_SCHEMA,
+    schema_file: Path | None = None,
 ) -> None:
     """Connect to target database and execute the raw database schema DDL directly."""
     target_file = (
@@ -80,7 +69,9 @@ def load_schema(
     sql_content = target_file.read_text(encoding="utf-8")
     engine = get_engine(target_db)
     with engine.begin() as conn:
-        print(f"Applying schema DDL from '{target_file.name}'...")
+        conn.execute(text(f'CREATE SCHEMA IF NOT EXISTS "{target_schema}";'))
+        conn.execute(text(f'SET search_path TO "{target_schema}", public;'))
+        print(f"Applying schema DDL from '{target_file.name}' into schema '{target_schema}'...")
         conn.execute(text(sql_content))
     engine.dispose()
     print(f"Raw database schema from '{target_file.name}' applied successfully (tables reset).\n")
@@ -177,13 +168,13 @@ def load_parquet_data(
 
 def main() -> None:
     print(f"Iniciando pipeline de carga en BD '{TARGET_DB}' (esquema '{TARGET_SCHEMA}')...")
-    # Reinicia completamente la base de datos de destino
-    reset_database(TARGET_DB, ADMIN_DB)
-    # Ejecuta el DDL de definición del esquema en public
-    load_schema(TARGET_DB)
+    # Reinicia completamente el esquema de destino
+    reset_schema(TARGET_DB, TARGET_SCHEMA)
+    # Ejecuta el DDL de definición del esquema en TARGET_SCHEMA
+    load_schema(TARGET_DB, TARGET_SCHEMA)
     # Inserta los datos desde los archivos Parquet en orden de dependencias FK
     load_parquet_data(TARGET_DB, schema=TARGET_SCHEMA)
-    print("🎉 Base de datos raw reiniciada, migrada y cargada con éxito.")
+    print(f"🎉 Esquema '{TARGET_SCHEMA}' en BD '{TARGET_DB}' reiniciado, migrado y cargado con éxito.")
 
 
 if __name__ == "__main__":

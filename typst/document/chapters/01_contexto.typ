@@ -76,6 +76,6 @@ Para la contextualización del estudio es fundamental diferenciar entre las cond
 
 En concordancia, el flujo de trabajo computacional se estructura en las siguientes fases:
 + *Ingesta:* Construcción de un pipeline automatizado en Python (`httpx` / `requests`) con control de paginación y manejo de errores para extraer los endpoints de la API.
-+ *Almacenamiento Transaccional:* Ingesta y persistencia de los datos brutos en una base de datos relacional en la nube (*Azure Database for PostgreSQL*), configurada bajo la base de datos dedicada `raw` y esquema `public` como réplica transaccional (OLTP).
++ *Almacenamiento Transaccional:* Ingesta y persistencia de los datos brutos en una base de datos relacional en la nube (*Azure Database for PostgreSQL*), configurada en la base de datos `postgres` bajo el esquema transaccional `raw` (OLTP).
 + *Transformación y Modelado Analítico:* Despliegue de un almacén analítico estructurado en estrella mediante *dbt (Data Build Tool)*, garantizando trazabilidad y calidad de datos.
 + *Inferencia y Evaluación:* Aplicación de análisis estadístico, estimación de elasticidades de demanda y modelación matemática sobre el repositorio analítico resultante.

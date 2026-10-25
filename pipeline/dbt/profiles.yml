@@ -8,6 +8,6 @@ movigo_transformations:
       password: "{{ env_var('PGPASSWORD', '') }}"
       port: "{{ env_var('PGPORT', '5432') | as_number }}"
       dbname: "{{ env_var('PGDATABASE', 'postgres') }}"
-      schema: "{{ env_var('PGSCHEMA', 'dbt_dev') }}"
-      sslmode: "{{ env_var('PGSSLMODE', 'prefer') }}"
+      schema: "{{ env_var('PGSCHEMA', 'analytics') }}"
+      sslmode: "{{ env_var('PGSSLMODE', 'require') }}"
 

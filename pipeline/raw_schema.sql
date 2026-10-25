@@ -1,7 +1,10 @@
 -- =========================================================
 -- ESQUEMA OLTP / RAW STAGING: MoviGo (Managua, Nicaragua)
--- Database: raw (Schema: public)
+-- Database: postgres (Schema: raw)
 -- =========================================================
+
+CREATE SCHEMA IF NOT EXISTS raw;
+SET search_path TO raw, public;
 
 CREATE TABLE zonas_urbanas (
     id_zona INT PRIMARY KEY,

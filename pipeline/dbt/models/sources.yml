@@ -2,9 +2,9 @@ version: 2
 
 sources:
   - name: raw
-    description: "Tablas transaccionales OLTP / raw staging de MoviGo (Managua) en PostgreSQL"
-    database: "{{ env_var('RAW_DB_NAME', 'raw') }}"
-    schema: "{{ env_var('RAW_SCHEMA', 'public') }}"
+    description: "Tablas transaccionales OLTP / raw staging de MoviGo (Managua) en Azure PostgreSQL"
+    database: "{{ env_var('RAW_DB_NAME', 'postgres') }}"
+    schema: "{{ env_var('RAW_SCHEMA', 'raw') }}"
     tables:
       - name: zonas_urbanas
         description: "Cuadrantes y sectores urbanos de Managua con coordenadas y tarifas base de bajada de bandera"

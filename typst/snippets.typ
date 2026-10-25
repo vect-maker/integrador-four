@@ -17,7 +17,10 @@ df.to_parquet(RAW_FOLDER / filename, index=False)
 
 // 2. Esquema DDL: Definición relacional y validaciones en PostgreSQL
 #let snippet-raw-ddl = ```sql
--- pipeline/raw_schema.sql: Esquema OLTP con restricciones de integridad
+-- pipeline/raw_schema.sql: Esquema OLTP en base de datos 'postgres'
+CREATE SCHEMA IF NOT EXISTS raw;
+SET search_path TO raw, public;
+
 CREATE TABLE viajes (
     id_viaje INT PRIMARY KEY,
     id_usuario INT NOT NULL REFERENCES usuarios(id_usuario),
@@ -34,7 +37,7 @@ CREATE INDEX idx_viajes_solicitud ON viajes(fecha_hora_solicitud);
 
 // 3. Cargador Cloud: Conexión cifrada e inserción por lotes en Azure PostgreSQL
 #let snippet-loader-azure = ```python
-# pipeline/loader.py: Carga por lotes (chunksize 2,000) en Azure Database for PostgreSQL
+# pipeline/loader.py: Carga por lotes (chunksize 2,000) en esquema 'raw'
 engine = create_engine(
     f"postgresql+psycopg://{quote_plus(PGUSER)}:{quote_plus(PGPASSWORD)}"
     f"@{PGHOST}:{PGPORT}/{TARGET_DB}?sslmode=require"
@@ -43,7 +46,7 @@ engine = create_engine(
 df.to_sql(
     name=table_name,
     con=engine,
-    schema="public",
+    schema="raw",
     if_exists="append",
     index=False,
     chunksize=2000,
@@ -57,8 +60,8 @@ df.to_sql(
 version: 2
 sources:
   - name: raw
-    database: "{{ env_var('RAW_DB_NAME', 'raw') }}"
-    schema: "{{ env_var('RAW_SCHEMA', 'public') }}"
+    database: "{{ env_var('RAW_DB_NAME', 'postgres') }}"
+    schema: "{{ env_var('RAW_SCHEMA', 'raw') }}"
     tables:
       - name: viajes
         columns:

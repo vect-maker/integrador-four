@@ -51,7 +51,7 @@ Para investigar empíricamente este fenómeno, se requiere una arquitectura anal
 
 Dado que MoviGo expone sus datos a través de una API REST pública (proporcionada en una URL temporal para fines académicos), la solución tecnológica se estructura bajo el paradigma *ELT (Extract, Load, Transform)*:
 
-+ *Ingesta y Carga Cruda (Python $arrow.r$ Azure PostgreSQL):* Un script modular en Python (`requests`/`httpx`) consume los endpoints transaccionales y de catálogo, gestionando paginación sistemática, serializando archivos columnares en Apache Parquet y asegurando la integridad referencial antes de persistir los datos en un servicio administrado en la nube (*Azure Database for PostgreSQL*). Esta capa opera como réplica transaccional estructurada en la base de datos `raw` bajo el esquema `public` (OLTP).
++ *Ingesta y Carga Cruda (Python $arrow.r$ Azure PostgreSQL):* Un script modular en Python (`requests`/`httpx`) consume los endpoints transaccionales y de catálogo, gestionando paginación sistemática, serializando archivos columnares en Apache Parquet y asegurando la integridad referencial antes de persistir los datos en un servicio administrado en la nube (*Azure Database for PostgreSQL*). Esta capa opera como réplica transaccional estructurada en la base de datos `postgres` bajo el esquema `raw` (OLTP).
 + *Transformación Analítica con dbt Core:* La orquestación del almacén de datos se delega en *dbt (Data Build Tool)*, permitiendo versionar las transformaciones en SQL modular, materializar tablas intermedias y desacoplar la capa de staging de la capa analítica de consulta (OLAP) @kimball2013.
 
 == Modelado Dimensional Kimball para Análisis del Viaje
