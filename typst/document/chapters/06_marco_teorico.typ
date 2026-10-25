@@ -51,16 +51,21 @@ Para investigar empíricamente este fenómeno, se requiere una arquitectura anal
 
 Dado que MoviGo expone sus datos a través de una API REST pública (proporcionada en una URL temporal para fines académicos), la solución tecnológica se estructura bajo el paradigma *ELT (Extract, Load, Transform)*:
 
-+ *Ingesta y Carga Cruda (Python $arrow.r$ Azure PostgreSQL):* Un script modular en Python (`requests`/`httpx`) consume los endpoints transaccionales y de catálogo, gestionando paginación sistemática, serializando archivos columnares en Apache Parquet y asegurando la integridad referencial antes de persistir los datos en un servicio administrado en la nube (*Azure Database for PostgreSQL*). Esta capa opera como réplica transaccional estructurada en la base de datos `postgres` bajo el esquema `raw` (OLTP).
-+ *Transformación Analítica con dbt Core:* La orquestación del almacén de datos se delega en *dbt (Data Build Tool)*, permitiendo versionar las transformaciones en SQL modular, materializar tablas intermedias y desacoplar la capa de staging de la capa analítica de consulta (OLAP) @kimball2013.
++ *Ingesta y Carga Cruda (Python $arrow.r$ Azure PostgreSQL):* Un cliente modular en Python (`fetcher.py`) consume los endpoints transaccionales y de catálogo, gestionando paginación sistemática (`limit=200`, `offset`), serializando archivos columnares en Apache Parquet y asegurando la integridad referencial antes de persistir los datos en un servicio administrado en la nube (*Azure Database for PostgreSQL*). Esta capa opera como réplica transaccional estructurada en la base de datos `postgres` bajo el esquema `raw` (OLTP).
++ *Transformación Analítica con dbt Core:* La orquestación del almacén de datos se delega en *dbt (Data Build Tool)*, estructurando las transformaciones en un flujo de dos niveles: una capa de limpieza y enriquecimiento operacional (_staging_) materializada como vistas lógicas, y una capa dimensional de negocio (_marts_) materializada físicamente en tablas optimizadas para procesamiento analítico en línea (OLAP) @kimball2013.
 
-== Modelado Dimensional Kimball para Análisis del Viaje
+== Modelado Dimensional Kimball y Esquema en Estrella para Análisis del Viaje
 
-El diseño dimensional sigue los principios de Ralph Kimball, definiendo el ciclo de vida del viaje como el proceso de negocio central a través de un *Esquema en Estrella* (_Star Schema_):
+El diseño analítico sigue rigurosamente los principios de modelado dimensional propuestos por Ralph Kimball @kimball2013, definiendo la atención y resolución del viaje como el proceso de negocio nodal a través de un *Esquema en Estrella* (_Star Schema_):
 
-- *Tabla de Hechos Atómica (`fact_viajes`):* Grano de una fila por cada intento o viaje registrado (> 77,000 registros). Centraliza métricas monetarias (tarifas base y finales, multiplicadores aplicados), operativas (distancias, duraciones, tiempos de espera) y de calidad (estados de servicio y calificaciones).
-- *Dimensiones Conformadas:* Cuadrantes urbanos de origen y destino, marcas temporales y franjas horarias, registros meteorológicos diarios, perfiles de usuarios y flota vehicular registrada.
-- *Llaves Subrogadas Hash (MD5):* Desacoplan la identidad analítica de los identificadores operativos de origen, preservando la inmutabilidad y trazabilidad del modelo ante posibles cambios de esquema.
++ *Tabla de Hechos Atómica (`fct_viajes`):* Posee el grano más fino posible: un registro por cada intento o solicitud de traslado registrado ($N = 77,036$). Centraliza tanto métricas monetarias (tarifa base, multiplicador dinámico aplicado, recargo absoluto por surge y tarifa final) como métricas operativas (distancia recorrida, duración efectiva, tiempo de espera en minutos) e indicadores dicotómicos del resultado del servicio (`es_cancelado`, `es_cancelado_usuario`, `es_cancelado_conductor`, `es_completado`).
++ *Dimensiones Conformadas:* Proveen el contexto descriptivo y los filtros analíticos para el desglose multidimensional:
+  - `dim_zonas`: Caracteriza los 12 cuadrantes urbanos de Managua, su estrato socioeconómico, clasificación ordinal de ingreso, coordenadas geográficas y costo base de bajada de bandera. Opera como dimensión de doble rol (_role-playing dimension_), relacionándose simultáneamente con la zona de origen (`sk_zona_origen`) y la zona de destino (`sk_zona_destino`).
+  - `dim_clima`: Registra a nivel diario la serie temporal meteorológica, cuantificando la precipitación en milímetros, temperatura ambiente, condición de cielo, presencia de lluvia e índice de congestión vehicular.
+  - `dim_usuarios`: Consolida atributos de los pasajeros, su comportamiento histórico de calificación y su preferencia de pago (efectivo versus medios digitales).
+  - `dim_conductores`: Agrupa la información del parque vehicular (tipo de servicio: estándar, comfort o moto), modelo, año, estado activo y tasa de aceptación.
+  - `dim_campanas`: Almacena el portafolio de programas de incentivos y bonos para conductores, especificando el costo presupuestario y las horas de conexión proyectadas.
++ *Llaves Subrogadas Sintéticas Determinísticas (MD5):* En concordancia con las mejores prácticas de la ingeniería analítica moderna, el enlace entre la tabla de hechos y las dimensiones no depende de las claves primarias autoincrementales del sistema origen, sino de llaves subrogadas hash (`sk_*`) generadas mediante la función criptográfica `md5(cast(id as text))`. Este mecanismo desacopla el almacén de posibles colisiones o mutaciones en los identificadores operativos, garantizando idempotencia, inmutabilidad y máxima eficiencia en las operaciones de cruce (_joins_).
 
 == Fundamentos Teóricos para el Análisis Cuantitativo
 

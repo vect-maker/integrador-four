@@ -1,4 +1,12 @@
-#import "../../snippets.typ": snippet-raw-ddl, snippet-loader-azure
+#show bibliography: none
+#bibliography("../../references.bib")
+#import "../../snippets.typ": (
+  snippet-raw-ddl,
+  snippet-loader-azure,
+  snippet-fct-viajes,
+  snippet-marts-models,
+)
+#import "../../diagrams/star_schema.typ": diagram-star-schema
 
 = Diseño Metodológico
 
@@ -13,11 +21,97 @@ El diseño metodológico establece la secuencia técnica, analítica y computaci
 
 == Fases Metodológicas de la Investigación
 
-=== Fase 1: Pipeline de Datos ELT e Infraestructura Cloud (Objetivo 1)
-La base computacional consolida los datos dispersos de la plataforma MoviGo mediante un flujo moderno ELT (*Extract, Load, Transform*):
-+ *Extracción y Serialización Parquet:* Consumo sistemático de los endpoints de la API REST mediante un cliente en Python (`fetcher.py`) con control dinámico de paginación (`limit=200`, `offset`). Los conjuntos recuperados se serializan en archivos columnares *Apache Parquet* (`pipeline/data/raw/*.parquet`), asegurando inmutabilidad, reducción de almacenamiento y desacoplamiento de la red.
-+ *Carga Transaccional en Azure PostgreSQL:* Ejecución del esquema DDL estricto (`raw_schema.sql`) en el esquema dedicado `raw` de la base de datos predeterminada (`postgres`) en *Azure Database for PostgreSQL*, asegurando tipos de datos e integridad referencial como se ilustra en el @lst-ddl. El script cargador (`loader.py`) aplica casteo de marcas temporales y gestiona claves foráneas, insertando por lotes de 2,000 registros en orden topológico relacional (@lst-loader).
-+ *Transformación y Calidad con dbt Core:* Orquestación de modelos dimensionales mediante *dbt*, estructurando vistas de estandarización (`staging`) y la tabla de hechos atómica (`fct_viajes`) en esquema analítico, gobernados por pruebas automatizadas declarativas de no nulidad, unicidad y validación de reglas de negocio en `sources.yml`.
+=== Fase 1: Pipeline de Datos ELT, Procesamiento y Esquema en Estrella (Objetivo 1)
+
+Para consolidar el repositorio analítico de operaciones 2024 a partir de las fuentes desagregadas de la plataforma MoviGo, se ejecutó integralmente un pipeline de datos moderno bajo el paradigma *ELT (Extract, Load, Transform)* articulado en las siguientes etapas computacionales:
+
++ *Extracción y Serialización Parquet:* Consumo sistemático de los endpoints de la API REST mediante un cliente en Python (`fetcher.py`) con control dinámico de paginación (`limit=200`, `offset`). Los conjuntos recuperados se serializan en siete archivos columnares *Apache Parquet* (`pipeline/data/raw/*.parquet`: zonas, usuarios, conductores, campañas, clima, viajes y telemetría), garantizando inmutabilidad, reducción volumétrica de almacenamiento y desacoplamiento de la red.
+
++ *Carga Transaccional Relacional en Azure PostgreSQL:* Despliegue del esquema DDL estricto (`raw_schema.sql`) en el esquema dedicado `raw` de *Azure Database for PostgreSQL*, asegurando tipificación fuerte, restricciones de clave primaria y foránea, así como validaciones de dominio mediante reglas `CHECK` como se ilustra en el @lst-ddl. El script cargador (`loader.py`) aplica casteo de marcas temporales, establece conexión cifrada TLS/SSL y ejecuta inserciones por bloques de 2,000 registros respetando el orden topológico de dependencias (@lst-loader).
+
++ *Capa de Preparación y Limpieza (Staging en dbt Core):* Implementación de modelos intermedios en dbt materializados como vistas lógicas (`view`) bajo la capa `staging`. En esta fase se homogenizan formatos, se limpian inconsistencias y se realiza ingeniería de características operacional:
+  - En `stg_viajes`: segregación de componentes temporales (`fecha_solicitud`, `hora_solicitud`, `dia_semana_iso`), identificación determinística de fines de semana (`es_fin_de_semana`) y horas pico matutinas (07:00--08:59) y vespertinas (17:00--18:59) (`es_hora_pico`), cuantificación del sobrecosto monetario atribuible al surge (`sobrecosto_surge_nio = tarifa_final - tarifa_base`), cálculo del tiempo de espera en minutos hasta el inicio del servicio (`tiempo_espera_minutos`), y binarización rigurosa de las cancelaciones en indicadores analíticos (`es_cancelado`, `es_cancelado_usuario`, `es_cancelado_conductor`, `es_completado`).
+  - En `stg_clima`: categorización ordinal de la intensidad de precipitación (`sin lluvia`, `ligera`, `moderada`, `fuerte`) y de los niveles de saturación vial (`baja`, `moderada`, `alta`, `critica`).
+  - En `stg_zonas`: derivación del estrato socioeconómico ordinal (`nivel_estrato` de 1 a 4).
+  - En `stg_campanas`: cálculo del costo presupuestario unitario por hora adicional de conexión de conductores (`costo_por_hora_conexion`).
+
++ *Capa Dimensional y Esquema en Estrella (Marts en dbt Core):* Transformación y estructuración de los datos en un *Esquema en Estrella* (_Star Schema_) según la metodología de Ralph Kimball @kimball2013, materializado físicamente como tablas (`table`) en la base de datos para maximizar el rendimiento analítico (OLAP):
+  - *Tabla de Hechos Atómica (`fct_viajes`):* Grano atómico de un registro por cada intento o servicio de transporte ($N = 77,036$). Integra llaves primarias y foráneas subrogadas conformadas calculadas mediante la función criptográfica `md5(cast(id as text))` (`sk_viaje`, `sk_zona_origen`, `sk_zona_destino`, `sk_conductor`, `sk_usuario`, `sk_clima`), métricas financieras de tarifa dinámica, métricas operacionales de tiempo y distancia, y la variable respuesta dicotómica de cancelación para el modelado econométrico (@lst-fct-viajes).
+  - *Dimensiones Conformadas (`dim_zonas`, `dim_clima`, `dim_usuarios`, `dim_conductores`, `dim_campanas`):* Tablas de contexto desacopladas que almacenan respectivamente la estratificación urbana, el régimen meteorológico y de congestión diario, el perfil socio-financiero de pasajeros, el parque vehicular activo y los programas presupuestarios de incentivos (@fig-star-schema y @tbl-star-schema).
+
++ *Marco de Calidad y Pruebas Automatizadas de Integridad:* Implementación de pruebas declarativas automatizadas en `sources.yml`, `_staging__models.yml` y `_marts__models.yml` ejecutadas mediante `dbt test`. El marco valida formalmente la unicidad (`unique`) y completitud (`not_null`) de todas las claves primarias y foráneas subrogadas, la integridad referencial cruzada (`relationships`) entre `fct_viajes` y las dimensiones correspondientes, y la validez del dominio en la variable dependiente de cancelación (`accepted_values: [0, 1]`), tal como se detalla en el @lst-dbt-marts.
+
+#figure(
+  diagram-star-schema,
+  caption: [Diagrama dimensional del Esquema en Estrella (Star Schema) implementado en dbt Core],
+) <fig-star-schema>
+
+#figure(
+  {
+    set text(size: 7.6pt)
+    show raw.where(block: false): it => box(
+      fill: rgb("#f1f5f9"),
+      radius: 1.5pt,
+      inset: (x: 1.8pt, y: 0pt),
+      baseline: 0%,
+      text(font: ("Liberation Mono", "DejaVu Sans Mono"), size: 6.8pt, it.text)
+    )
+    table(
+      columns: (1.35fr, 1.05fr, 1.15fr, 1.35fr, 2.6fr),
+      stroke: 0.4pt + rgb("#cbd5e1"),
+      inset: (x: 4pt, y: 3.5pt),
+      align: (col, row) => if row == 0 { center + horizon } else { left + horizon },
+      fill: (col, row) => if row == 0 { rgb("#f1f5f9") } else if calc.even(row) { rgb("#f8fafc") } else { none },
+      table.header(
+        [*Modelo (dbt)*], [*Rol Dimensional*], [*PK Subrogada*], [*Relaciones / FK*], [*Grano y Métricas / Atributos Clave*]
+      ),
+      [`fct_viajes`],
+      [Tabla de Hechos (Atómica)],
+      [`sk_viaje` \ #text(size: 6.8pt, fill: rgb("#64748b"))[(Hash MD5)]],
+      [
+        #stack(
+          spacing: 1.5pt,
+          [`sk_zona_origen`],
+          [`sk_zona_destino`],
+          [`sk_clima`, `sk_usuario`],
+          [`sk_conductor`]
+        )
+      ],
+      [1 fila por solicitud ($N = 77,036$). Multiplicador dinámico, tarifa base, tarifa final, recargo surge, tiempo espera, cancelaciones (`es_cancelado`).],
+
+      [`dim_zonas`],
+      [Dimensión Conformada],
+      [`sk_zona` \ #text(size: 6.8pt, fill: rgb("#64748b"))[(Hash MD5)]],
+      [Origen y Destino \ #text(size: 6.8pt, fill: rgb("#64748b"))[(`fct_viajes`)]],
+      [12 cuadrantes urbanos. Estrato socioeconómico, nivel ordinal (1--4), latitud, longitud, radio cobertura, bajada de bandera zonal.],
+
+      [`dim_clima`],
+      [Dimensión Conformada],
+      [`sk_clima` \ #text(size: 6.8pt, fill: rgb("#64748b"))[(Hash MD5)]],
+      [`sk_clima` \ #text(size: 6.8pt, fill: rgb("#64748b"))[(`fct_viajes`)]],
+      [365 días del ciclo 2024. Precipitación (mm), temperatura (°C), índice y nivel de congestión vial, condición de cielo, indicador de lluvia.],
+
+      [`dim_usuarios`],
+      [Dimensión Conformada],
+      [`sk_usuario` \ #text(size: 6.8pt, fill: rgb("#64748b"))[(Hash MD5)]],
+      [`sk_usuario` \ #text(size: 6.8pt, fill: rgb("#64748b"))[(`fct_viajes`)]],
+      [Pasajeros registrados. Preferencia de pago (efectivo vs tarjeta/digital), calificación histórica promedio, fecha de registro.],
+
+      [`dim_conductores`],
+      [Dimensión Conformada],
+      [`sk_conductor` \ #text(size: 6.8pt, fill: rgb("#64748b"))[(Hash MD5)]],
+      [`sk_conductor` \ #text(size: 6.8pt, fill: rgb("#64748b"))[(`fct_viajes`)]],
+      [Socios de la flota. Modalidad vehicular (`movigo_estandar`, `movigo_comfort`, `movigo_moto`), modelo, año, calificación, tasa de aceptación, estado activo.],
+
+      [`dim_campanas`],
+      [Dimensión Prescriptiva],
+      [`sk_campana` \ #text(size: 6.8pt, fill: rgb("#64748b"))[(Hash MD5)]],
+      [Optimización \ #text(size: 6.8pt, fill: rgb("#64748b"))[Mochila 0/1]],
+      [Programas de bonos. Costo presupuestario en córdobas (NIO), incremento en horas de conexión y ratio de costo unitario por hora.]
+    )
+  },
+  caption: [Especificación arquitectónica del Esquema en Estrella (Star Schema) implementado en dbt Core],
+) <tbl-star-schema>
 
 #figure(
   snippet-raw-ddl,
@@ -28,6 +122,16 @@ La base computacional consolida los datos dispersos de la plataforma MoviGo medi
   snippet-loader-azure,
   caption: [Conexión cifrada e inserción por lotes en Azure Database for PostgreSQL (`loader.py`)],
 ) <lst-loader>
+
+#figure(
+  snippet-fct-viajes,
+  caption: [Modelo de la tabla de hechos atómica en dbt Core con llaves subrogadas hash MD5 (`fct_viajes.sql`)],
+) <lst-fct-viajes>
+
+#figure(
+  snippet-marts-models,
+  caption: [Pruebas declarativas de integridad referencial foránea y calidad de datos en dbt (`_marts__models.yml`)],
+) <lst-dbt-marts>
 
 === Fase 2: Modelación Econométrica de la Cancelación de Viajes (Objetivo 2)
 A partir del repositorio analítico consolidado, se modela la probabilidad de cancelación del viaje ($Y in {0,1}$, donde $1 = "cancelado"$) como respuesta a la tarifa dinámica y factores exógenos:

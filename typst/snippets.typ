@@ -56,7 +56,7 @@ df.to_sql(
 
 // 4. Transformación: Definición de fuentes y pruebas automatizadas en dbt Core
 #let snippet-dbt-sources = ```yaml
-# pipeline/dbt/models/sources.yml: Fuentes transaccionales y calidad en dbt
+# pipeline/dbt/models/staging/sources.yml: Fuentes transaccionales y calidad en dbt
 version: 2
 sources:
   - name: raw
@@ -69,4 +69,54 @@ sources:
             tests: [unique, not_null]
           - name: multiplicador_dinamico
             tests: [not_null]
+```
+
+// 5. Esquema en Estrella: Modelo atómico de hechos fct_viajes con llaves MD5
+#let snippet-fct-viajes = ```sql
+-- pipeline/dbt/models/marts/fct_viajes.sql: Modelo de hechos y llaves subrogadas MD5
+with viajes as (
+    select * from {{ ref('stg_viajes') }}
+)
+select
+    -- Llave primaria subrogada (MD5)
+    md5(cast(id_viaje as text)) as sk_viaje,
+    id_viaje,
+    -- Llaves foráneas conformadas subrogadas (MD5)
+    md5(cast(id_zona_origen as text)) as sk_zona_origen,
+    md5(cast(id_zona_destino as text)) as sk_zona_destino,
+    case when id_conductor is not null then md5(cast(id_conductor as text)) else null end as sk_conductor,
+    md5(cast(id_usuario as text)) as sk_usuario,
+    md5(cast(fecha_solicitud as text)) as sk_clima,
+    -- Métricas de tarificación dinámica y estado de cancelación
+    tarifa_base, multiplicador_dinamico, tiene_surge, tarifa_final, sobrecosto_surge_nio,
+    estado_viaje, es_cancelado, es_cancelado_usuario, tiempo_espera_minutos
+from viajes
+```
+
+// 6. Calidad Dimensional: Pruebas de integridad referencial y dominios en dbt
+#let snippet-marts-models = ```yaml
+# pipeline/dbt/models/marts/_marts__models.yml: Pruebas de integridad referencial y calidad
+version: 2
+models:
+  - name: fct_viajes
+    columns:
+      - name: sk_viaje
+        tests: [unique, not_null]
+      - name: sk_zona_origen
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_zonas')
+              field: sk_zona
+      - name: sk_clima
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_clima')
+              field: sk_clima
+      - name: es_cancelado
+        tests:
+          - not_null
+          - accepted_values:
+              values: [0, 1]
 ```
