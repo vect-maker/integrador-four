@@ -8,8 +8,8 @@
 
 + *Implementar* un pipeline de ingeniería de datos bajo el paradigma ELT (API REST, Apache Parquet, Azure Database for PostgreSQL y dbt Core) para la consolidación del repositorio analítico de operaciones 2024.
 
-+ *Modelar* la probabilidad de cancelación de viajes frente a variaciones en el multiplicador dinámico, perturbaciones meteorológicas y estratos socioeconómicos mediante técnicas estadísticas multivariadas.
++ *Modelar* la tasa de cancelación de viajes frente a variaciones en el multiplicador dinámico y perturbaciones meteorológicas mediante técnicas de regresión lineal múltiple (MCO) y análisis de varianza.
 
 + *Calcular* el umbral crítico de multiplicador tarifario de equilibrio en la función de exceso de demanda mediante algoritmos numéricos de búsqueda de raíces.
 
-+ *Optimizar* la asignación presupuestaria de campañas de incentivos para conductores mediante programación entera binaria (problema de la mochila 0/1) para el fortalecimiento de la oferta vehicular.
++ *Optimizar* el tiempo de respuesta y desplazamiento vehicular en la red vial urbana de Managua mediante algoritmos de ruta más corta en teoría de grafos (algoritmo de Dijkstra), evaluando la resiliencia operativa de los corredores críticos ante contingencias climáticas y congestión severa.
