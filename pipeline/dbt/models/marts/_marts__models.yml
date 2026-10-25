@@ -1,0 +1,100 @@
+version: 2
+
+models:
+  - name: dim_zonas
+    description: "Dimensión conformada de cuadrantes urbanos y estratos socioeconómicos de Managua"
+    columns:
+      - name: sk_zona
+        description: "Llave primaria subrogada (MD5)"
+        tests:
+          - unique
+          - not_null
+      - name: id_zona
+        description: "Clave operativa natural"
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_clima
+    description: "Dimensión conformada de series temporales de clima y congestión vial"
+    columns:
+      - name: sk_clima
+        description: "Llave primaria subrogada (MD5)"
+        tests:
+          - unique
+          - not_null
+      - name: fecha
+        description: "Fecha calendario natural"
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_usuarios
+    description: "Dimensión conformada de pasajeros y métodos de pago preferidos"
+    columns:
+      - name: sk_usuario
+        description: "Llave primaria subrogada (MD5)"
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_conductores
+    description: "Dimensión conformada de la flota de socios conductores"
+    columns:
+      - name: sk_conductor
+        description: "Llave primaria subrogada (MD5)"
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_campanas
+    description: "Dimensión de campañas de incentivos presupuestarios para optimización de oferta"
+    columns:
+      - name: sk_campana
+        description: "Llave primaria subrogada (MD5)"
+        tests:
+          - unique
+          - not_null
+
+  - name: fct_viajes
+    description: "Tabla de hechos atómica del viaje para análisis de tarifa dinámica y cancelaciones"
+    columns:
+      - name: sk_viaje
+        description: "Llave primaria subrogada del viaje (MD5)"
+        tests:
+          - unique
+          - not_null
+      - name: sk_zona_origen
+        description: "Llave foránea a dim_zonas (origen)"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_zonas')
+              field: sk_zona
+      - name: sk_zona_destino
+        description: "Llave foránea a dim_zonas (destino)"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_zonas')
+              field: sk_zona
+      - name: sk_usuario
+        description: "Llave foránea a dim_usuarios"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_usuarios')
+              field: sk_usuario
+      - name: sk_clima
+        description: "Llave foránea a dim_clima"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_clima')
+              field: sk_clima
+      - name: es_cancelado
+        description: "Indicador binario de viaje cancelado (0 o 1)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [0, 1]
