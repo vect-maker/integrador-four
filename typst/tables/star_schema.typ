@@ -1,6 +1,13 @@
 // Especificación Arquitectónica del Esquema en Estrella (Star Schema)
 // Componente de tabla reutilizable para el paper, presentaciones y anexos técnicos
 
+#import "../data_bindings.typ": (
+  total-trips-fmt,
+  total-zones,
+  total-weather-days,
+  total-campaigns,
+)
+
 #let table-star-schema(size: 7.6pt, raw-size: 6.8pt) = {
   set text(size: size)
   show raw.where(block: false): it => box(
@@ -31,19 +38,19 @@
         [`sk_conductor`]
       )
     ],
-    [1 fila por solicitud ($N = 77,036$). Multiplicador dinámico, tarifa base, tarifa final, recargo surge, tiempo espera, bandera booleana de cancelación (`es_cancelado`).],
+    [1 fila por solicitud ($N = #total-trips-fmt$). Multiplicador dinámico, tarifa base, tarifa final, recargo surge, tiempo espera, bandera booleana de cancelación (`es_cancelado`).],
 
     [`dim_zonas`],
     [Dimensión Conformada],
     [`sk_zona` \ #text(size: raw-size, fill: rgb("#64748b"))[(Hash MD5)]],
     [Origen y Destino \ #text(size: raw-size, fill: rgb("#64748b"))[(`fct_viajes`)]],
-    [12 cuadrantes urbanos. Estrato socioeconómico, nivel ordinal (1--4), latitud, longitud, radio cobertura, bajada de bandera zonal.],
+    [#total-zones cuadrantes urbanos. Estrato socioeconómico, nivel ordinal (1--4), latitud, longitud, radio cobertura, bajada de bandera zonal.],
 
     [`dim_clima`],
     [Dimensión Conformada],
     [`sk_clima` \ #text(size: raw-size, fill: rgb("#64748b"))[(Hash MD5)]],
     [`sk_clima` \ #text(size: raw-size, fill: rgb("#64748b"))[(`fct_viajes`)]],
-    [365 días del ciclo 2024. Precipitación (mm), temperatura (°C), índice y nivel de congestión vial, condición de cielo, indicador de lluvia.],
+    [#total-weather-days días del ciclo 2024. Precipitación (mm), temperatura (°C), índice y nivel de congestión vial, condición de cielo, indicador de lluvia.],
 
     [`dim_usuarios`],
     [Dimensión Conformada],
@@ -61,7 +68,7 @@
     [Dimensión Prescriptiva],
     [`sk_campania` \ #text(size: raw-size, fill: rgb("#64748b"))[(Hash MD5)]],
     [Optimización \ #text(size: raw-size, fill: rgb("#64748b"))[Mochila 0/1]],
-    [Programas de bonos. Costo presupuestario en córdobas (NIO), incremento en horas de conexión y ratio de costo unitario por hora.]
+    [#total-campaigns programas de bonos. Costo presupuestario en córdobas (NIO), incremento en horas de conexión y ratio de costo unitario por hora.]
   )
 }
 

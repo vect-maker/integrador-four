@@ -1,5 +1,6 @@
 #show bibliography: none
 #bibliography("../../references.bib")
+#import "../../data_bindings.typ": total-trips-fmt, total-zones
 
 = Marco Teórico
 
@@ -58,9 +59,9 @@ Dado que MoviGo expone sus datos a través de una API REST pública (proporciona
 
 El diseño analítico sigue rigurosamente los principios de modelado dimensional propuestos por Ralph Kimball @kimball2013, definiendo la atención y resolución del viaje como el proceso de negocio nodal a través de un *Esquema en Estrella* (_Star Schema_):
 
-+ *Tabla de Hechos Atómica (`fct_viajes`):* Posee el grano más fino posible: un registro por cada intento o solicitud de traslado registrado ($N = 77,036$). Centraliza tanto métricas monetarias (tarifa base, multiplicador dinámico aplicado, recargo absoluto por surge y tarifa final) como métricas operativas (distancia recorrida, duración efectiva, tiempo de espera en minutos) e indicadores dicotómicos del resultado del servicio (`es_cancelado`, `es_cancelado_usuario`, `es_cancelado_conductor`, `es_completado`).
++ *Tabla de Hechos Atómica (`fct_viajes`):* Posee el grano más fino posible: un registro por cada intento o solicitud de traslado registrado ($N = #total-trips-fmt$). Centraliza tanto métricas monetarias (tarifa base, multiplicador dinámico aplicado, recargo absoluto por surge y tarifa final) como métricas operativas (distancia recorrida, duración efectiva, tiempo de espera en minutos) e indicadores dicotómicos del resultado del servicio (`es_cancelado`, `es_cancelado_usuario`, `es_cancelado_conductor`, `es_completado`).
 + *Dimensiones Conformadas:* Proveen el contexto descriptivo y los filtros analíticos para el desglose multidimensional:
-  - `dim_zonas`: Caracteriza los 12 cuadrantes urbanos de Managua, su estrato socioeconómico, clasificación ordinal de ingreso, coordenadas geográficas y costo base de bajada de bandera. Opera como dimensión de doble rol (_role-playing dimension_), relacionándose simultáneamente con la zona de origen (`sk_zona_origen`) y la zona de destino (`sk_zona_destino`).
+  - `dim_zonas`: Caracteriza los #total-zones cuadrantes urbanos de Managua, su estrato socioeconómico, clasificación ordinal de ingreso, coordenadas geográficas y costo base de bajada de bandera. Opera como dimensión de doble rol (_role-playing dimension_), relacionándose simultáneamente con la zona de origen (`sk_zona_origen`) y la zona de destino (`sk_zona_destino`).
   - `dim_clima`: Registra a nivel diario la serie temporal meteorológica, cuantificando la precipitación en milímetros, temperatura ambiente, condición de cielo, presencia de lluvia e índice de congestión vehicular.
   - `dim_usuarios`: Consolida atributos de los pasajeros, su comportamiento histórico de calificación y su preferencia de pago (efectivo versus medios digitales).
   - `dim_conductores`: Agrupa la información del parque vehicular (tipo de servicio: estándar, comfort o moto), modelo, año, estado activo y tasa de aceptación.

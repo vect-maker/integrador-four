@@ -9,5 +9,11 @@ SELECT
     ROUND(AVG(tarifa_final), 2) AS tarifa_final_promedio_nio,
     ROUND(AVG(sobrecosto_surge_nio), 2) AS sobrecosto_promedio_nio,
     ROUND(AVG(distancia_km), 2) AS distancia_promedio_km,
-    ROUND(AVG(tiempo_espera_minutos), 2) AS tiempo_espera_promedio_min
+    ROUND(AVG(tiempo_espera_minutos), 2) AS tiempo_espera_promedio_min,
+    -- Dimensional system counts
+    (SELECT COUNT(*) FROM dim_zonas) AS total_zonas,
+    (SELECT COUNT(*) FROM dim_clima) AS total_dias_clima,
+    (SELECT COUNT(*) FROM dim_usuarios) AS total_usuarios,
+    (SELECT COUNT(*) FROM dim_conductores) AS total_conductores,
+    (SELECT COUNT(*) FROM dim_campanias) AS total_campanias
 FROM fct_viajes

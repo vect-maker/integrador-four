@@ -29,7 +29,7 @@ Every dataset is serialized as structured JSON (`array[dictionary]`), providing 
 
 ### Semantic Property Access (Single Object)
 ```typst
-#let kpis = json("/data/general_kpis.json").at(0)
+#let kpis = json("data/general_kpis.json").at(0)
 
 El ciclo analítico consolidó un total de #kpis.total_viajes solicitudes, registrando
 una tasa global de cancelación del #kpis.tasa_cancelacion_pct% bajo un multiplicador
@@ -38,7 +38,7 @@ dinámico promedio de #kpis.surge_promedio x.
 
 ### Collection Iteration and Mapping (Tables & Cards)
 ```typst
-#let zones = json("/data/zones.json")
+#let zones = json("data/zones.json")
 
 #table(
   columns: (1.5fr, 1.2fr, 1fr),

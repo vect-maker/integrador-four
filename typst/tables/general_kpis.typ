@@ -1,7 +1,7 @@
 // typst/tables/general_kpis.typ: Macro Operational KPIs Summary Table
-// Programmatically hydrated from /data/general_kpis.json via DuckDB
+// Programmatically hydrated from data/general_kpis.json via DuckDB
 
-#let kpis = json("/data/general_kpis.json").at(0)
+#import "../data_bindings.typ": general-kpis as kpis
 
 // Reusable table component
 #let table-general-kpis(size: 8pt) = {
