@@ -117,6 +117,4 @@ models:
       - name: es_cancelado
         tests:
           - not_null
-          - accepted_values:
-              values: [0, 1]
 ```

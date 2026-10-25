@@ -33,13 +33,13 @@ Para consolidar el repositorio analítico de operaciones 2024 a partir de las fu
   - En `stg_viajes`: segregación de componentes temporales (`fecha_solicitud`, `hora_solicitud`, `dia_semana_iso`), identificación determinística de fines de semana (`es_fin_de_semana`) y horas pico matutinas (07:00--08:59) y vespertinas (17:00--18:59) (`es_hora_pico`), cuantificación del sobrecosto monetario atribuible al surge (`sobrecosto_surge_nio = tarifa_final - tarifa_base`), cálculo del tiempo de espera en minutos hasta el inicio del servicio (`tiempo_espera_minutos`), y binarización rigurosa de las cancelaciones en indicadores analíticos (`es_cancelado`, `es_cancelado_usuario`, `es_cancelado_conductor`, `es_completado`).
   - En `stg_clima`: categorización ordinal de la intensidad de precipitación (`sin lluvia`, `ligera`, `moderada`, `fuerte`) y de los niveles de saturación vial (`baja`, `moderada`, `alta`, `critica`).
   - En `stg_zonas`: derivación del estrato socioeconómico ordinal (`nivel_estrato` de 1 a 4).
-  - En `stg_campanas`: cálculo del costo presupuestario unitario por hora adicional de conexión de conductores (`costo_por_hora_conexion`).
+  - En `stg_campanias`: cálculo del costo presupuestario unitario por hora adicional de conexión de conductores (`costo_por_hora_conexion`).
 
 + *Capa Dimensional y Esquema en Estrella (Marts en dbt Core):* Transformación y estructuración de los datos en un *Esquema en Estrella* (_Star Schema_) según la metodología de Ralph Kimball @kimball2013, materializado físicamente como tablas (`table`) en la base de datos para maximizar el rendimiento analítico (OLAP):
   - *Tabla de Hechos Atómica (`fct_viajes`):* Grano atómico de un registro por cada intento o servicio de transporte ($N = 77,036$). Integra llaves primarias y foráneas subrogadas conformadas calculadas mediante la función criptográfica `md5(cast(id as text))` (`sk_viaje`, `sk_zona_origen`, `sk_zona_destino`, `sk_conductor`, `sk_usuario`, `sk_clima`), métricas financieras de tarifa dinámica, métricas operacionales de tiempo y distancia, y la variable respuesta dicotómica de cancelación para el modelado econométrico (@lst-fct-viajes).
-  - *Dimensiones Conformadas (`dim_zonas`, `dim_clima`, `dim_usuarios`, `dim_conductores`, `dim_campanas`):* Tablas de contexto desacopladas que almacenan respectivamente la estratificación urbana, el régimen meteorológico y de congestión diario, el perfil socio-financiero de pasajeros, el parque vehicular activo y los programas presupuestarios de incentivos (@fig-star-schema y @tbl-star-schema).
+  - *Dimensiones Conformadas (`dim_zonas`, `dim_clima`, `dim_usuarios`, `dim_conductores`, `dim_campanias`):* Tablas de contexto desacopladas que almacenan respectivamente la estratificación urbana, el régimen meteorológico y de congestión diario, el perfil socio-financiero de pasajeros, el parque vehicular activo y los programas presupuestarios de incentivos (@fig-star-schema y @tbl-star-schema).
 
-+ *Marco de Calidad y Pruebas Automatizadas de Integridad:* Implementación de pruebas declarativas automatizadas en `sources.yml`, `_staging__models.yml` y `_marts__models.yml` ejecutadas mediante `dbt test`. El marco valida formalmente la unicidad (`unique`) y completitud (`not_null`) de todas las claves primarias y foráneas subrogadas, la integridad referencial cruzada (`relationships`) entre `fct_viajes` y las dimensiones correspondientes, y la validez del dominio en la variable dependiente de cancelación (`accepted_values: [0, 1]`), tal como se detalla en el @lst-dbt-marts.
++ *Marco de Calidad y Pruebas Automatizadas de Integridad:* Implementación de pruebas declarativas automatizadas en `sources.yml`, `_staging__models.yml` y `_marts__models.yml` ejecutadas mediante `dbt test`. El marco valida formalmente la unicidad (`unique`) y completitud (`not_null`) de todas las claves primarias y foráneas subrogadas, la integridad referencial cruzada (`relationships`) entre `fct_viajes` y las dimensiones correspondientes, y la no nulidad en la variable dependiente booleana de cancelación (`es_cancelado: not_null`), tal como se detalla en el @lst-dbt-marts.
 
 #figure(
   diagram-star-schema,
@@ -77,7 +77,7 @@ Para consolidar el repositorio analítico de operaciones 2024 a partir de las fu
           [`sk_conductor`]
         )
       ],
-      [1 fila por solicitud ($N = 77,036$). Multiplicador dinámico, tarifa base, tarifa final, recargo surge, tiempo espera, cancelaciones (`es_cancelado`).],
+      [1 fila por solicitud ($N = 77,036$). Multiplicador dinámico, tarifa base, tarifa final, recargo surge, tiempo espera, bandera booleana de cancelación (`es_cancelado`).],
 
       [`dim_zonas`],
       [Dimensión Conformada],
@@ -103,9 +103,9 @@ Para consolidar el repositorio analítico de operaciones 2024 a partir de las fu
       [`sk_conductor` \ #text(size: 6.8pt, fill: rgb("#64748b"))[(`fct_viajes`)]],
       [Socios de la flota. Modalidad vehicular (`movigo_estandar`, `movigo_comfort`, `movigo_moto`), modelo, año, calificación, tasa de aceptación, estado activo.],
 
-      [`dim_campanas`],
+      [`dim_campanias`],
       [Dimensión Prescriptiva],
-      [`sk_campana` \ #text(size: 6.8pt, fill: rgb("#64748b"))[(Hash MD5)]],
+      [`sk_campania` \ #text(size: 6.8pt, fill: rgb("#64748b"))[(Hash MD5)]],
       [Optimización \ #text(size: 6.8pt, fill: rgb("#64748b"))[Mochila 0/1]],
       [Programas de bonos. Costo presupuestario en córdobas (NIO), incremento en horas de conexión y ratio de costo unitario por hora.]
     )
@@ -134,7 +134,7 @@ Para consolidar el repositorio analítico de operaciones 2024 a partir de las fu
 ) <lst-dbt-marts>
 
 === Fase 2: Modelación Econométrica de la Cancelación de Viajes (Objetivo 2)
-A partir del repositorio analítico consolidado, se modela la probabilidad de cancelación del viaje ($Y in {0,1}$, donde $1 = "cancelado"$) como respuesta a la tarifa dinámica y factores exógenos:
+A partir del repositorio analítico consolidado, la bandera booleana `es_cancelado` se transforma en el vector dicotómico ($Y in {0,1}$, donde $1 = "true" = "cancelado"$) para modelar la probabilidad de cancelación del viaje como respuesta a la tarifa dinámica y factores exógenos:
 + *Especificación del Modelo Logístico:* Estimación de coeficientes y razones de momios (_odds ratios_) mediante regresión logística binaria:
   $ ln(frac(P(Y=1), 1 - P(Y=1))) = beta_0 + beta_1 dot m + beta_2 dot "precipitacion" + sum_(k) gamma_k dot "estrato"_k + epsilon $
   donde $m$ es el multiplicador dinámico aplicado a la transacción.

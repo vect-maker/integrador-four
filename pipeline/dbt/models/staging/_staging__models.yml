@@ -33,10 +33,10 @@ models:
           - unique
           - not_null
 
-  - name: stg_campanas
+  - name: stg_campanias
     description: "Capa de staging para campañas de bonos e incentivos económicos"
     columns:
-      - name: id_campana
+      - name: id_campania
         description: "Identificador único de la campaña"
         tests:
           - unique
@@ -60,11 +60,9 @@ models:
           - unique
           - not_null
       - name: es_cancelado
-        description: "Bandera binaria que indica si el viaje fue cancelado (1) o no (0)"
+        description: "Bandera booleana que indica si el viaje fue cancelado (true) o no (false)"
         tests:
           - not_null
-          - accepted_values:
-              values: [0, 1]
 
   - name: stg_telemetria
     description: "Capa de staging para pings de posicionamiento GPS y velocidad vehicular"

@@ -3,7 +3,7 @@ with source as (
 )
 
 select
-    id_campana,
+    id_campana as id_campania,
     nombre_bono,
     costo_presupuesto_nio,
     incremento_horas_conexion,
@@ -13,4 +13,4 @@ select
     fecha_fin,
     estado
 from source
-order by id_campana
+order by id_campania

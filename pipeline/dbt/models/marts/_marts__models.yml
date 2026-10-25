@@ -47,11 +47,16 @@ models:
           - unique
           - not_null
 
-  - name: dim_campanas
+  - name: dim_campanias
     description: "Dimensión de campañas de incentivos presupuestarios para optimización de oferta"
     columns:
-      - name: sk_campana
+      - name: sk_campania
         description: "Llave primaria subrogada (MD5)"
+        tests:
+          - unique
+          - not_null
+      - name: id_campania
+        description: "Clave operativa natural"
         tests:
           - unique
           - not_null
@@ -93,8 +98,6 @@ models:
               to: ref('dim_clima')
               field: sk_clima
       - name: es_cancelado
-        description: "Indicador binario de viaje cancelado (0 o 1)"
+        description: "Indicador booleano de viaje cancelado (true o false)"
         tests:
           - not_null
-          - accepted_values:
-              values: [0, 1]

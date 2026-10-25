@@ -1,10 +1,10 @@
 with source as (
-    select * from {{ ref('stg_campanas') }}
+    select * from {{ ref('stg_campanias') }}
 )
 
 select
-    md5(cast(id_campana as text)) as sk_campana,
-    id_campana,
+    md5(cast(id_campania as text)) as sk_campania,
+    id_campania,
     nombre_bono,
     costo_presupuesto_nio,
     incremento_horas_conexion,

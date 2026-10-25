@@ -82,10 +82,10 @@
       ([], [tarifa_final], text(fill: rgb("#64748b"))[decimal]),
       ([], [sobrecosto_surge_nio], text(fill: rgb("#64748b"))[decimal]),
       ([], [tiempo_espera_minutos], text(fill: rgb("#64748b"))[decimal]),
-      ([], text(fill: rgb("#b91c1c"), weight: "bold")[es_cancelado], text(fill: rgb("#b91c1c"), weight: "bold")[int(0/1)]),
+      ([], text(fill: rgb("#b91c1c"), weight: "bold")[es_cancelado], text(fill: rgb("#b91c1c"), weight: "bold")[boolean]),
     ))),
 
-    // --- FILA INFERIOR: dim_usuarios (0, 2), dim_campanas (1, 2) y dim_conductores (2, 2) ---
+    // --- FILA INFERIOR: dim_usuarios (0, 2), dim_campanias (1, 2) y dim_conductores (2, 2) ---
     node((0, 2), db-table("dim_usuarios", "DIMENSION", rgb("#0369a1"), rgb("#0284c7"), (
       (pk-tag, text(weight: "bold")[sk_usuario], text(fill: rgb("#64748b"))[text]),
       ([], [id_usuario], text(fill: rgb("#64748b"))[int]),
@@ -95,9 +95,9 @@
       ([], [fecha_registro], text(fill: rgb("#64748b"))[date]),
     ))),
 
-    node((1, 2), db-table("dim_campanas", "OPTIMIZACIÓN", rgb("#14532d"), rgb("#16a34a"), width: 132pt, (
-      (pk-tag, text(weight: "bold")[sk_campana], text(fill: rgb("#64748b"))[text]),
-      ([], [id_campana], text(fill: rgb("#64748b"))[int]),
+    node((1, 2), db-table("dim_campanias", "OPTIMIZACIÓN", rgb("#14532d"), rgb("#16a34a"), width: 132pt, (
+      (pk-tag, text(weight: "bold")[sk_campania], text(fill: rgb("#64748b"))[text]),
+      ([], [id_campania], text(fill: rgb("#64748b"))[int]),
       ([], [costo_presupuesto], text(fill: rgb("#64748b"))[decimal]),
       ([], [incremento_horas], text(fill: rgb("#64748b"))[int]),
       ([], [costo_hora_conexion], text(fill: rgb("#64748b"))[decimal]),
@@ -118,7 +118,7 @@
     edge((0, 2), (1, 1), "-|>", stroke: 0.7pt + rgb("#0284c7"), label: text(size: 5.5pt, weight: "bold", fill: rgb("#0369a1"))[1 : N], label-side: left),
     edge((2, 2), (1, 1), "-|>", stroke: 0.7pt + rgb("#0284c7"), label: text(size: 5.5pt, weight: "bold", fill: rgb("#0369a1"))[1 : N], label-side: right),
 
-    // --- ENLACE PRESCRIPTIVO dim_campanas -> dim_conductores ---
+    // --- ENLACE PRESCRIPTIVO dim_campanias -> dim_conductores ---
     edge((1, 2), (2, 2), "-->", stroke: (dash: "dashed", paint: rgb("#16a34a"), thickness: 0.7pt), label: text(size: 5pt, weight: "bold", fill: rgb("#15803d"))[Incentivos], label-side: left),
   )
 ]

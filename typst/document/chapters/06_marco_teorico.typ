@@ -64,7 +64,7 @@ El diseño analítico sigue rigurosamente los principios de modelado dimensional
   - `dim_clima`: Registra a nivel diario la serie temporal meteorológica, cuantificando la precipitación en milímetros, temperatura ambiente, condición de cielo, presencia de lluvia e índice de congestión vehicular.
   - `dim_usuarios`: Consolida atributos de los pasajeros, su comportamiento histórico de calificación y su preferencia de pago (efectivo versus medios digitales).
   - `dim_conductores`: Agrupa la información del parque vehicular (tipo de servicio: estándar, comfort o moto), modelo, año, estado activo y tasa de aceptación.
-  - `dim_campanas`: Almacena el portafolio de programas de incentivos y bonos para conductores, especificando el costo presupuestario y las horas de conexión proyectadas.
+  - `dim_campanias`: Almacena el portafolio de programas de incentivos y bonos para conductores, especificando el costo presupuestario y las horas de conexión proyectadas.
 + *Llaves Subrogadas Sintéticas Determinísticas (MD5):* En concordancia con las mejores prácticas de la ingeniería analítica moderna, el enlace entre la tabla de hechos y las dimensiones no depende de las claves primarias autoincrementales del sistema origen, sino de llaves subrogadas hash (`sk_*`) generadas mediante la función criptográfica `md5(cast(id as text))`. Este mecanismo desacopla el almacén de posibles colisiones o mutaciones en los identificadores operativos, garantizando idempotencia, inmutabilidad y máxima eficiencia en las operaciones de cruce (_joins_).
 
 == Fundamentos Teóricos para el Análisis Cuantitativo

@@ -32,10 +32,10 @@ select
     round(tarifa_final - tarifa_base, 2) as sobrecosto_surge_nio,
     metodo_pago,
     estado_viaje,
-    case when estado_viaje in ('cancelado_usuario', 'cancelado_conductor') then 1 else 0 end as es_cancelado,
-    case when estado_viaje = 'cancelado_usuario' then 1 else 0 end as es_cancelado_usuario,
-    case when estado_viaje = 'cancelado_conductor' then 1 else 0 end as es_cancelado_conductor,
-    case when estado_viaje = 'completado' then 1 else 0 end as es_completado,
+    case when estado_viaje in ('cancelado_usuario', 'cancelado_conductor') then true else false end as es_cancelado,
+    case when estado_viaje = 'cancelado_usuario' then true else false end as es_cancelado_usuario,
+    case when estado_viaje = 'cancelado_conductor' then true else false end as es_cancelado_conductor,
+    case when estado_viaje = 'completado' then true else false end as es_completado,
     case 
         when fecha_hora_inicio is not null 
         then round(extract(epoch from (fecha_hora_inicio - fecha_hora_solicitud)) / 60.0, 2) 
