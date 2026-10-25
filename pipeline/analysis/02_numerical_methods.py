@@ -20,27 +20,43 @@ Outputs:
 from __future__ import annotations
 
 import json
-from pathlib import Path
 import sys
+from pathlib import Path
+from typing import overload
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-
 # -----------------------------------------------------------------------------
 # Microeconomic Parameters & Functions
 # -----------------------------------------------------------------------------
-D0 = 220.0       # Baseline peak hourly demand (trip requests/hour at m=1.00)
-ALPHA = 0.65     # Exponential price elasticity decay parameter
-S0 = 140.0       # Baseline peak hourly supply (active drivers at m=1.00)
-BETA = 0.85      # Logarithmic supply incentive attraction parameter
-TOLERANCE = 1e-6 # Numerical convergence tolerance threshold
-MAX_ITER = 100   # Maximum iteration guardrail
+D0 = 220.0  # Baseline peak hourly demand (trip requests/hour at m=1.00)
+ALPHA = 0.65  # Exponential price elasticity decay parameter
+S0 = 140.0  # Baseline peak hourly supply (active drivers at m=1.00)
+BETA = 0.85  # Logarithmic supply incentive attraction parameter
+TOLERANCE = 1e-6  # Numerical convergence tolerance threshold
+MAX_ITER = 100  # Maximum iteration guardrail
+
+
+@overload
+def demand_function(m: float) -> float: ...
+
+
+@overload
+def demand_function(m: np.ndarray) -> np.ndarray: ...
 
 
 def demand_function(m: float | np.ndarray) -> float | np.ndarray:
     """Evaluates the customer trip demand curve: D(m) = D0 * exp(-alpha * (m - 1))."""
     return D0 * np.exp(-ALPHA * (m - 1.0))
+
+
+@overload
+def supply_function(m: float) -> float: ...
+
+
+@overload
+def supply_function(m: np.ndarray) -> np.ndarray: ...
 
 
 def supply_function(m: float | np.ndarray) -> float | np.ndarray:
@@ -96,14 +112,16 @@ def solve_bisection(
         fm = excess_demand_f(m)
         error = (current_b - current_a) / 2.0
 
-        history.append({
-            "step": step,
-            "a": round(float(current_a), 6),
-            "b": round(float(current_b), 6),
-            "m": round(float(m), 6),
-            "f_m": round(float(fm), 6),
-            "error": round(float(error), 8),
-        })
+        history.append(
+            {
+                "step": step,
+                "a": round(float(current_a), 6),
+                "b": round(float(current_b), 6),
+                "m": round(float(m), 6),
+                "f_m": round(float(fm), 6),
+                "error": round(float(error), 8),
+            }
+        )
 
         if error < tol or abs(fm) < tol:
             return m, history
@@ -139,28 +157,34 @@ def solve_newton_raphson(
         f_prime = excess_demand_f_prime(current_m)
 
         if abs(f_prime) < 1e-12:
-            raise ZeroDivisionError(f"Derivative near zero at step {step}: f'({current_m})={f_prime}")
+            raise ZeroDivisionError(
+                f"Derivative near zero at step {step}: f'({current_m})={f_prime}"
+            )
 
         next_m = current_m - (fm / f_prime)
         error = abs(next_m - current_m)
 
-        history.append({
-            "step": step,
-            "m": round(float(current_m), 6),
-            "f_m": round(float(fm), 6),
-            "f_prime": round(float(f_prime), 4),
-            "error": round(float(error), 8),
-        })
+        history.append(
+            {
+                "step": step,
+                "m": round(float(current_m), 6),
+                "f_m": round(float(fm), 6),
+                "f_prime": round(float(f_prime), 4),
+                "error": round(float(error), 8),
+            }
+        )
 
         if error < tol or abs(fm) < tol:
             # Append final converged point state
-            history.append({
-                "step": step + 1,
-                "m": round(float(next_m), 6),
-                "f_m": round(float(excess_demand_f(next_m)), 6),
-                "f_prime": round(float(excess_demand_f_prime(next_m)), 4),
-                "error": 0.0,
-            })
+            history.append(
+                {
+                    "step": step + 1,
+                    "m": round(float(next_m), 6),
+                    "f_m": round(float(excess_demand_f(next_m)), 6),
+                    "f_prime": round(float(excess_demand_f_prime(next_m)), 4),
+                    "error": 0.0,
+                }
+            )
             return next_m, history
 
         current_m = next_m
@@ -177,7 +201,11 @@ def generate_market_curves_plot(m_star: float, output_path: Path):
     Renders standalone PNG: Supply vs. Demand curves showing the equilibrium root m*.
     """
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    plt.style.use("seaborn-v0_8-whitegrid" if "seaborn-v0_8-whitegrid" in plt.style.available else "default")
+    plt.style.use(
+        "seaborn-v0_8-whitegrid"
+        if "seaborn-v0_8-whitegrid" in plt.style.available
+        else "default"
+    )
     fig, ax = plt.subplots(figsize=(6.8, 4.4), dpi=300)
 
     m_vals = np.linspace(1.0, 2.5, 200)
@@ -186,8 +214,20 @@ def generate_market_curves_plot(m_star: float, output_path: Path):
     q_star = demand_function(m_star)
 
     # Plot curves
-    ax.plot(m_vals, d_vals, color="#c62828", linewidth=2.2, label=r"Demanda $D(m) = D_0 e^{-\alpha(m-1)}$")
-    ax.plot(m_vals, s_vals, color="#1565c0", linewidth=2.2, label=r"Oferta $S(m) = S_0 (1 + \beta \ln m)$")
+    ax.plot(
+        m_vals,
+        d_vals,
+        color="#c62828",
+        linewidth=2.2,
+        label=r"Demanda $D(m) = D_0 e^{-\alpha(m-1)}$",
+    )
+    ax.plot(
+        m_vals,
+        s_vals,
+        color="#1565c0",
+        linewidth=2.2,
+        label=r"Oferta $S(m) = S_0 (1 + \beta \ln m)$",
+    )
 
     # Shaded excess regions
     mask_shortage = m_vals <= m_star
@@ -225,10 +265,20 @@ def generate_market_curves_plot(m_star: float, output_path: Path):
         q_star + 14,
         annotation_text,
         fontsize=9,
-        bbox=dict(boxstyle="round,pad=0.4", facecolor="#fff9c4", edgecolor="#fbc02d", alpha=0.95),
+        bbox=dict(
+            boxstyle="round,pad=0.4",
+            facecolor="#fff9c4",
+            edgecolor="#fbc02d",
+            alpha=0.95,
+        ),
     )
 
-    ax.set_title("Equilibrio Microeconómico de Demanda y Oferta en Horas Pico", fontsize=11, fontweight="bold", pad=8)
+    ax.set_title(
+        "Equilibrio Microeconómico de Demanda y Oferta en Horas Pico",
+        fontsize=11,
+        fontweight="bold",
+        pad=8,
+    )
     ax.set_xlabel("Multiplicador Dinámico de Tarifa (m)", fontsize=10)
     ax.set_ylabel("Volumen Horario de Viajes (solicitudes/h)", fontsize=10)
     ax.set_xlim(1.0, 2.5)
@@ -251,7 +301,11 @@ def generate_convergence_plot(
     Illustrates linear convergence of Bisection vs. quadratic convergence of Newton-Raphson.
     """
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    plt.style.use("seaborn-v0_8-whitegrid" if "seaborn-v0_8-whitegrid" in plt.style.available else "default")
+    plt.style.use(
+        "seaborn-v0_8-whitegrid"
+        if "seaborn-v0_8-whitegrid" in plt.style.available
+        else "default"
+    )
     fig, ax = plt.subplots(figsize=(6.8, 4.4), dpi=300)
 
     # Bisection points
@@ -282,10 +336,21 @@ def generate_convergence_plot(
     )
 
     # Threshold horizontal line
-    ax.axhline(TOLERANCE, color="#424242", linestyle="--", linewidth=1.2, label=r"Tolerancia $\epsilon = 10^{-6}$")
+    ax.axhline(
+        TOLERANCE,
+        color="#424242",
+        linestyle="--",
+        linewidth=1.2,
+        label=r"Tolerancia $\epsilon = 10^{-6}$",
+    )
 
     ax.set_yscale("log")
-    ax.set_title("Trayectoria de Convergencia Numérica del Error de Aproximación", fontsize=11, fontweight="bold", pad=8)
+    ax.set_title(
+        "Trayectoria de Convergencia Numérica del Error de Aproximación",
+        fontsize=11,
+        fontweight="bold",
+        pad=8,
+    )
     ax.set_xlabel("Número de Iteración (k)", fontsize=10)
     ax.set_ylabel(r"Error Absoluto Estimado $|e_k|$ (Escala Logarítmica)", fontsize=10)
     ax.set_xticks(range(0, max(b_steps) + 1, 2))
@@ -309,7 +374,9 @@ def main():
     print("=" * 60)
     print("MoviGo Numerical Methods: Tariff Equilibrium Root-Finding")
     print("=" * 60)
-    print(f"Excess demand function: f(m) = {D0}*exp(-{ALPHA}*(m-1)) - {S0}*(1+{BETA}*ln(m))")
+    print(
+        f"Excess demand function: f(m) = {D0}*exp(-{ALPHA}*(m-1)) - {S0}*(1+{BETA}*ln(m))"
+    )
     print(f"Tolerance target: epsilon = {TOLERANCE}")
 
     # 1. Run Bisection
@@ -328,7 +395,9 @@ def main():
     print(f"  Final residual: f(m*) = {excess_demand_f(root_newton):.2e}")
 
     speedup = round(len(hist_bisect) / num_newton_steps, 2)
-    print(f"\n⚡ Performance speedup: Newton-Raphson required {speedup}x fewer iterations.")
+    print(
+        f"\n⚡ Performance speedup: Newton-Raphson required {speedup}x fewer iterations."
+    )
 
     # 3. Build JSON payload
     payload = {
@@ -342,14 +411,18 @@ def main():
         },
         "root_equilibrium": {
             "m_star": round(float(root_newton), 4),
-            "balanced_volume_trips_per_hour": round(float(demand_function(root_newton)), 2),
+            "balanced_volume_trips_per_hour": round(
+                float(demand_function(root_newton)), 2
+            ),
         },
         "bisection": {
             "initial_interval": [a_init, b_init],
             "total_iterations": len(hist_bisect),
             "converged": True,
             "final_root": round(float(root_bisect), 6),
-            "final_residual": float(np.format_float_scientific(excess_demand_f(root_bisect), precision=3)),
+            "final_residual": float(
+                np.format_float_scientific(excess_demand_f(root_bisect), precision=3)
+            ),
             "convergence_order": 1,
             "history": hist_bisect,
         },
@@ -358,7 +431,9 @@ def main():
             "total_iterations": num_newton_steps,
             "converged": True,
             "final_root": round(float(root_newton), 6),
-            "final_residual": float(np.format_float_scientific(excess_demand_f(root_newton), precision=3)),
+            "final_residual": float(
+                np.format_float_scientific(excess_demand_f(root_newton), precision=3)
+            ),
             "convergence_order": 2,
             "history": hist_newton,
         },
@@ -376,10 +451,14 @@ def main():
 
     # 5. Render Standalone PNGs (300 DPI)
     generate_market_curves_plot(root_newton, curves_plot_path)
-    print(f"✅ Market equilibrium curves saved to: {curves_plot_path.relative_to(root)}")
+    print(
+        f"✅ Market equilibrium curves saved to: {curves_plot_path.relative_to(root)}"
+    )
 
     generate_convergence_plot(hist_bisect, hist_newton, convergence_plot_path)
-    print(f"✅ Numerical convergence plot saved to: {convergence_plot_path.relative_to(root)}")
+    print(
+        f"✅ Numerical convergence plot saved to: {convergence_plot_path.relative_to(root)}"
+    )
 
     print("\n" + "=" * 60)
     print("Numerical methods analysis successfully completed!")

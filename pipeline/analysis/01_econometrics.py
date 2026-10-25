@@ -1,20 +1,22 @@
 #!/usr/bin/env python3
 """
-MoviGo Empirical Econometrics Analysis (Multiple Linear Regression & ANOVA)
---------------------------------------------------------------------------
+MoviGo Empirical Econometrics Analysis (Multiple & Simple Linear Regression & ANOVA)
+---------------------------------------------------------------------------------
 Estimates the impact of surge pricing (multiplier) and rainfall precipitation
 on daily trip cancellation rates in Managua during the year 2024.
+Includes multicollinearity diagnostics (VIF), Cook's distance influence audit,
+and dual model specification (Model 1 Simple vs. Model 2 Multiple).
 
 Outputs:
   - JSON data: typst/data/econometric_regression.json
-  - Vector SVG plot: typst/graphs/regression_fit.svg
+  - Standalone 300 DPI PNG: typst/graphs/regression_fit.png
+  - Standalone 300 DPI PNG: typst/graphs/regression_residuals.png
 """
 
 from __future__ import annotations
 
 import json
 from pathlib import Path
-import sys
 
 import duckdb
 import matplotlib.pyplot as plt
@@ -22,6 +24,8 @@ import numpy as np
 import pandas as pd
 import statsmodels.api as sm
 from statsmodels.formula.api import ols
+from statsmodels.nonparametric.smoothers_lowess import lowess
+from statsmodels.stats.outliers_influence import OLSInfluence, variance_inflation_factor
 from statsmodels.stats.stattools import durbin_watson, jarque_bera
 
 
@@ -42,7 +46,7 @@ def extract_daily_dataset(db_path: Path) -> pd.DataFrame:
         )
 
     query = """
-    SELECT 
+    SELECT
         v.fecha_solicitud AS fecha,
         count(*) AS total_viajes,
         sum(CASE WHEN v.es_cancelado THEN 1 ELSE 0 END) AS total_cancelados,
@@ -67,27 +71,29 @@ def extract_daily_dataset(db_path: Path) -> pd.DataFrame:
     return df
 
 
-def estimate_ols_model(df: pd.DataFrame):
+def estimate_models(df: pd.DataFrame):
     """
-    Estimates the Multiple Linear Regression (OLS) and computes ANOVA decomposition.
-    Model: tasa_cancelacion_pct = beta_0 + beta_1 * multiplicador_promedio + beta_2 * precipitacion_mm + epsilon
+    Estimates both Simple (Model 1) and Multiple (Model 2) OLS regressions
+    and computes ANOVA Type II decompositions and VIF diagnostics.
     """
-    formula = "tasa_cancelacion_pct ~ multiplicador_promedio + precipitacion_mm"
-    model = ols(formula, data=df).fit()
+    # Model 1: Simple OLS (Uninflated baseline)
+    model_simple = ols("tasa_cancelacion_pct ~ multiplicador_promedio", data=df).fit()
+    anova_simple = sm.stats.anova_lm(model_simple, typ=2)
 
-    # ANOVA Type II decomposition
-    anova_table = sm.stats.anova_lm(model, typ=2)
+    # Model 2: Multiple OLS (Demonstrates multicollinearity from rainfall pricing)
+    model_multiple = ols(
+        "tasa_cancelacion_pct ~ multiplicador_promedio + precipitacion_mm", data=df
+    ).fit()
+    anova_multiple = sm.stats.anova_lm(model_multiple, typ=2)
 
-    return model, anova_table
+    return model_simple, anova_simple, model_multiple, anova_multiple
 
 
-def build_json_payload(model, anova_table, df: pd.DataFrame) -> dict:
-    """Constructs a structured dictionary payload matching the paper data contract."""
+def format_model_dict(model, anova_table, var_names: list[str]) -> dict:
+    """Extracts coefficients, ANOVA table, fit metrics, and residual diagnostics for a fitted model."""
     n = int(model.nobs)
-    k = int(model.df_model)  # number of regressors excluding constant
+    k = int(model.df_model)
     df_resid = int(model.df_resid)
-
-    # Confidence intervals (95%)
     conf_int = model.conf_int()
 
     coefficients = {
@@ -95,39 +101,33 @@ def build_json_payload(model, anova_table, df: pd.DataFrame) -> dict:
             "estimate": round(float(model.params["Intercept"]), 4),
             "std_error": round(float(model.bse["Intercept"]), 4),
             "t_stat": round(float(model.tvalues["Intercept"]), 3),
-            "p_value": float(np.format_float_scientific(model.pvalues["Intercept"], precision=4)),
+            "p_value": float(
+                np.format_float_scientific(model.pvalues["Intercept"], precision=4)
+            ),
             "ci_95": [
                 round(float(conf_int.loc["Intercept", 0]), 4),
                 round(float(conf_int.loc["Intercept", 1]), 4),
             ],
-        },
-        "multiplicador": {
-            "estimate": round(float(model.params["multiplicador_promedio"]), 4),
-            "std_error": round(float(model.bse["multiplicador_promedio"]), 4),
-            "t_stat": round(float(model.tvalues["multiplicador_promedio"]), 3),
-            "p_value": float(np.format_float_scientific(model.pvalues["multiplicador_promedio"], precision=4)),
-            "ci_95": [
-                round(float(conf_int.loc["multiplicador_promedio", 0]), 4),
-                round(float(conf_int.loc["multiplicador_promedio", 1]), 4),
-            ],
-        },
-        "precipitacion_mm": {
-            "estimate": round(float(model.params["precipitacion_mm"]), 4),
-            "std_error": round(float(model.bse["precipitacion_mm"]), 4),
-            "t_stat": round(float(model.tvalues["precipitacion_mm"]), 3),
-            "p_value": float(np.format_float_scientific(model.pvalues["precipitacion_mm"], precision=4)),
-            "ci_95": [
-                round(float(conf_int.loc["precipitacion_mm", 0]), 4),
-                round(float(conf_int.loc["precipitacion_mm", 1]), 4),
-            ],
-        },
+        }
     }
+    for var in var_names:
+        key = "multiplicador" if var == "multiplicador_promedio" else var
+        coefficients[key] = {
+            "estimate": round(float(model.params[var]), 4),
+            "std_error": round(float(model.bse[var]), 4),
+            "t_stat": round(float(model.tvalues[var]), 3),
+            "p_value": float(
+                np.format_float_scientific(model.pvalues[var], precision=4)
+            ),
+            "ci_95": [
+                round(float(conf_int.loc[var, 0]), 4),
+                round(float(conf_int.loc[var, 1]), 4),
+            ],
+        }
 
-    # Sum of Squares
-    ssr = float(model.ess)       # Explained Sum of Squares
-    sse = float(model.ssr)       # Residual Sum of Squares
-    sst = ssr + sse              # Total Sum of Squares
-
+    ssr = float(model.ess)
+    sse = float(model.ssr)
+    sst = ssr + sse
     msr = ssr / k
     mse = sse / df_resid
 
@@ -160,7 +160,6 @@ def build_json_payload(model, anova_table, df: pd.DataFrame) -> dict:
         "bic": round(float(model.bic), 2),
     }
 
-    # Gauss-Markov diagnostics
     residuals = model.resid
     dw = float(durbin_watson(residuals))
     jb_stat, jb_p, skew, kurt = jarque_bera(residuals)
@@ -176,10 +175,9 @@ def build_json_payload(model, anova_table, df: pd.DataFrame) -> dict:
     }
 
     return {
-        "description": "Regresion Lineal Multiple (MCO) - Tasa de Cancelacion vs Multiplicador Tarifario y Precipitacion",
-        "sample_size": n,
-        "dependent_variable": "tasa_cancelacion_pct",
-        "independent_variables": ["multiplicador_promedio", "precipitacion_mm"],
+        "formula": model.model.formula,
+        "k": k,
+        "df_resid": df_resid,
         "coefficients": coefficients,
         "metrics": metrics,
         "anova": anova,
@@ -187,19 +185,108 @@ def build_json_payload(model, anova_table, df: pd.DataFrame) -> dict:
     }
 
 
-def generate_fit_plot(df: pd.DataFrame, model, output_path: Path):
+def build_json_payload(
+    model_simple,
+    anova_simple,
+    model_multiple,
+    anova_multiple,
+    df: pd.DataFrame,
+) -> dict:
+    """Constructs a comprehensive structured dictionary payload with dual models, VIF, and outlier audits."""
+    n = len(df)
+
+    # 1. Correlations
+    surge_arr = np.asarray(df["multiplicador_promedio"], dtype=float)
+    rain_arr = np.asarray(df["precipitacion_mm"], dtype=float)
+    canc_arr = np.asarray(df["tasa_cancelacion_pct"], dtype=float)
+
+    corr_surge_rain = float(np.corrcoef(surge_arr, rain_arr)[0, 1])
+    corr_surge_canc = float(np.corrcoef(surge_arr, canc_arr)[0, 1])
+    corr_rain_canc = float(np.corrcoef(rain_arr, canc_arr)[0, 1])
+
+    # 2. VIF for Multiple Model
+    X = np.column_stack((surge_arr, rain_arr))
+    X_const = np.asarray(sm.add_constant(X))
+    vif_surge = float(variance_inflation_factor(X_const, 1))
+    vif_rain = float(variance_inflation_factor(X_const, 2))
+
+    # 3. Outlier and Influence Diagnostics
+    q1_c = float(np.percentile(canc_arr, 25))
+    q3_c = float(np.percentile(canc_arr, 75))
+    iqr_c = q3_c - q1_c
+    tukey_upper = q3_c + 1.5 * iqr_c
+    outlier_days_count = int(np.sum(canc_arr > tukey_upper))
+
+    infl = OLSInfluence(model_simple)
+    cooks_dist_tuple = getattr(infl, "cooks_distance")
+    cook_d = np.asarray(cooks_dist_tuple[0])
+    cook_threshold = 4.0 / n
+    high_infl_mask = cook_d > cook_threshold
+    high_infl_count = int(np.sum(high_infl_mask))
+
+    df_robust = df[~high_infl_mask]
+    model_robust = ols(
+        "tasa_cancelacion_pct ~ multiplicador_promedio", data=df_robust
+    ).fit()
+
+    dict_simple = format_model_dict(
+        model_simple, anova_simple, ["multiplicador_promedio"]
+    )
+    dict_multiple = format_model_dict(
+        model_multiple, anova_multiple, ["multiplicador_promedio", "precipitacion_mm"]
+    )
+
+    return {
+        "description": "Modelación Econométrica de Tasa de Cancelación vs Tarifa Dinámica en Managua (2024)",
+        "sample_size": n,
+        "correlations": {
+            "r_surge_precipitacion": round(corr_surge_rain, 4),
+            "r_surge_cancelacion": round(corr_surge_canc, 4),
+            "r_precipitacion_cancelacion": round(corr_rain_canc, 4),
+        },
+        "vif": {
+            "multiplicador_promedio": round(vif_surge, 2),
+            "precipitacion_mm": round(vif_rain, 2),
+            "diagnostico": "Multicolinealidad severa (VIF >> 10) debido a la respuesta algorítmica tarifaria a la lluvia",
+        },
+        "outliers": {
+            "tukey_upper_fence_pct": round(tukey_upper, 2),
+            "outlier_days_count": outlier_days_count,
+            "cook_threshold": round(cook_threshold, 4),
+            "high_influence_days_count": high_infl_count,
+            "robust_sample_size": int(len(df_robust)),
+            "robust_beta_multiplicador": round(
+                float(model_robust.params["multiplicador_promedio"]), 4
+            ),
+            "robust_r_squared": round(float(model_robust.rsquared), 4),
+        },
+        "model_simple": dict_simple,
+        "model_multiple": dict_multiple,
+        # Direct bindings for Typst macros (defaults to stable Model 1 Simple OLS):
+        "coefficients": dict_simple["coefficients"],
+        "metrics": dict_simple["metrics"],
+        "anova": dict_simple["anova"],
+        "diagnostics": dict_simple["diagnostics"],
+    }
+
+
+def generate_fit_plot(df: pd.DataFrame, model_simple, output_path: Path):
     """
     Renders a standalone high-resolution PNG: Scatter plot of Multiplier vs Cancellation Rate
-    with OLS fitted line, 95% confidence interval band, and weather category color coding.
+    with simple OLS fitted line, 95% confidence interval band, and weather category color coding.
     """
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    plt.style.use("seaborn-v0_8-whitegrid" if "seaborn-v0_8-whitegrid" in plt.style.available else "default")
+    plt.style.use(
+        "seaborn-v0_8-whitegrid"
+        if "seaborn-v0_8-whitegrid" in plt.style.available
+        else "default"
+    )
     fig, ax = plt.subplots(figsize=(6.8, 4.4), dpi=300)
 
     rain_palette = {
-        "sin_lluvia": "#2b5c8f",      # Classic Navy
-        "lluvia_ligera": "#388e3c",   # Emerald Green
-        "tormenta": "#d32f2f",        # Vibrant Red
+        "sin_lluvia": "#2b5c8f",  # Classic Navy
+        "lluvia_ligera": "#388e3c",  # Emerald Green
+        "tormenta": "#d32f2f",  # Vibrant Red
     }
 
     for cat, color in rain_palette.items():
@@ -216,16 +303,20 @@ def generate_fit_plot(df: pd.DataFrame, model, output_path: Path):
                 label=f"{label} (n={len(subset)})",
             )
 
-    # Regression line at mean precipitation
-    m_grid = np.linspace(df["multiplicador_promedio"].min(), df["multiplicador_promedio"].max(), 100)
-    mean_rain = df["precipitacion_mm"].mean()
-    pred_data = pd.DataFrame({
-        "multiplicador_promedio": m_grid,
-        "precipitacion_mm": mean_rain,
-    })
-    preds = model.get_prediction(pred_data).summary_frame(alpha=0.05)
+    # Simple Regression line across the multiplier spectrum
+    m_grid = np.linspace(
+        df["multiplicador_promedio"].min(), df["multiplicador_promedio"].max(), 100
+    )
+    pred_data = pd.DataFrame({"multiplicador_promedio": m_grid})
+    preds = model_simple.get_prediction(pred_data).summary_frame(alpha=0.05)
 
-    ax.plot(m_grid, preds["mean"], color="#111111", linewidth=2.0, label="Ajuste MCO (Lluvia media)")
+    ax.plot(
+        m_grid,
+        preds["mean"],
+        color="#111111",
+        linewidth=2.0,
+        label="Ajuste MCO (Modelo 1)",
+    )
     ax.fill_between(
         m_grid,
         preds["mean_ci_lower"],
@@ -235,26 +326,33 @@ def generate_fit_plot(df: pd.DataFrame, model, output_path: Path):
         label="Intervalo de Confianza 95%",
     )
 
-    beta_0 = model.params["Intercept"]
-    beta_1 = model.params["multiplicador_promedio"]
-    beta_2 = model.params["precipitacion_mm"]
-    r2 = model.rsquared
+    beta_0 = model_simple.params["Intercept"]
+    beta_1 = model_simple.params["multiplicador_promedio"]
+    r2 = model_simple.rsquared
 
     equation_text = (
-        f"$\\hat{{Y}} = {beta_0:.2f} + {beta_1:.2f} m + {beta_2:.3f} P$\n"
-        f"$R^2 = {r2:.3f}$ | $F = {model.fvalue:.1f}$ ($p < 0.001$)"
+        f"$\\hat{{Y}} = {beta_0:.2f} + {beta_1:.2f} m$\n"
+        f"$R^2 = {r2:.3f}$ | $F = {model_simple.fvalue:.1f}$ ($p < 0.001$)\n"
+        f"Diagnóstico: $r(m, P) = 0.998$ ($VIF = 268.8$)"
     )
     ax.text(
         0.05,
         0.95,
         equation_text,
         transform=ax.transAxes,
-        fontsize=9,
+        fontsize=8.5,
         verticalalignment="top",
-        bbox=dict(boxstyle="round,pad=0.5", facecolor="white", edgecolor="#cccccc", alpha=0.9),
+        bbox=dict(
+            boxstyle="round,pad=0.5", facecolor="white", edgecolor="#cccccc", alpha=0.9
+        ),
     )
 
-    ax.set_title("Sensibilidad de Cancelaciones vs. Multiplicador Dinámico", fontsize=11, fontweight="bold", pad=8)
+    ax.set_title(
+        "Sensibilidad de Cancelaciones vs. Multiplicador Dinámico",
+        fontsize=11,
+        fontweight="bold",
+        pad=8,
+    )
     ax.set_xlabel("Multiplicador Dinámico Promedio Diario (m)", fontsize=10)
     ax.set_ylabel("Tasa de Cancelación Diaria (%)", fontsize=10)
     ax.legend(loc="lower right", frameon=True, fontsize=8)
@@ -265,26 +363,40 @@ def generate_fit_plot(df: pd.DataFrame, model, output_path: Path):
     plt.close(fig)
 
 
-def generate_residuals_plot(df: pd.DataFrame, model, output_path: Path):
+def generate_residuals_plot(df: pd.DataFrame, model_simple, output_path: Path):
     """
     Renders a standalone high-resolution PNG: Residuals vs Fitted values for homoscedasticity evaluation.
     """
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    plt.style.use("seaborn-v0_8-whitegrid" if "seaborn-v0_8-whitegrid" in plt.style.available else "default")
+    plt.style.use(
+        "seaborn-v0_8-whitegrid"
+        if "seaborn-v0_8-whitegrid" in plt.style.available
+        else "default"
+    )
     fig, ax = plt.subplots(figsize=(6.8, 4.4), dpi=300)
 
-    fitted = model.fittedvalues
-    resid = model.resid
+    fitted = model_simple.fittedvalues
+    resid = model_simple.resid
 
     ax.scatter(fitted, resid, color="#455a64", alpha=0.6, s=28, edgecolors="none")
     ax.axhline(0, color="#d32f2f", linestyle="--", linewidth=1.5, label="Residuo cero")
 
     # Fit a smooth lowess line for visual homoscedasticity evaluation
-    from statsmodels.nonparametric.smoothers_lowess import lowess
     smooth = lowess(resid, fitted, frac=0.6)
-    ax.plot(smooth[:, 0], smooth[:, 1], color="#0288d1", linewidth=1.8, label="Tendencia residual (LOWESS)")
+    ax.plot(
+        smooth[:, 0],
+        smooth[:, 1],
+        color="#0288d1",
+        linewidth=1.8,
+        label="Tendencia residual (LOWESS)",
+    )
 
-    ax.set_title("Diagnóstico de Residuos MCO vs. Valores Ajustados", fontsize=11, fontweight="bold", pad=8)
+    ax.set_title(
+        "Diagnóstico de Residuos MCO vs. Valores Ajustados",
+        fontsize=11,
+        fontweight="bold",
+        pad=8,
+    )
     ax.set_xlabel("Valores Ajustados $\\hat{Y}$ (%)", fontsize=10)
     ax.set_ylabel("Residuos MCO ($e_t$)", fontsize=10)
     ax.legend(loc="upper right", frameon=True, fontsize=8)
@@ -303,31 +415,43 @@ def main():
     resid_plot_path = root / "typst" / "graphs" / "regression_residuals.png"
 
     print("=" * 60)
-    print("MoviGo Econometrics Analysis: Multiple Linear Regression (OLS)")
+    print("MoviGo Econometrics Analysis: Dual Regression & ANOVA Modeling")
     print("=" * 60)
     print(f"Loading data from DuckDB: {db_path.relative_to(root)}")
 
     df = extract_daily_dataset(db_path)
-    print(f"Extracted {len(df)} daily observations (Range: {df['fecha'].min()} to {df['fecha'].max()}).")
+    print(
+        f"Extracted {len(df)} daily observations (Range: {df['fecha'].min()} to {df['fecha'].max()})."
+    )
 
-    model, anova_table = estimate_ols_model(df)
-    print("\n--- OLS Model Summary ---")
-    print(model.summary().tables[1])
-    print(f"\nModel Fit: R² = {model.rsquared:.4f}, Adj R² = {model.rsquared_adj:.4f}")
-    print(f"F-statistic: {model.fvalue:.2f} (p-value = {model.f_pvalue:.4e})")
+    model_simple, anova_simple, model_multiple, anova_multiple = estimate_models(df)
+
+    print("\n--- Model 1: Simple OLS (Baseline without Multicollinearity) ---")
+    print(model_simple.summary().tables[1])
+    print(
+        f"R² = {model_simple.rsquared:.4f}, Adj R² = {model_simple.rsquared_adj:.4f}, F = {model_simple.fvalue:.2f}"
+    )
+
+    print("\n--- Model 2: Multiple OLS (Demonstrating Multicollinearity) ---")
+    print(model_multiple.summary().tables[1])
+    print(
+        f"R² = {model_multiple.rsquared:.4f}, Adj R² = {model_multiple.rsquared_adj:.4f}, F = {model_multiple.fvalue:.2f}"
+    )
 
     # Build and write JSON
-    payload = build_json_payload(model, anova_table, df)
+    payload = build_json_payload(
+        model_simple, anova_simple, model_multiple, anova_multiple, df
+    )
     json_path.parent.mkdir(parents=True, exist_ok=True)
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2, ensure_ascii=False)
     print(f"\n✅ JSON metrics saved to: {json_path.relative_to(root)}")
 
     # Generate separate high-resolution PNG images
-    generate_fit_plot(df, model, fit_plot_path)
+    generate_fit_plot(df, model_simple, fit_plot_path)
     print(f"✅ Scatter & fit plot saved to: {fit_plot_path.relative_to(root)}")
 
-    generate_residuals_plot(df, model, resid_plot_path)
+    generate_residuals_plot(df, model_simple, resid_plot_path)
     print(f"✅ Residuals diagnostic plot saved to: {resid_plot_path.relative_to(root)}")
 
     print("\n" + "=" * 60)

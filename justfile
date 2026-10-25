@@ -103,6 +103,14 @@ run-analysis: run-econometrics run-numerical run-optimization
 hydrate-data:
     @bash pipeline/hydrate_paper_data.sh
 
+# Ejecutar auditoría estadística de distribuciones, outliers y colinealidad en DuckDB
+check-data:
+    @.venv/bin/python pipeline/analysis/data_distribution_check.py
+
+# Ejecutar verificación de tipos estáticos con basedpyright (idéntico al LSP de Zed)
+check-types:
+    @uvx basedpyright pipeline/
+
 # Abrir CLI interactivo en el snapshot local de DuckDB
 duckdb:
     duckdb pipeline/data/analytics.duckdb

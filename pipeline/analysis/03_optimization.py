@@ -21,13 +21,10 @@ from __future__ import annotations
 import json
 from math import atan2, cos, radians, sin, sqrt
 from pathlib import Path
-import sys
 
 import duckdb
 import matplotlib.pyplot as plt
 import networkx as nx
-import numpy as np
-
 
 # -----------------------------------------------------------------------------
 # Spatial Utility Functions
@@ -177,19 +174,19 @@ EVAL_OD_PAIRS = [
     {
         "od_id": "OD_1",
         "description": "Diagonal Metropolitana Noroccidente - Suroriente",
-        "origin_id": 8,       # Linda Vista
+        "origin_id": 8,  # Linda Vista
         "destination_id": 3,  # Santo Domingo
     },
     {
         "od_id": "OD_2",
         "description": "Residencial Sur a Nucleo Comercial Mayorista",
-        "origin_id": 2,       # Las Colinas
-        "destination_id": 11, # Mercado Oriental
+        "origin_id": 2,  # Las Colinas
+        "destination_id": 11,  # Mercado Oriental
     },
     {
         "od_id": "OD_3",
         "description": "Corredor Transversal Este - Oeste",
-        "origin_id": 6,       # Bolonia
+        "origin_id": 6,  # Bolonia
         "destination_id": 7,  # Bello Horizonte
     },
 ]
@@ -207,38 +204,44 @@ def run_dijkstra_analysis(G: nx.Graph, zones: dict[int, dict]) -> list[dict]:
         # 1. Dry Scenario
         path_dry = nx.dijkstra_path(G, orig, dest, weight="weight_dry")
         time_dry = nx.dijkstra_path_length(G, orig, dest, weight="weight_dry")
-        dist_dry = sum(G[u][v]["distance_km"] for u, v in zip(path_dry[:-1], path_dry[1:]))
+        dist_dry = sum(
+            G[u][v]["distance_km"] for u, v in zip(path_dry[:-1], path_dry[1:])
+        )
 
         # 2. Storm Scenario
         path_storm = nx.dijkstra_path(G, orig, dest, weight="weight_storm")
         time_storm = nx.dijkstra_path_length(G, orig, dest, weight="weight_storm")
-        dist_storm = sum(G[u][v]["distance_km"] for u, v in zip(path_storm[:-1], path_storm[1:]))
+        dist_storm = sum(
+            G[u][v]["distance_km"] for u, v in zip(path_storm[:-1], path_storm[1:])
+        )
 
         delay_pct = round(((time_storm - time_dry) / time_dry) * 100.0, 1)
-        path_changed = (path_dry != path_storm)
+        path_changed = path_dry != path_storm
 
-        results.append({
-            "od_id": od["od_id"],
-            "description": od["description"],
-            "origin": {"id": orig, "name": zones[orig]["nombre"]},
-            "destination": {"id": dest, "name": zones[dest]["nombre"]},
-            "dry_scenario": {
-                "path_nodes": path_dry,
-                "path_names": [zones[n]["nombre"] for n in path_dry],
-                "travel_time_minutes": round(time_dry, 2),
-                "distance_km": round(dist_dry, 2),
-                "avg_speed_kmh": round((dist_dry / (time_dry / 60.0)), 1),
-            },
-            "storm_scenario": {
-                "path_nodes": path_storm,
-                "path_names": [zones[n]["nombre"] for n in path_storm],
-                "travel_time_minutes": round(time_storm, 2),
-                "distance_km": round(dist_storm, 2),
-                "avg_speed_kmh": round((dist_storm / (time_storm / 60.0)), 1),
-                "delay_percentage": delay_pct,
-                "path_rerouted": path_changed,
-            },
-        })
+        results.append(
+            {
+                "od_id": od["od_id"],
+                "description": od["description"],
+                "origin": {"id": orig, "name": zones[orig]["nombre"]},
+                "destination": {"id": dest, "name": zones[dest]["nombre"]},
+                "dry_scenario": {
+                    "path_nodes": path_dry,
+                    "path_names": [zones[n]["nombre"] for n in path_dry],
+                    "travel_time_minutes": round(time_dry, 2),
+                    "distance_km": round(dist_dry, 2),
+                    "avg_speed_kmh": round((dist_dry / (time_dry / 60.0)), 1),
+                },
+                "storm_scenario": {
+                    "path_nodes": path_storm,
+                    "path_names": [zones[n]["nombre"] for n in path_storm],
+                    "travel_time_minutes": round(time_storm, 2),
+                    "distance_km": round(dist_storm, 2),
+                    "avg_speed_kmh": round((dist_storm / (time_storm / 60.0)), 1),
+                    "delay_percentage": delay_pct,
+                    "path_rerouted": path_changed,
+                },
+            }
+        )
 
     return results
 
@@ -252,48 +255,101 @@ def generate_topology_plot(G: nx.Graph, zones: dict[int, dict], output_path: Pat
     with arterial road connections, node strata colors, and flood-prone corridors flagged.
     """
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    plt.style.use("seaborn-v0_8-whitegrid" if "seaborn-v0_8-whitegrid" in plt.style.available else "default")
+    plt.style.use(
+        "seaborn-v0_8-whitegrid"
+        if "seaborn-v0_8-whitegrid" in plt.style.available
+        else "default"
+    )
     fig, ax = plt.subplots(figsize=(8.0, 5.8), dpi=300)
 
     pos = nx.get_node_attributes(G, "pos")
 
     # Stratum color mapping
     stratum_colors = {
-        "alto": "#1976d2",       # Royal Blue
-        "medio": "#388e3c",      # Forest Green
+        "alto": "#1976d2",  # Royal Blue
+        "medio": "#388e3c",  # Forest Green
         "comercial": "#f57c00",  # Amber Orange
-        "popular": "#7b1fa2",    # Purple
+        "popular": "#7b1fa2",  # Purple
     }
 
     # Draw edges
     flood_edges = [(u, v) for u, v, d in G.edges(data=True) if d["is_flood_prone"]]
     safe_edges = [(u, v) for u, v, d in G.edges(data=True) if not d["is_flood_prone"]]
 
-    nx.draw_networkx_edges(G, pos, edgelist=safe_edges, width=1.8, alpha=0.6, edge_color="#616161", ax=ax, label="Corredor Arterial Drenado")
-    nx.draw_networkx_edges(G, pos, edgelist=flood_edges, width=2.4, alpha=0.85, edge_color="#d32f2f", style="--", ax=ax, label="Corredor Vulnerable a Inundación")
+    nx.draw_networkx_edges(
+        G,
+        pos,
+        edgelist=safe_edges,
+        width=1.8,
+        alpha=0.6,
+        edge_color="#616161",
+        ax=ax,
+        label="Corredor Arterial Drenado",
+    )
+    nx.draw_networkx_edges(
+        G,
+        pos,
+        edgelist=flood_edges,
+        width=2.4,
+        alpha=0.85,
+        edge_color="#d32f2f",
+        style="--",
+        ax=ax,
+        label="Corredor Vulnerable a Inundación",
+    )
 
     # Draw nodes by stratum
     for stratum, color in stratum_colors.items():
         node_subset = [n for n, d in G.nodes(data=True) if d["estrato"] == stratum]
         nx.draw_networkx_nodes(
-            G, pos, nodelist=node_subset,
-            node_color=color, node_size=380,
-            edgecolors="#ffffff", linewidths=1.5, ax=ax,
-            label=f"Estrato {stratum.capitalize()}"
+            G,
+            pos,
+            nodelist=node_subset,
+            node_color=color,
+            node_size=380,
+            edgecolors="#ffffff",
+            linewidths=1.5,
+            ax=ax,
+            label=f"Estrato {stratum.capitalize()}",
         )
 
     # Node labels (ID inside node, name offset)
     node_labels = {n: str(n) for n in G.nodes()}
-    nx.draw_networkx_labels(G, pos, labels=node_labels, font_size=8, font_color="#ffffff", font_weight="bold", ax=ax)
+    nx.draw_networkx_labels(
+        G,
+        pos,
+        labels=node_labels,
+        font_size=8,
+        font_color="#ffffff",
+        font_weight="bold",
+        ax=ax,
+    )
 
     # Offset zone name text
     for n, (x, y) in pos.items():
         name = zones[n]["nombre"].split(" / ")[0]  # shorter name
-        ax.text(x, y + 0.0025, name, fontsize=7.5, fontweight="semibold",
-                ha="center", va="bottom",
-                bbox=dict(boxstyle="round,pad=0.2", facecolor="white", edgecolor="#e0e0e0", alpha=0.85))
+        ax.text(
+            x,
+            y + 0.0025,
+            name,
+            fontsize=7.5,
+            fontweight="semibold",
+            ha="center",
+            va="bottom",
+            bbox=dict(
+                boxstyle="round,pad=0.2",
+                facecolor="white",
+                edgecolor="#e0e0e0",
+                alpha=0.85,
+            ),
+        )
 
-    ax.set_title("Topología Espacial de la Red Vial Urbana de Managua (12 Cuadrantes)", fontsize=11, fontweight="bold", pad=10)
+    ax.set_title(
+        "Topología Espacial de la Red Vial Urbana de Managua (12 Cuadrantes)",
+        fontsize=11,
+        fontweight="bold",
+        pad=10,
+    )
     ax.set_xlabel("Longitud Oeste (WGS84)", fontsize=9)
     ax.set_ylabel("Latitud Norte (WGS84)", fontsize=9)
     ax.legend(loc="upper left", frameon=True, fontsize=7.5)
@@ -315,7 +371,11 @@ def generate_dijkstra_plot(
     (solid green) and storm rerouted path (dashed red/amber) for OD_1.
     """
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    plt.style.use("seaborn-v0_8-whitegrid" if "seaborn-v0_8-whitegrid" in plt.style.available else "default")
+    plt.style.use(
+        "seaborn-v0_8-whitegrid"
+        if "seaborn-v0_8-whitegrid" in plt.style.available
+        else "default"
+    )
     fig, ax = plt.subplots(figsize=(8.2, 6.0), dpi=300)
 
     pos = nx.get_node_attributes(G, "pos")
@@ -332,30 +392,77 @@ def generate_dijkstra_plot(
 
     # Highlight dry route
     nx.draw_networkx_edges(
-        G, pos, edgelist=dry_edges,
-        width=3.5, alpha=0.85, edge_color="#2e7d32",
-        ax=ax, label=f"Ruta Óptima en Seco ({od_result['dry_scenario']['travel_time_minutes']} min, {od_result['dry_scenario']['distance_km']} km)"
+        G,
+        pos,
+        edgelist=dry_edges,
+        width=3.5,
+        alpha=0.85,
+        edge_color="#2e7d32",
+        ax=ax,
+        label=f"Ruta Óptima en Seco ({od_result['dry_scenario']['travel_time_minutes']} min, {od_result['dry_scenario']['distance_km']} km)",
     )
 
     # Highlight storm route
     nx.draw_networkx_edges(
-        G, pos, edgelist=storm_edges,
-        width=3.0, alpha=0.9, edge_color="#d84315", style="--",
-        ax=ax, label=f"Desvío Óptimo por Tormenta ({od_result['storm_scenario']['travel_time_minutes']} min, {od_result['storm_scenario']['distance_km']} km)"
+        G,
+        pos,
+        edgelist=storm_edges,
+        width=3.0,
+        alpha=0.9,
+        edge_color="#d84315",
+        style="--",
+        ax=ax,
+        label=f"Desvío Óptimo por Tormenta ({od_result['storm_scenario']['travel_time_minutes']} min, {od_result['storm_scenario']['distance_km']} km)",
     )
 
     # Draw nodes
-    nx.draw_networkx_nodes(G, pos, node_color="#eceff1", node_size=320, edgecolors="#78909c", linewidths=1.2, ax=ax)
+    nx.draw_networkx_nodes(
+        G,
+        pos,
+        node_color="#eceff1",
+        node_size=320,
+        edgecolors="#78909c",
+        linewidths=1.2,
+        ax=ax,
+    )
 
     # Highlight Origin and Destination
     orig = od_result["origin"]["id"]
     dest = od_result["destination"]["id"]
-    nx.draw_networkx_nodes(G, pos, nodelist=[orig], node_color="#43a047", node_size=480, edgecolors="#ffffff", linewidths=2.0, ax=ax, label=f"Origen: {zones[orig]['nombre']}")
-    nx.draw_networkx_nodes(G, pos, nodelist=[dest], node_color="#e53935", node_size=480, edgecolors="#ffffff", linewidths=2.0, ax=ax, label=f"Destino: {zones[dest]['nombre']}")
+    nx.draw_networkx_nodes(
+        G,
+        pos,
+        nodelist=[orig],
+        node_color="#43a047",
+        node_size=480,
+        edgecolors="#ffffff",
+        linewidths=2.0,
+        ax=ax,
+        label=f"Origen: {zones[orig]['nombre']}",
+    )
+    nx.draw_networkx_nodes(
+        G,
+        pos,
+        nodelist=[dest],
+        node_color="#e53935",
+        node_size=480,
+        edgecolors="#ffffff",
+        linewidths=2.0,
+        ax=ax,
+        label=f"Destino: {zones[dest]['nombre']}",
+    )
 
     # Labels inside nodes
     node_labels = {n: str(n) for n in G.nodes()}
-    nx.draw_networkx_labels(G, pos, labels=node_labels, font_size=8, font_color="#263238", font_weight="bold", ax=ax)
+    nx.draw_networkx_labels(
+        G,
+        pos,
+        labels=node_labels,
+        font_size=8,
+        font_color="#263238",
+        font_weight="bold",
+        ax=ax,
+    )
 
     # Annotation box with comparative metrics
     info_text = (
@@ -366,12 +473,26 @@ def generate_dijkstra_plot(
         f"• Reruteo Activo: {'SÍ (Desvío Adaptativo)' if od_result['storm_scenario']['path_rerouted'] else 'NO'}"
     )
     ax.text(
-        0.03, 0.05, info_text, transform=ax.transAxes,
-        fontsize=8.5, verticalalignment="bottom",
-        bbox=dict(boxstyle="round,pad=0.5", facecolor="#ffffff", edgecolor="#b0bec5", alpha=0.92)
+        0.03,
+        0.05,
+        info_text,
+        transform=ax.transAxes,
+        fontsize=8.5,
+        verticalalignment="bottom",
+        bbox=dict(
+            boxstyle="round,pad=0.5",
+            facecolor="#ffffff",
+            edgecolor="#b0bec5",
+            alpha=0.92,
+        ),
     )
 
-    ax.set_title(f"Optimización de Ruta Dijkstra ante Tormenta: {od_result['description']}", fontsize=11, fontweight="bold", pad=10)
+    ax.set_title(
+        f"Optimización de Ruta Dijkstra ante Tormenta: {od_result['description']}",
+        fontsize=11,
+        fontweight="bold",
+        pad=10,
+    )
     ax.set_xlabel("Longitud Oeste (WGS84)", fontsize=9)
     ax.set_ylabel("Latitud Norte (WGS84)", fontsize=9)
     ax.legend(loc="upper left", frameon=True, fontsize=7.5)
@@ -402,7 +523,9 @@ def main():
 
     # Build road network graph
     G = build_managua_graph(zones)
-    print(f"Constructed network graph: {G.number_of_nodes()} nodes, {G.number_of_edges()} arterial edges.")
+    print(
+        f"Constructed network graph: {G.number_of_nodes()} nodes, {G.number_of_edges()} arterial edges."
+    )
 
     # Run Dijkstra across OD pairs
     routes_results = run_dijkstra_analysis(G, zones)
@@ -410,9 +533,15 @@ def main():
     print("\n--- Dijkstra Shortest Path Comparison ---")
     for r in routes_results:
         print(f"\n[{r['od_id']}] {r['description']}:")
-        print(f"  Seco:     {r['dry_scenario']['travel_time_minutes']} min | {r['dry_scenario']['distance_km']} km | Ruta: {' -> '.join(r['dry_scenario']['path_names'])}")
-        print(f"  Tormenta: {r['storm_scenario']['travel_time_minutes']} min | {r['storm_scenario']['distance_km']} km | Ruta: {' -> '.join(r['storm_scenario']['path_names'])}")
-        print(f"  Demora:   +{r['storm_scenario']['delay_percentage']}% | Reruteo: {'SÍ' if r['storm_scenario']['path_rerouted'] else 'NO'}")
+        print(
+            f"  Seco:     {r['dry_scenario']['travel_time_minutes']} min | {r['dry_scenario']['distance_km']} km | Ruta: {' -> '.join(r['dry_scenario']['path_names'])}"
+        )
+        print(
+            f"  Tormenta: {r['storm_scenario']['travel_time_minutes']} min | {r['storm_scenario']['distance_km']} km | Ruta: {' -> '.join(r['storm_scenario']['path_names'])}"
+        )
+        print(
+            f"  Demora:   +{r['storm_scenario']['delay_percentage']}% | Reruteo: {'SÍ' if r['storm_scenario']['path_rerouted'] else 'NO'}"
+        )
 
     # Build JSON payload
     payload = {
@@ -439,7 +568,9 @@ def main():
     print(f"✅ Urban network topology saved to: {topo_plot_path.relative_to(root)}")
 
     generate_dijkstra_plot(G, zones, routes_results[0], dijkstra_plot_path)
-    print(f"✅ Dijkstra routing comparison saved to: {dijkstra_plot_path.relative_to(root)}")
+    print(
+        f"✅ Dijkstra routing comparison saved to: {dijkstra_plot_path.relative_to(root)}"
+    )
 
     print("\n" + "=" * 60)
     print("Routing optimization analysis successfully completed!")
