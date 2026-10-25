@@ -1,40 +1,37 @@
 = Diseño Metodológico
 
-El diseño metodológico describe la secuencia técnica y computacional concebida para la recolección, ingesta, transformación y estructuración de los datos del servicio MoviGo, así como el marco general para los análisis cuantitativos posteriores orientados a evaluar la tarifa dinámica.
+El diseño metodológico establece la secuencia técnica, analítica y computacional estructurada para dar cumplimiento a los cuatro objetivos de la investigación, articulando la ingeniería de datos, la econometría, los métodos numéricos y la optimización prescriptiva.
 
-== Enfoque, Tipo y Alcance de la Investigación
+== Enfoque, Tipo y Alcance
 
-La presente investigación se fundamenta en un *enfoque cuantitativo empírico*, sustentado en el procesamiento y modelación de registros transaccionales, telemétricos y meteorológicos generados a partir de un entorno de simulación que abarca un año completo de operaciones del servicio MoviGo en Managua.
+- *Enfoque Cuantitativo:* Sustentado en el modelado estadístico, numérico y de optimización sobre datos empíricos de operaciones de transporte selectivo.
+- *Diseño No Experimental y Longitudinal:* Observa transacciones y eventos climáticos registrados a lo largo de un ciclo operativo anual (2024), sin manipulación deliberada de variables.
+- *Alcance Correlacional y Prescriptivo:* Evalúa la relación entre la tarifa dinámica y las tasas de cancelación, proponiendo umbrales de equilibrio numérico y asignación óptima de incentivos.
+- *Unidad de Análisis:* El viaje individual o solicitud de traslado ($N = 77,036$ registros), caracterizado por su origen, destino, marca temporal, multiplicador dinámico aplicado, condiciones climáticas concurrentes y estado final de atención o cancelación.
 
-De acuerdo con sus objetivos y naturaleza, el estudio se caracteriza por:
-- *Diseño No Experimental y Longitudinal:* Se analizan los eventos y registros operativos generados por la simulación a lo largo del tiempo, sin manipular de forma directa el comportamiento de los usuarios o conductores.
-- *Alcance Descriptivo y Correlacional:* Busca describir la distribución espacial y temporal del servicio y evaluar las relaciones existentes entre el multiplicador dinámico, los eventos climáticos, las características socioeconómicas de las zonas y los niveles de cancelación observados.
-- *Proyección Prescriptiva:* Plantea explorar formulaciones de balance tarifario y modelos de optimización de incentivos para mitigar las fricciones operativas detectadas.
+== Fases Metodológicas de la Investigación
 
-== Arquitectura del Pipeline y Paradigma ELT
+=== Fase 1: Pipeline de Datos ELT e Infraestructura Cloud (Objetivo 1)
+La base computacional consolida los datos dispersos de la plataforma MoviGo mediante un flujo moderno ELT (*Extract, Load, Transform*):
++ *Extracción y Serialización Parquet:* Consumo sistemático de los endpoints de la API REST mediante un cliente en Python (`fetcher.py`) con control dinámico de paginación (`limit=200`, `offset`). Los conjuntos recuperados se serializan en archivos columnares *Apache Parquet* (`pipeline/data/raw/*.parquet`), asegurando inmutabilidad, reducción de almacenamiento y desacoplamiento de la red.
++ *Carga Transaccional en Azure PostgreSQL:* Ejecución del esquema DDL estricto (`raw_schema.sql`) directamente sobre el esquema `public` de una base de datos administrada dedicada (`raw`) en *Azure Database for PostgreSQL*. El script cargador (`loader.py`) aplica casteo de marcas temporales y gestiona claves foráneas, insertando por lotes de 2,000 registros en orden topológico relacional (`zonas` $arrow$ `usuarios` $arrow$ `conductores` $arrow$ `campanas` $arrow$ `clima` $arrow$ `viajes` $arrow$ `telemetria`).
++ *Transformación y Calidad con dbt Core:* Orquestación de modelos dimensionales mediante *dbt*, estructurando vistas de estandarización (`staging`) y la tabla de hechos atómica (`fct_viajes`) en esquema analítico, gobernados por pruebas automatizadas declarativas de no nulidad, unicidad y validación de reglas de negocio en `sources.yml`.
 
-La estrategia de ingeniería de datos constituye la base operativa y concreta planificada para el proyecto, adoptando una arquitectura moderna basada en el paradigma *ELT (Extract, Load, Transform)*:
+=== Fase 2: Modelación Econométrica de la Cancelación de Viajes (Objetivo 2)
+A partir del repositorio analítico consolidado, se modela la probabilidad de cancelación del viaje ($Y in {0,1}$, donde $1 = "cancelado"$) como respuesta a la tarifa dinámica y factores exógenos:
++ *Especificación del Modelo Logístico:* Estimación de coeficientes y razones de momios (_odds ratios_) mediante regresión logística binaria:
+  $ ln(frac(P(Y=1), 1 - P(Y=1))) = beta_0 + beta_1 dot m + beta_2 dot "precipitacion" + sum_(k) gamma_k dot "estrato"_k + epsilon $
+  donde $m$ es el multiplicador dinámico aplicado a la transacción.
++ *Evaluación de Elasticidad y Sensibilidad Socioeconómica:* Estimación de la elasticidad-precio de la demanda y contraste de hipótesis (pruebas Welch y Chi-cuadrado) para determinar si la propensión a cancelar difiere significativamente entre estratos socioeconómicos ante un mismo incremento tarifario.
 
-=== 1. Extracción de Datos vía API REST y Persistencia en Parquet
-El acceso a la información se realiza a partir de una base de datos sintética expuesta a través de una *API REST pública en una URL temporal provista para fines académicos* (el repositorio de código fuente del generador de datos será enlazado y documentado en fases posteriores). Dado que como estudiantes no se cuenta con acceso directo al motor de base de datos de producción, se implementa un script en Python modular (`fetcher.py`):
-- Paginación sistemática mediante parámetros `limit` y `offset` dinámico para recuperar las colecciones completas de viajes, clima, zonas, conductores, usuarios y telemetría.
-- Serialización de los conjuntos de datos en archivos columnares en formato *Apache Parquet* (`.parquet`) en el directorio de almacenamiento crudo local. Esta práctica desacopla el consumo de red de los procesos de carga, garantiza idempotencia, preserva los tipos de datos nativos y asegura la reproducibilidad sin reconsultar recurrentemente la API transaccional.
+=== Fase 3: Cálculo Numérico del Umbral Tarifario de Equilibrio (Objetivo 3)
+Para resolver la rigidez de las soluciones analíticas continuas en presencia de congestión y lluvia:
++ *Formulación de la Ecuación de Exceso de Demanda:* Se define numéricamente la función de balance $f(m) = "Demanda"(m) - "Oferta"(m) = 0$.
++ *Algoritmos de Búsqueda de Raíces:* Implementación de los métodos de *Bisección* y *Newton-Raphson* para aproximar el multiplicador de equilibrio $m^*$, identificando el umbral de tarifa a partir del cual el incremento marginal en precio dispara las cancelaciones y anula el beneficio de atraer oferta vehicular.
 
-=== 2. Persistencia en Azure PostgreSQL como Réplica OLTP (Base de Datos `raw`, Esquema `public`)
-Una vez generados los archivos Parquet, se realiza la carga hacia un servicio administrado en la nube en *Azure Database for PostgreSQL (Flexible Server)* mediante un módulo cargador en Python (`loader.py`) empleando SQLAlchemy y `psycopg3` bajo conexión segura cifrada (`sslmode=require`):
-- *Aprovisionamiento y Definición DDL:* Se establece la base de datos transaccional dedicada `raw`, ejecutando un esquema relacional estricto en el esquema `public` (`raw_schema.sql`). Este define claves primarias, restricciones de validación (`CHECK`), índices analíticos y restricciones de integridad referencial foráneas en las siete entidades principales (`zonas_urbanas`, `usuarios`, `conductores`, `campanas_incentivos`, `clima_cuadrantes`, `viajes`, `telemetria_conductores`) y su tabla de auditoría.
-- *Casteo y Carga Topológica por Lotes:* El script procesa explícitamente los formatos de fecha (ISO8601 a tipos nativos SQL `DATE` y `TIMESTAMP`) y gestiona identificadores nulos en claves foráneas. La inserción se ejecuta en lotes de 2,000 registros respetando el orden estricto de dependencias foráneas, consolidando una réplica transaccional (*OLTP*) de alta fidelidad que funge como fuente única de verdad para el almacén de datos.
-
-=== 3. Transformación y Modelado Analítico con dbt Core
-Una vez consolidados los datos crudos en la base de datos `raw` de Azure PostgreSQL (esquema `public`), se utiliza *dbt (Data Build Tool)* para orquestar la transformación y estructuración de la base de datos analítica (*OLAP*), declarando la capa transaccional como fuente primaria en `sources.yml`:
-- *Capa de Estandarización (_Staging_):* Vistas SQL que homogenizan la nomenclatura a convenciones consistentes (`snake_case`), tipifican marcas de tiempo en formato estándar y calculan métricas operativas intermedias (tales como tiempos de espera entre solicitud y abordaje).
-- *Capa de Entrega Analítica (_Marts_):* Materialización de esquemas optimizados para consulta y agregación multidimensional, facilitando el análisis del comportamiento del viaje junto con su contexto espacial, temporal y meteorológico.
-- *Aseguramiento de Calidad de Datos (_dbt Tests_):* Ejecución de pruebas automáticas declaradas en esquemas YAML para auditar unicidad, no nulidad, consistencia referencial y cumplimiento de reglas operativas básicas (tarifas positivas y coherencia de identificadores).
-
-== Marco para los Análisis Cuantitativos Posteriores
-
-A partir de la base de datos analítica consolidada y transformada mediante dbt, el proyecto contempla el desarrollo de tres líneas de trabajo analítico complementarias:
-
-+ *Modelación e Inferencia Estadística:* Orientada a evaluar la sensibilidad de la demanda ante fluctuaciones en la tarifa, examinar la incidencia de choques meteorológicos sobre el volumen de viajes y contrastar si existen variaciones significativas en la propensión a la cancelación según el estrato socioeconómico o la franja horaria.
-+ *Métodos Numéricos y Sensibilidad:* Orientada a estudiar el comportamiento de la elasticidad-precio y explorar puntos de equilibrio tarifario que equilibren las solicitudes de pasajeros y la disponibilidad de vehículos.
-+ *Optimización Operativa:* Orientada a formular y evaluar esquemas de asignación eficiente de recursos o incentivos presupuestarios dirigidos a socios conductores para fortalecer la oferta vehicular en zonas o periodos con alta demanda.
+=== Fase 4: Optimización Prescriptiva de Incentivos a la Oferta (Objetivo 4)
+Para contrarrestar el desbalance de oferta sin depender exclusivamente del encarecimiento tarifario trasladado al usuario:
++ *Formulación de la Mochila Binaria (0/1):* Selección óptima de programas de incentivos para conductores (`/movigo/campanas`) que maximice las horas totales de conexión activa ($H = sum h_i x_i$), sujeta al límite presupuestario finito de la empresa:
+  $ max sum_(i=1)^n h_i x_i quad "sujeto a" quad sum_(i=1)^n c_i x_i <= B, quad x_i in {0,1} $
+  donde $c_i$ es el costo de cada campaña y $B = "C\$ 120,000 NIO"$ es el presupuesto disponible.
++ *Impacto en Cancelaciones:* Comparación del volumen de cancelaciones esperadas bajo el esquema actual basado en tarifa dinámica extrema versus el escenario con flota reforzada mediante incentivos optimizados.

@@ -2,14 +2,14 @@
 
 == Objetivo General
 
-*Evaluar* el esquema de tarificación dinámica del servicio de transporte selectivo MoviGo en el municipio de Managua durante el año 2024, en función de su impacto sobre la demanda, las cancelaciones de viajes y la equidad socio-espacial.
+*Determinar* el impacto del esquema de tarificación dinámica sobre la probabilidad de cancelación de viajes del servicio de transporte selectivo MoviGo en el municipio de Managua durante el año 2024.
 
 == Objetivos Específicos
 
-+ *Consolidar* un repositorio analítico multidimensional en PostgreSQL y dbt a partir de los datos transaccionales y meteorológicos extraídos de la API REST para el período 2024.
++ *Implementar* un pipeline de ingeniería de datos bajo el paradigma ELT (API REST, Apache Parquet, Azure Database for PostgreSQL y dbt Core) para la consolidación del repositorio analítico de operaciones 2024.
 
-+ *Determinar* la sensibilidad de la demanda y la probabilidad de cancelación de viajes frente a variaciones en el multiplicador dinámico, estratos socioeconómicos y condiciones climáticas.
++ *Modelar* la probabilidad de cancelación de viajes frente a variaciones en el multiplicador dinámico, perturbaciones meteorológicas y estratos socioeconómicos mediante técnicas estadísticas multivariadas.
 
-+ *Modelar* el punto de equilibrio tarifario y la elasticidad-precio del servicio mediante métodos numéricos.
++ *Calcular* el umbral crítico de multiplicador tarifario de equilibrio en la función de exceso de demanda mediante algoritmos numéricos de búsqueda de raíces.
 
-+ *Examinar* esquemas de incentivos económicos como alternativa operativa para mitigar el desbalance de oferta sin encarecer excesivamente el servicio al usuario.
++ *Optimizar* la asignación presupuestaria de campañas de incentivos para conductores mediante programación entera binaria (problema de la mochila 0/1) para el fortalecimiento de la oferta vehicular.

@@ -50,10 +50,10 @@ Los datos que reflejan este fenómeno se encuentran fragmentados en endpoints de
 - Factores exógenos diarios de lluvia y tráfico en `/movigo/clima`.
 - Zonas, usuarios, conductores y campañas en sus respectivos directorios.
 
-Sin un pipeline automatizado de ingeniería de datos (ingesta en Python, almacenamiento en PostgreSQL y transformación dimensional auditable con *dbt Core*), resulta imposible cuantificar rigurosamente la elasticidad de la demanda, contrastar hipótesis estadísticas sobre las cancelaciones, calcular raíces numéricas de equilibrio tarifario ni optimizar las campañas de incentivos.
+Sin un pipeline automatizado de ingeniería de datos (ingesta en Python, almacenamiento en Azure PostgreSQL y transformación dimensional auditable con *dbt Core*), resulta imposible cuantificar rigurosamente la probabilidad de cancelación, estimar numéricamente el multiplicador de equilibrio ni optimizar la cartera presupuestaria de incentivos.
 
 == Formulación del Problema Central de Investigación
 
 A partir de las problemáticas descritas, el problema central de investigación se sintetiza en la siguiente interrogante formulada:
 
-¿De qué manera incide el esquema de tarificación dinámica (_surge pricing_) de la plataforma MoviGo en la sensibilidad de la demanda, las tasas de cancelación de viajes y la equidad socio-espacial en el municipio de Managua, y cómo pueden determinarse puntos de equilibrio tarifario mediante métodos numéricos y optimizarse la asignación presupuestaria de incentivos a la flota para mitigar el abandono del servicio bajo condiciones variables de tráfico y lluvia?
+¿Cuál es el impacto del esquema de tarificación dinámica (*surge pricing*) sobre la probabilidad de cancelación de viajes en el servicio MoviGo en el municipio de Managua durante 2024, y de qué manera pueden determinarse umbrales tarifarios de equilibrio mediante métodos numéricos y optimizarse la asignación presupuestaria de incentivos a la flota para mitigar el abandono del servicio bajo perturbaciones climáticas y asimetrías socioeconómicas?

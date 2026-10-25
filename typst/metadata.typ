@@ -1,12 +1,12 @@
 // Metadata and configuration shared across MoviGo documents and slides
 
-#let title = "Evaluación del Esquema de Tarificación Dinámica del Servicio de Transporte Selectivo MoviGo en el Municipio de Managua (2024)"
+#let title = "Modelación del Impacto de la Tarifa Dinámica sobre la Tasa de Cancelación de Viajes en el Servicio MoviGo en Managua (2024)"
 
-#let title-short = "Evaluación del Esquema Tarifario de MoviGo en Managua"
+#let title-short = "Tarifa Dinámica y Cancelación de Viajes en MoviGo Managua"
 
-#let title-presentation = "Optimización Territorial de la Flota y Sistema Tarifario en Managua"
+#let title-presentation = "Tarifa Dinámica y Cancelación de Viajes en MoviGo"
 
-#let subtitle-presentation = "Caso de Estudio: Movi Go • Transporte Selectivo"
+#let subtitle-presentation = "Modelación Cuantitativa y Mitigación Operativa en Managua (2024)"
 
 #let authors = (
   (
