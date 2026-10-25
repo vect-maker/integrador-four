@@ -91,6 +91,14 @@ run-econometrics:
 run-numerical:
     @.venv/bin/python pipeline/analysis/02_numerical_methods.py
 
+# Ejecutar optimización de rutas (Teoría de Grafos y Dijkstra en red vial, JSON e imágenes PNG)
+run-optimization:
+    @.venv/bin/python pipeline/analysis/03_optimization.py
+
+# Ejecutar la suite completa de modelado computacional (Econometría, Métodos Numéricos y Optimización)
+run-analysis: run-econometrics run-numerical run-optimization
+    @echo "🎉 Suite completa de análisis computacional ejecutada exitosamente."
+
 # Hidratar datasets agregados en typst/data a partir de DuckDB y análisis
 hydrate-data:
     @bash pipeline/hydrate_paper_data.sh

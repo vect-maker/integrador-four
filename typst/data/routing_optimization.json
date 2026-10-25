@@ -1,0 +1,153 @@
+{
+  "description": "Optimizacion de Rutas de Despacho en Red Vial Urbana de Managua (Algoritmo de Dijkstra)",
+  "network_summary": {
+    "total_nodes": 12,
+    "total_edges": 22,
+    "tortuosity_factor": 1.3,
+    "baseline_arterial_speed_kmh": 32.0,
+    "storm_flood_speed_kmh": 11.2,
+    "flood_prone_corridors_count": 7
+  },
+  "routes": [
+    {
+      "od_id": "OD_1",
+      "description": "Diagonal Metropolitana Noroccidente - Suroriente",
+      "origin": {
+        "id": 8,
+        "name": "Linda Vista"
+      },
+      "destination": {
+        "id": 3,
+        "name": "Santo Domingo"
+      },
+      "dry_scenario": {
+        "path_nodes": [
+          8,
+          6,
+          4,
+          1,
+          3
+        ],
+        "path_names": [
+          "Linda Vista",
+          "Bolonia",
+          "Los Robles",
+          "Villa Fontana",
+          "Santo Domingo"
+        ],
+        "travel_time_minutes": 24.22,
+        "distance_km": 12.92,
+        "avg_speed_kmh": 32.0
+      },
+      "storm_scenario": {
+        "path_nodes": [
+          8,
+          9,
+          4,
+          1,
+          3
+        ],
+        "path_names": [
+          "Linda Vista",
+          "Metrocentro / Eje Corporativo UCA",
+          "Los Robles",
+          "Villa Fontana",
+          "Santo Domingo"
+        ],
+        "travel_time_minutes": 36.16,
+        "distance_km": 14.46,
+        "avg_speed_kmh": 24.0,
+        "delay_percentage": 49.3,
+        "path_rerouted": true
+      }
+    },
+    {
+      "od_id": "OD_2",
+      "description": "Residencial Sur a Nucleo Comercial Mayorista",
+      "origin": {
+        "id": 2,
+        "name": "Las Colinas"
+      },
+      "destination": {
+        "id": 11,
+        "name": "Mercado Oriental"
+      },
+      "dry_scenario": {
+        "path_nodes": [
+          2,
+          12,
+          11
+        ],
+        "path_names": [
+          "Las Colinas",
+          "Mercado Roberto Huembes",
+          "Mercado Oriental"
+        ],
+        "travel_time_minutes": 12.82,
+        "distance_km": 4.7,
+        "avg_speed_kmh": 22.0
+      },
+      "storm_scenario": {
+        "path_nodes": [
+          2,
+          12,
+          11
+        ],
+        "path_names": [
+          "Las Colinas",
+          "Mercado Roberto Huembes",
+          "Mercado Oriental"
+        ],
+        "travel_time_minutes": 24.37,
+        "distance_km": 4.7,
+        "avg_speed_kmh": 11.6,
+        "delay_percentage": 90.1,
+        "path_rerouted": false
+      }
+    },
+    {
+      "od_id": "OD_3",
+      "description": "Corredor Transversal Este - Oeste",
+      "origin": {
+        "id": 6,
+        "name": "Bolonia"
+      },
+      "destination": {
+        "id": 7,
+        "name": "Bello Horizonte"
+      },
+      "dry_scenario": {
+        "path_nodes": [
+          6,
+          10,
+          7
+        ],
+        "path_names": [
+          "Bolonia",
+          "Ciudad Jardín",
+          "Bello Horizonte"
+        ],
+        "travel_time_minutes": 16.07,
+        "distance_km": 8.57,
+        "avg_speed_kmh": 32.0
+      },
+      "storm_scenario": {
+        "path_nodes": [
+          6,
+          10,
+          7
+        ],
+        "path_names": [
+          "Bolonia",
+          "Ciudad Jardín",
+          "Bello Horizonte"
+        ],
+        "travel_time_minutes": 21.42,
+        "distance_km": 8.57,
+        "avg_speed_kmh": 24.0,
+        "delay_percentage": 33.3,
+        "path_rerouted": false
+      }
+    }
+  ]
+}

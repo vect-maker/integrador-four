@@ -289,13 +289,13 @@ flowchart LR
 ### Milestone 1: Python Computational Suite (`pipeline/analysis/`)
 - [x] Create and verify `pipeline/analysis/01_econometrics.py` (OLS multiple linear regression, ANOVA table, JSON metrics and PNG plots).
 - [x] Create and verify `pipeline/analysis/02_numerical_methods.py` (Bisection vs. Newton-Raphson, convergence comparison, JSON and PNG plots).
-- [ ] Create `pipeline/analysis/03_optimization.py` (12-node Managua road graph, Dijkstra normal vs. storm travel times, SVG/PNG network map).
-- [ ] Execute each script and verify zero errors.
+- [x] Create and verify `pipeline/analysis/03_optimization.py` (12-node Managua road graph, Dijkstra normal vs. storm travel times, JSON and PNG network maps).
+- [x] Execute each script and verify zero errors via `just run-analysis`.
 
 ### Milestone 2: Automated Hydration Integration
-- [ ] Add `just run-analysis` to `justfile`.
-- [ ] Update `pipeline/hydrate_paper_data.sh` to purge stale files and run both SQL exports and Python modeling scripts.
-- [ ] Run `just hydrate-data` and verify that all 9 files in `typst/data/` and 3 files in `typst/graphs/` are generated.
+- [x] Add `just run-analysis` to `justfile`.
+- [x] Update `pipeline/hydrate_paper_data.sh` to selectively purge stale files (preserving README.md), run DuckDB SQL exports, execute the Python modeling suite, and validate all outputs.
+- [x] Run `just hydrate-data` and verify that all 9 files in `typst/data/` and 6 files in `typst/graphs/` are generated and validated in ~7s.
 
 ### Milestone 3: Typst Modular Tables & Data Bindings
 - [ ] Update `typst/data_bindings.typ` with parsed bindings from new JSON files.
@@ -334,8 +334,8 @@ flowchart LR
 | Session / Date | Focus Area | Milestone | Status | Key Deliverables & Milestones |
 | :--- | :--- | :--- | :--- | :--- |
 | **Session 1** (Completed) | Setup, Roadmap & Objective Alignment | **M0** | ✅ **Completed** | Dependencies installed, `doc/paper_completion_roadmap.md`, objectives aligned in Ch. 5, 6, 7; verified with `just build-all`. |
-| **Session 2** (Next) | Computational Modeling Suite in Python | **M1** | ⏳ Scheduled | `01_econometrics.py`, `02_numerical_methods.py`, `03_optimization.py` |
-| **Session 3** | Automated Hydration, Tables & Data Bindings | **M2, M3** | ⏳ Scheduled | `just hydrate-data`, JSONs, SVGs, `data_bindings.typ`, modular tables |
+| **Session 2** (Completed) | Computational Modeling Suite in Python | **M1** | ✅ **Completed** | `01_econometrics.py`, `02_numerical_methods.py`, `03_optimization.py`, 3 JSONs, 6 PNGs (300 DPI); verified with `just run-analysis`. |
+| **Session 3** (In Progress) | Automated Hydration, Tables & Data Bindings | **M2, M3** | 🔄 In Progress | **M2 Completed:** Unified `just hydrate-data` (9 JSONs + 6 PNGs validated in 7s). **M3 Scheduled:** `data_bindings.typ` and modular tables. |
 | **Session 4** | Chapter 8 Drafting (Resultados y Discusión) | **M4** | ⏳ Scheduled | `08_resultados.typ` (Sections 8.1, 8.2, 8.3, 8.4) |
 | **Session 5** | Chapter 9, Master PDF QA & Final Verification | **M5, M6** | ⏳ Scheduled | `09_conclusiones.typ`, `document.pdf` compiled cleanly |
 | **Session 6** | Defense Slides Synchronization | **M7** | ⏳ Scheduled | `slides.pdf` updated with real empirical results |
