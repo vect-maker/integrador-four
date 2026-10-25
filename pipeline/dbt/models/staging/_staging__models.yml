@@ -1,0 +1,76 @@
+version: 2
+
+models:
+  - name: stg_zonas
+    description: "Capa de staging para cuadrantes urbanos y estratos socioeconómicos de Managua"
+    columns:
+      - name: id_zona
+        description: "Identificador único de la zona"
+        tests:
+          - unique
+          - not_null
+      - name: estrato_socioeconomico
+        description: "Estrato socioeconómico territorial"
+        tests:
+          - accepted_values:
+              values: ['alto', 'medio', 'popular', 'comercial']
+
+  - name: stg_usuarios
+    description: "Capa de staging para usuarios pasajeros y sus preferencias de pago"
+    columns:
+      - name: id_usuario
+        description: "Identificador único del usuario"
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_conductores
+    description: "Capa de staging para la flota de socios conductores y estado operativo"
+    columns:
+      - name: id_conductor
+        description: "Identificador único del conductor"
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_campanas
+    description: "Capa de staging para campañas de bonos e incentivos económicos"
+    columns:
+      - name: id_campana
+        description: "Identificador único de la campaña"
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_clima
+    description: "Capa de staging para registros meteorológicos e índice de congestión vial"
+    columns:
+      - name: fecha
+        description: "Fecha del registro climático"
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_viajes
+    description: "Capa de staging enriquecida para transacciones de viajes, cancelaciones y tarifas"
+    columns:
+      - name: id_viaje
+        description: "Identificador único del viaje"
+        tests:
+          - unique
+          - not_null
+      - name: es_cancelado
+        description: "Bandera binaria que indica si el viaje fue cancelado (1) o no (0)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [0, 1]
+
+  - name: stg_telemetria
+    description: "Capa de staging para pings de posicionamiento GPS y velocidad vehicular"
+    columns:
+      - name: id_telemetria
+        description: "Identificador único del ping telemétrico"
+        tests:
+          - unique
+          - not_null
