@@ -1,0 +1,9 @@
+# Treat image files as binary to avoid diff pollution
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.svg binary
+
+# Exclude generated figures and data from GitHub language breakdown metrics
+typst/graphs/* binary linguist-generated=true
+typst/data/*.json linguist-generated=true

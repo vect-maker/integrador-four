@@ -11,6 +11,10 @@ dist/
 # Ignorar los PDFs compilados para no inflar el historial de Git con binarios
 *.pdf
 
+# Ignorar archivos SVG y PNG pesados autogenerados para evitar contaminar el historial
+typst/graphs/*.svg
+typst/graphs/*.png
+
 # Caché y artefactos del Language Server de Typst (Tinymist)
 .tinymist/
 *.preview.html

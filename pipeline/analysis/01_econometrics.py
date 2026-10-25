@@ -187,22 +187,15 @@ def build_json_payload(model, anova_table, df: pd.DataFrame) -> dict:
     }
 
 
-def generate_vector_svg(df: pd.DataFrame, model, output_path: Path):
+def generate_fit_plot(df: pd.DataFrame, model, output_path: Path):
     """
-    Renders a high-resolution, academic-styled dual-panel vector SVG graphic.
-    Panel 1: Scatter plot of Multiplier vs Cancellation Rate with fitted line & 95% CI.
-    Panel 2: Residuals vs Fitted values for homoscedasticity evaluation.
+    Renders a standalone high-resolution PNG: Scatter plot of Multiplier vs Cancellation Rate
+    with OLS fitted line, 95% confidence interval band, and weather category color coding.
     """
     output_path.parent.mkdir(parents=True, exist_ok=True)
-
-    # Use clean academic style
     plt.style.use("seaborn-v0_8-whitegrid" if "seaborn-v0_8-whitegrid" in plt.style.available else "default")
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11.5, 4.6), dpi=300)
+    fig, ax = plt.subplots(figsize=(6.8, 4.4), dpi=300)
 
-    # -------------------------------------------------------------
-    # Panel 1: Scatter & Regression Line
-    # -------------------------------------------------------------
-    # Classify weather condition for color mapping
     rain_palette = {
         "sin_lluvia": "#2b5c8f",      # Classic Navy
         "lluvia_ligera": "#388e3c",   # Emerald Green
@@ -213,12 +206,12 @@ def generate_vector_svg(df: pd.DataFrame, model, output_path: Path):
         subset = df[df["categoria_precipitacion"] == cat]
         if not subset.empty:
             label = cat.replace("_", " ").capitalize()
-            ax1.scatter(
+            ax.scatter(
                 subset["multiplicador_promedio"],
                 subset["tasa_cancelacion_pct"],
                 color=color,
                 alpha=0.65,
-                s=30,
+                s=32,
                 edgecolors="none",
                 label=f"{label} (n={len(subset)})",
             )
@@ -232,8 +225,8 @@ def generate_vector_svg(df: pd.DataFrame, model, output_path: Path):
     })
     preds = model.get_prediction(pred_data).summary_frame(alpha=0.05)
 
-    ax1.plot(m_grid, preds["mean"], color="#111111", linewidth=2.0, label="Ajuste MCO (Lluvia media)")
-    ax1.fill_between(
+    ax.plot(m_grid, preds["mean"], color="#111111", linewidth=2.0, label="Ajuste MCO (Lluvia media)")
+    ax.fill_between(
         m_grid,
         preds["mean_ci_lower"],
         preds["mean_ci_upper"],
@@ -251,44 +244,54 @@ def generate_vector_svg(df: pd.DataFrame, model, output_path: Path):
         f"$\\hat{{Y}} = {beta_0:.2f} + {beta_1:.2f} m + {beta_2:.3f} P$\n"
         f"$R^2 = {r2:.3f}$ | $F = {model.fvalue:.1f}$ ($p < 0.001$)"
     )
-    ax1.text(
+    ax.text(
         0.05,
         0.95,
         equation_text,
-        transform=ax1.transAxes,
+        transform=ax.transAxes,
         fontsize=9,
         verticalalignment="top",
         bbox=dict(boxstyle="round,pad=0.5", facecolor="white", edgecolor="#cccccc", alpha=0.9),
     )
 
-    ax1.set_title("(a) Sensibilidad de Cancelaciones vs. Multiplicador", fontsize=11, fontweight="bold", pad=8)
-    ax1.set_xlabel("Multiplicador Dinámico Promedio Diario (m)", fontsize=10)
-    ax1.set_ylabel("Tasa de Cancelación Diaria (%)", fontsize=10)
-    ax1.legend(loc="lower right", frameon=True, fontsize=8)
-    ax1.grid(True, linestyle="--", alpha=0.5)
+    ax.set_title("Sensibilidad de Cancelaciones vs. Multiplicador Dinámico", fontsize=11, fontweight="bold", pad=8)
+    ax.set_xlabel("Multiplicador Dinámico Promedio Diario (m)", fontsize=10)
+    ax.set_ylabel("Tasa de Cancelación Diaria (%)", fontsize=10)
+    ax.legend(loc="lower right", frameon=True, fontsize=8)
+    ax.grid(True, linestyle="--", alpha=0.5)
 
-    # -------------------------------------------------------------
-    # Panel 2: Residuals vs Fitted
-    # -------------------------------------------------------------
+    plt.tight_layout()
+    plt.savefig(output_path, format="png", dpi=300, bbox_inches="tight")
+    plt.close(fig)
+
+
+def generate_residuals_plot(df: pd.DataFrame, model, output_path: Path):
+    """
+    Renders a standalone high-resolution PNG: Residuals vs Fitted values for homoscedasticity evaluation.
+    """
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    plt.style.use("seaborn-v0_8-whitegrid" if "seaborn-v0_8-whitegrid" in plt.style.available else "default")
+    fig, ax = plt.subplots(figsize=(6.8, 4.4), dpi=300)
+
     fitted = model.fittedvalues
     resid = model.resid
 
-    ax2.scatter(fitted, resid, color="#455a64", alpha=0.6, s=26, edgecolors="none")
-    ax2.axhline(0, color="#d32f2f", linestyle="--", linewidth=1.5, label="Residuo cero")
+    ax.scatter(fitted, resid, color="#455a64", alpha=0.6, s=28, edgecolors="none")
+    ax.axhline(0, color="#d32f2f", linestyle="--", linewidth=1.5, label="Residuo cero")
 
     # Fit a smooth lowess line for visual homoscedasticity evaluation
     from statsmodels.nonparametric.smoothers_lowess import lowess
     smooth = lowess(resid, fitted, frac=0.6)
-    ax2.plot(smooth[:, 0], smooth[:, 1], color="#0288d1", linewidth=1.8, label="Tendencia residual (LOWESS)")
+    ax.plot(smooth[:, 0], smooth[:, 1], color="#0288d1", linewidth=1.8, label="Tendencia residual (LOWESS)")
 
-    ax2.set_title("(b) Diagnóstico de Residuos vs. Valores Ajustados", fontsize=11, fontweight="bold", pad=8)
-    ax2.set_xlabel("Valores Ajustados $\\hat{Y}$ (%)", fontsize=10)
-    ax2.set_ylabel("Residuos MCO ($e_t$)", fontsize=10)
-    ax2.legend(loc="upper right", frameon=True, fontsize=8)
-    ax2.grid(True, linestyle="--", alpha=0.5)
+    ax.set_title("Diagnóstico de Residuos MCO vs. Valores Ajustados", fontsize=11, fontweight="bold", pad=8)
+    ax.set_xlabel("Valores Ajustados $\\hat{Y}$ (%)", fontsize=10)
+    ax.set_ylabel("Residuos MCO ($e_t$)", fontsize=10)
+    ax.legend(loc="upper right", frameon=True, fontsize=8)
+    ax.grid(True, linestyle="--", alpha=0.5)
 
     plt.tight_layout()
-    plt.savefig(output_path, format="svg", bbox_inches="tight")
+    plt.savefig(output_path, format="png", dpi=300, bbox_inches="tight")
     plt.close(fig)
 
 
@@ -296,7 +299,8 @@ def main():
     root = get_project_root()
     db_path = root / "pipeline" / "data" / "analytics.duckdb"
     json_path = root / "typst" / "data" / "econometric_regression.json"
-    svg_path = root / "typst" / "graphs" / "regression_fit.svg"
+    fit_plot_path = root / "typst" / "graphs" / "regression_fit.png"
+    resid_plot_path = root / "typst" / "graphs" / "regression_residuals.png"
 
     print("=" * 60)
     print("MoviGo Econometrics Analysis: Multiple Linear Regression (OLS)")
@@ -319,9 +323,12 @@ def main():
         json.dump(payload, f, indent=2, ensure_ascii=False)
     print(f"\n✅ JSON metrics saved to: {json_path.relative_to(root)}")
 
-    # Generate Vector SVG plot
-    generate_vector_svg(df, model, svg_path)
-    print(f"✅ Vector SVG plot saved to: {svg_path.relative_to(root)}")
+    # Generate separate high-resolution PNG images
+    generate_fit_plot(df, model, fit_plot_path)
+    print(f"✅ Scatter & fit plot saved to: {fit_plot_path.relative_to(root)}")
+
+    generate_residuals_plot(df, model, resid_plot_path)
+    print(f"✅ Residuals diagnostic plot saved to: {resid_plot_path.relative_to(root)}")
 
     print("\n" + "=" * 60)
     print("Econometrics analysis successfully executed!")

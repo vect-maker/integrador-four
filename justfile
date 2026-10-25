@@ -42,19 +42,28 @@ watch-slides:
 info-slides:
     @pdfinfo typst/slides.pdf 2>/dev/null || echo "⚠️  No se encontró typst/slides.pdf. Ejecuta 'just build-slides' primero."
 
-# Crear entorno virtual local con uv (Python 3.14) para LSP y linters
+# Configurar entorno virtual local (.venv) instalando uv automáticamente si no existe y dependencias
 setup-env:
-    uv venv --python 3.14 --clear .venv
-    uv pip install -r pipeline/requirements.txt
-    @echo "✅ Entorno virtual (.venv) listo con uv (Python 3.14) para soporte LSP y linters."
+    @bash -c '\
+        if ! command -v uv &> /dev/null; then \
+            echo "⚠️  uv no está instalado en el sistema. Instalando uv automáticamente..."; \
+            curl -LsSf https://astral.sh/uv/install.sh | sh; \
+            export PATH="$$HOME/.local/bin:$$HOME/.cargo/bin:$$PATH"; \
+        fi; \
+        echo "🔧 Creando entorno virtual local (.venv)..."; \
+        uv venv --clear .venv; \
+        echo "📦 Instalando dependencias de pipeline/requirements.txt en .venv..."; \
+        uv pip install -r pipeline/requirements.txt; \
+        echo "✅ Entorno virtual (.venv) listo y verificado con todas las dependencias científicas."; \
+    '
 
-# Ejecutar extracción de datos desde los 7 endpoints de MoviGo a Parquet
+# Ejecutar extracción de datos desde los 7 endpoints de MoviGo a Parquet (ejecución directa en .venv)
 pipeline-fetch:
-    cd pipeline && python3 fetcher.py
+    .venv/bin/python pipeline/fetcher.py
 
-# Ejecutar pipeline en BD: carga del esquema DDL (destroy block) y datos Parquet
+# Ejecutar pipeline en BD: carga del esquema DDL y datos Parquet (ejecución directa en .venv)
 pipeline-load:
-    cd pipeline && python3 loader.py
+    .venv/bin/python pipeline/loader.py
 
 # Ejecutar comandos de dbt mediante el contenedor oficial de dbt Labs con Podman
 dbt *args="debug":

@@ -39,9 +39,9 @@ flowchart TD
         J1["typst/data/econometric_regression.json"]
         J2["typst/data/numerical_methods.json"]
         J3["typst/data/routing_optimization.json"]
-        G1["typst/graphs/regression_fit.svg"]
-        G2["typst/graphs/root_finding_convergence.svg"]
-        G3["typst/graphs/urban_network_dijkstra.svg"]
+        G1["typst/graphs/regression_fit.png"]
+        G2["typst/graphs/root_finding_convergence.png"]
+        G3["typst/graphs/urban_network_dijkstra.png"]
     end
 
     subgraph S4["4. Typst Document Engine (Single Source of Truth)"]
