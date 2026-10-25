@@ -28,7 +28,7 @@ En el ámbito tecnológico, el proyecto resuelve un desafío propio de los entor
 
 El pipeline tecnológico implementado demuestra un diseño DataOps escalable y profesional:
 + *Extracción Modular y Paginación Robusta:* Cliente en Python (`httpx`/`requests`) diseñado para consumir colecciones paginadas (`limit=200`, `offset` dinámico), validando esquemas y computando sumas criptográficas *SHA-256* para auditoría y trazabilidad de los datos brutos.
-+ *Capa Cruda en PostgreSQL:* Ingesta y normalización relacional de los 7 endpoints de la plataforma MoviGo en tablas crudas locales.
++ *Capa Cruda en Azure PostgreSQL:* Ingesta, normalización relacional y persistencia de los 7 endpoints de la plataforma MoviGo en la base de datos `raw` (esquema `public`) alojada en un servicio administrado en la nube (*Azure Database for PostgreSQL*).
 + *Modelado Dimensional y Transformación con dbt Core:* Construcción de un Data Warehouse bajo metodología Kimball mediante *dbt (Data Build Tool)*, desacoplando staging y marts analíticos, con llaves subrogadas hash (MD5) y una batería exhaustiva de pruebas automáticas de calidad (_dbt tests_) que validan reglas de negocio (`multiplicador_dinamico >= 1.00`, tarifas positivas y unicidad referencial) @kimball2013.
 
 == Relevancia Social y Equidad Territorial en el Municipio de Managua
