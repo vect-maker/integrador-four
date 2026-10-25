@@ -1,12 +1,13 @@
 #show bibliography: none
 #bibliography("../../references.bib")
 #import "../../snippets.typ": (
-  snippet-raw-ddl,
-  snippet-loader-azure,
-  snippet-fct-viajes,
-  snippet-marts-models,
+  fig-raw-ddl,
+  fig-loader-azure,
+  fig-fct-viajes,
+  fig-marts-models,
 )
-#import "../../diagrams/star_schema.typ": diagram-star-schema
+#import "../../diagrams/star_schema.typ": fig-star-schema
+#import "../../tables/star_schema.typ": fig-star-schema-table
 
 = Diseño Metodológico
 
@@ -41,97 +42,17 @@ Para consolidar el repositorio analítico de operaciones 2024 a partir de las fu
 
 + *Marco de Calidad y Pruebas Automatizadas de Integridad:* Implementación de pruebas declarativas automatizadas en `sources.yml`, `_staging__models.yml` y `_marts__models.yml` ejecutadas mediante `dbt test`. El marco valida formalmente la unicidad (`unique`) y completitud (`not_null`) de todas las claves primarias y foráneas subrogadas, la integridad referencial cruzada (`relationships`) entre `fct_viajes` y las dimensiones correspondientes, y la no nulidad en la variable dependiente booleana de cancelación (`es_cancelado: not_null`), tal como se detalla en el @lst-dbt-marts.
 
-#figure(
-  diagram-star-schema,
-  caption: [Diagrama dimensional del Esquema en Estrella (Star Schema) implementado en dbt Core],
-) <fig-star-schema>
+#fig-star-schema <fig-star-schema>
 
-#figure(
-  {
-    set text(size: 7.6pt)
-    show raw.where(block: false): it => box(
-      fill: rgb("#f1f5f9"),
-      radius: 1.5pt,
-      inset: (x: 1.8pt, y: 0pt),
-      baseline: 0%,
-      text(font: ("Liberation Mono", "DejaVu Sans Mono"), size: 6.8pt, it.text)
-    )
-    table(
-      columns: (1.35fr, 1.05fr, 1.15fr, 1.35fr, 2.6fr),
-      stroke: 0.4pt + rgb("#cbd5e1"),
-      inset: (x: 4pt, y: 3.5pt),
-      align: (col, row) => if row == 0 { center + horizon } else { left + horizon },
-      fill: (col, row) => if row == 0 { rgb("#f1f5f9") } else if calc.even(row) { rgb("#f8fafc") } else { none },
-      table.header(
-        [*Modelo (dbt)*], [*Rol Dimensional*], [*PK Subrogada*], [*Relaciones / FK*], [*Grano y Métricas / Atributos Clave*]
-      ),
-      [`fct_viajes`],
-      [Tabla de Hechos (Atómica)],
-      [`sk_viaje` \ #text(size: 6.8pt, fill: rgb("#64748b"))[(Hash MD5)]],
-      [
-        #stack(
-          spacing: 1.5pt,
-          [`sk_zona_origen`],
-          [`sk_zona_destino`],
-          [`sk_clima`, `sk_usuario`],
-          [`sk_conductor`]
-        )
-      ],
-      [1 fila por solicitud ($N = 77,036$). Multiplicador dinámico, tarifa base, tarifa final, recargo surge, tiempo espera, bandera booleana de cancelación (`es_cancelado`).],
+#fig-star-schema-table <tbl-star-schema>
 
-      [`dim_zonas`],
-      [Dimensión Conformada],
-      [`sk_zona` \ #text(size: 6.8pt, fill: rgb("#64748b"))[(Hash MD5)]],
-      [Origen y Destino \ #text(size: 6.8pt, fill: rgb("#64748b"))[(`fct_viajes`)]],
-      [12 cuadrantes urbanos. Estrato socioeconómico, nivel ordinal (1--4), latitud, longitud, radio cobertura, bajada de bandera zonal.],
+#fig-raw-ddl <lst-ddl>
 
-      [`dim_clima`],
-      [Dimensión Conformada],
-      [`sk_clima` \ #text(size: 6.8pt, fill: rgb("#64748b"))[(Hash MD5)]],
-      [`sk_clima` \ #text(size: 6.8pt, fill: rgb("#64748b"))[(`fct_viajes`)]],
-      [365 días del ciclo 2024. Precipitación (mm), temperatura (°C), índice y nivel de congestión vial, condición de cielo, indicador de lluvia.],
+#fig-loader-azure <lst-loader>
 
-      [`dim_usuarios`],
-      [Dimensión Conformada],
-      [`sk_usuario` \ #text(size: 6.8pt, fill: rgb("#64748b"))[(Hash MD5)]],
-      [`sk_usuario` \ #text(size: 6.8pt, fill: rgb("#64748b"))[(`fct_viajes`)]],
-      [Pasajeros registrados. Preferencia de pago (efectivo vs tarjeta/digital), calificación histórica promedio, fecha de registro.],
+#fig-fct-viajes <lst-fct-viajes>
 
-      [`dim_conductores`],
-      [Dimensión Conformada],
-      [`sk_conductor` \ #text(size: 6.8pt, fill: rgb("#64748b"))[(Hash MD5)]],
-      [`sk_conductor` \ #text(size: 6.8pt, fill: rgb("#64748b"))[(`fct_viajes`)]],
-      [Socios de la flota. Modalidad vehicular (`movigo_estandar`, `movigo_comfort`, `movigo_moto`), modelo, año, calificación, tasa de aceptación, estado activo.],
-
-      [`dim_campanias`],
-      [Dimensión Prescriptiva],
-      [`sk_campania` \ #text(size: 6.8pt, fill: rgb("#64748b"))[(Hash MD5)]],
-      [Optimización \ #text(size: 6.8pt, fill: rgb("#64748b"))[Mochila 0/1]],
-      [Programas de bonos. Costo presupuestario en córdobas (NIO), incremento en horas de conexión y ratio de costo unitario por hora.]
-    )
-  },
-  caption: [Especificación arquitectónica del Esquema en Estrella (Star Schema) implementado en dbt Core],
-) <tbl-star-schema>
-
-#figure(
-  snippet-raw-ddl,
-  caption: [Definición del esquema DDL relacional y restricciones de integridad (`raw_schema.sql`)],
-) <lst-ddl>
-
-#figure(
-  snippet-loader-azure,
-  caption: [Conexión cifrada e inserción por lotes en Azure Database for PostgreSQL (`loader.py`)],
-) <lst-loader>
-
-#figure(
-  snippet-fct-viajes,
-  caption: [Modelo de la tabla de hechos atómica en dbt Core con llaves subrogadas hash MD5 (`fct_viajes.sql`)],
-) <lst-fct-viajes>
-
-#figure(
-  snippet-marts-models,
-  caption: [Pruebas declarativas de integridad referencial foránea y calidad de datos en dbt (`_marts__models.yml`)],
-) <lst-dbt-marts>
+#fig-marts-models <lst-dbt-marts>
 
 === Fase 2: Modelación Econométrica de la Cancelación de Viajes (Objetivo 2)
 A partir del repositorio analítico consolidado, la bandera booleana `es_cancelado` se transforma en el vector dicotómico ($Y in {0,1}$, donde $1 = "true" = "cancelado"$) para modelar la probabilidad de cancelación del viaje como respuesta a la tarifa dinámica y factores exógenos:
@@ -147,7 +68,23 @@ Para resolver la rigidez de las soluciones analíticas continuas en presencia de
 
 === Fase 4: Optimización Prescriptiva de Incentivos a la Oferta (Objetivo 4)
 Para contrarrestar el desbalance de oferta sin depender exclusivamente del encarecimiento tarifario trasladado al usuario:
-+ *Formulación de la Mochila Binaria (0/1):* Selección óptima de programas de incentivos para conductores (`/movigo/campanas`) que maximice las horas totales de conexión activa ($H = sum h_i x_i$), sujeta al límite presupuestario finito de la empresa:
++ *Formulación de la Mochila Binaria (0/1):* Selección óptima de programas de incentivos para conductores (`dim_campanias`) que maximice las horas totales de conexión activa ($H = sum h_i x_i$), sujeta al límite presupuestario finito de la empresa:
   $ max sum_(i=1)^n h_i x_i quad "sujeto a" quad sum_(i=1)^n c_i x_i <= B, quad x_i in {0,1} $
   donde $c_i$ es el costo de cada campaña y $B = "C\$ 120,000 NIO"$ es el presupuesto disponible.
 + *Impacto en Cancelaciones:* Comparación del volumen de cancelaciones esperadas bajo el esquema actual basado en tarifa dinámica extrema versus el escenario con flota reforzada mediante incentivos optimizados.
+
+== Ecosistema Computacional y Flujo de Reproducibilidad (DuckDB, Python y Typst)
+
+Para asegurar la validez metodológica y la reproducibilidad científica estricta de los resultados, la fase final de análisis empírico y generación de evidencia desacopla y articula tres herramientas computacionales complementarias bajo el paradigma _Data-to-Document_:
+
++ *Análisis Exploratorio y Consultas OLAP de Baja Latencia (DuckDB CLI):* Para la exploración inicial y la generación de agregaciones multidimensionales sobre los 77,036 registros, se emplea *DuckDB CLI*. Su motor columnar en proceso permite ejecutar analítica OLAP de alto rendimiento con latencias de milisegundos directamente sobre el almacén analítico. A través de DuckDB se extraen agregaciones espaciotemporales consolidadas (distribución de cancelaciones por estrato, franja horaria y condición meteorológica), las cuales se exportan de forma automatizada hacia artefactos tabulares estandarizados en formato `.csv`.
+
++ *Inferencia Econométrica, Métodos Numéricos y Optimización (Python):* El cálculo científico avanzado se ejecuta mediante scripts modulares en *Python* soportados en librerías especializadas (`statsmodels`, `scipy`, `pulp`). Este entorno recibe las tablas analíticas depuradas para:
+  - Estimar los coeficientes, errores estándar robustos y razones de momios de la regresión logística binaria (Fase 2).
+  - Ejecutar los algoritmos numéricos de búsqueda de raíces (Bisección y Newton-Raphson) para hallar el umbral crítico tarifario de equilibrio $m^*$ (Fase 3).
+  - Resolver el problema de programación lineal entera binaria para la asignación presupuestaria óptima de bonos (Fase 4).
+
++ *Renderizado Programático y Trazabilidad sin Error Humano (Typst):* La inclusión de *Typst* como motor de maquetación científica trasciende la tipografía convencional al operar como un procesador de documentos enlazado dinámicamente a los datos:
+  - Typst consume directamente los archivos `.csv` generados por DuckDB y los parámetros cuantitativos calculados por Python mediante funciones nativas de ingesta de datos (`#csv(...)`).
+  - Las tablas estadísticas, indicadores cuantitativos y visualizaciones gráficas del paper se sintetizan algorítmicamente en tiempo de compilación (`just build-doc`).
+  - Esta arquitectura programática establece una *fuente única de verdad* (_single source of truth_), eliminando por completo el riesgo de transcripción manual o desalineación de cifras (*human drift*), garantizando que toda actualización en los datos o en los modelos se refleje de manera inmediata, exacta y determinística en el documento final.

@@ -122,3 +122,9 @@
     edge((1, 2), (2, 2), "-->", stroke: (dash: "dashed", paint: rgb("#16a34a"), thickness: 0.7pt), label: text(size: 5pt, weight: "bold", fill: rgb("#15803d"))[Incentivos], label-side: left),
   )
 ]
+
+// Figura enumerada completa con título para documentos formales
+#let fig-star-schema = figure(
+  diagram-star-schema,
+  caption: [Diagrama dimensional del Esquema en Estrella (Star Schema) implementado en dbt Core],
+)

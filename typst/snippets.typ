@@ -118,3 +118,24 @@ models:
         tests:
           - not_null
 ```
+
+// Figuras y Listados enumerados con título formal para documentos y artículos
+#let fig-raw-ddl = figure(
+  snippet-raw-ddl,
+  caption: [Definición del esquema DDL relacional y restricciones de integridad (`raw_schema.sql`)],
+)
+
+#let fig-loader-azure = figure(
+  snippet-loader-azure,
+  caption: [Conexión cifrada e inserción por lotes en Azure Database for PostgreSQL (`loader.py`)],
+)
+
+#let fig-fct-viajes = figure(
+  snippet-fct-viajes,
+  caption: [Modelo de la tabla de hechos atómica en dbt Core con llaves subrogadas hash MD5 (`fct_viajes.sql`)],
+)
+
+#let fig-marts-models = figure(
+  snippet-marts-models,
+  caption: [Pruebas declarativas de integridad referencial foránea y calidad de datos en dbt (`_marts__models.yml`)],
+)
