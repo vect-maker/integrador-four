@@ -16,11 +16,11 @@ A partir del análisis de los *77,386 registros históricos de viajes* y las ser
 
 Desde el punto de vista científico y metodológico, la investigación trasciende la mera analítica descriptiva para articular herramientas formales de *econometría, análisis numérico e investigación de operaciones*:
 
-+ *Modelación Econométrica e Inferencia Rigurosa:* Permite contrastar de manera rigurosa cómo interactúan el multiplicador dinámico, los fenómenos meteorológicos diarios (`precipitacion_mm`) y la saturación del tráfico (`indice_congestion`) sobre el volumen de viajes y la tasa de cancelación, validando formalmente los supuestos clásicos de Gauss-Markov (normalidad, homocedasticidad y no autocorrelación).
-+ *Aproximación Numérica de la Elasticidad y Puntos de Equilibrio:* Aborda el problema de calibración tarifaria mediante métodos de búsqueda de raíces (*Bisección y Newton-Raphson*) para resolver numéricamente la función de exceso de demanda:
++ *Modelación Econométrica e Inferencia Rigurosa:* Cuantifica formalmente el impacto del multiplicador de tarifa dinámica sobre la tasa de cancelación mediante regresión lineal simple (MCO) y análisis de varianza (ANOVA), contrastando la significancia global del modelo mediante la prueba $F$ y midiendo la variabilidad explicada ($R^2$).
++ *Aproximación Numérica del Punto de Equilibrio:* Aborda la calibración tarifaria mediante métodos de búsqueda de raíces no lineales (*Bisección y Newton-Raphson*), resolviendo numéricamente la función de exceso de demanda:
   $ f(m) = "Demanda"(m) - "Oferta"(m) = 0 $
-  calculando además la elasticidad-precio de la demanda mediante aproximaciones diferenciales de orden $cal(O)(h^2)$ para tipificar el comportamiento elástico o inelástico en cada cuadrante.
-+ *Optimización Prescriptiva de la Oferta (Mochila Binaria):* Modela la selección de campañas de bonificación e incentivos para conductores (`/movigo/campanas`) como un *Problema de la Mochila 0/1*, maximizando las horas adicionales de conexión activa bajo una restricción presupuestaria de *C\$ 120,000 NIO*.
+  para identificar el umbral de multiplicador óptimo ($m^* = 1.35times$) y comparando la eficiencia algorítmica y orden de convergencia entre ambos métodos.
++ *Optimización Espacial de Redes y Teoría de Grafos:* Modela la red vial urbana de los 12 cuadrantes de Managua como un grafo ponderado $G = (V, E)$, aplicando el *Algoritmo de Dijkstra* para evaluar el impacto de perturbaciones climáticas e inundaciones sobre los tiempos de viaje y desvíos obligados, identificando el estrangulamiento físico que detona cancelaciones de servicio.
 
 == Relevancia Tecnológica y Arquitectura de Ingeniería de Datos (ELT con dbt)
 
@@ -37,12 +37,13 @@ En términos de impacto social, la investigación incide directamente en la equi
 
 Un algoritmo de tarifa dinámica descalibrado actúa como una barrera económica excluyente que expulsa a las familias de menores ingresos en momentos de vulnerabilidad (lluvias torrenciales o emergencias). Calibrar la tarifa con consideraciones de equidad socio-espacial y evaluar la correlación entre el estrato económico, el medio de pago preferido (`efectivo`, `tarjeta`, `billetera_digital`) y la propensión a la cancelación garantiza un servicio más accesible e inclusivo para la ciudadanía de Managua.
 
-== Coherencia Curricular y Formativa (Integrador IV)
+== Articulación Interdisciplinaria en Ciencia de Datos
 
-El presente estudio satisface plenamente las exigencias académicas y formativas del *Integrador IV* de la carrera de Ingeniería en Ciencias de Datos, articulando los conocimientos de las cinco asignaturas del semestre en torno a un único hilo conductor coherente:
+La presente investigación demuestra la sinergia práctica de la ciencia de datos aplicada a la movilidad metropolitana, articulando armónicamente diferentes frentes técnicos y analíticos en torno a un hilo conductor común:
 
-- *Bases de Datos Analíticas:* Arquitectura ELT, diseño dimensional en estrella (`fact_viajes`) y materialización con *dbt Core* sobre PostgreSQL.
-- *Programación en Scripting:* Ingesta automatizada de la API REST, paginación, serialización Parquet y control de integridad DataOps.
-- *Estadística Aplicada (Estadística II):* Modelos de regresión múltiple, batería de contrastes de hipótesis (Welch, ANOVA, Chi-cuadrado, proporciones z) y verificación Gauss-Markov.
-- *Métodos Numéricos:* Solución numérica de ecuaciones no lineales ($f(m)=0$) mediante Bisección y Newton-Raphson, derivación numérica de elasticidad e integración con la regla de Simpson 1/3.
-- *Investigación de Operaciones / Optimización:* Programación entera binaria (Problema de la Mochila 0/1) para la selección de campañas de incentivos presupuestarias.
+- *Ingeniería y Almacenamiento Analítico:* Arquitectura ELT, diseño dimensional en estrella bajo metodología Kimball (`fct_viajes` atómica y dimensiones conformadas), transformaciones con *dbt Core* y motor OLAP columnar en proceso con *DuckDB*.
+- *Automatización y Reproducibilidad Computacional:* Automatización de ingesta desde API REST paginada, scripts Bash estructurados (`set -euo pipefail`), orquestación mediante `justfile`, entorno reproducible con `uv` y verificación estática con `basedpyright`.
+- *Modelado Econométrico e Inferencial:* Estimación de regresión lineal simple por MCO ($R^2 = 0.62$), descomposición ANOVA y prueba de significancia global $F$.
+- *Análisis y Simulación Numérica:* Modelación no lineal del exceso de demanda ($f(m)=0$), resolución iterativa por Bisección vs. Newton-Raphson y evaluación de órdenes de convergencia.
+- *Investigación de Operaciones y Redes:* Teoría de grafos, modelado de red vial urbana y algoritmo de Dijkstra para cuantificar retrasos y desvíos forzados ante contingencias pluviales.
+- *Persistencia Transaccional Relacional:* Diseño relacional normalizado (3NF) y almacenamiento estructurado en la nube sobre Azure Database for PostgreSQL.

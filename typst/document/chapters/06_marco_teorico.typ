@@ -70,13 +70,62 @@ El diseño analítico sigue rigurosamente los principios de modelado dimensional
 
 == Fundamentos Teóricos para el Análisis Cuantitativo
 
-A partir de la base de datos analítica estructurada mediante dbt, la investigación contempla el abordaje de tres pilares cuantitativos complementarios, cuyos modelos y algoritmos específicos se encuentran en fase de estudio y definición:
+A partir de la base de datos analítica consolidada, la investigación articula tres pilares cuantitativos complementarios y su marco de reproducibilidad computacional:
 
-=== Inferencia y Econometría en Transporte
-La literatura en economía del transporte sustenta que la demanda de movilidad y las decisiones de cancelación no responden de forma aislada a las tarifas, sino que están condicionadas por perturbaciones exógenas como la congestión vial y las precipitaciones meteorológicas. Los modelos econométricos permiten aislar el efecto marginal de cada factor contextual, verificar supuestos de estabilidad de varianza e independencia residual, y contrastar hipótesis estadísticas sobre la existencia de disparidades en el servicio según el cuadrante urbano o la franja horaria.
+=== Modelación Econométrica y Descomposición de Varianza (MCO y ANOVA)
 
-=== Equilibrio de Mercado y Análisis Numérico
-En los sistemas de transporte bajo demanda, la condición teórica de equilibrio se define a través de la función de exceso de demanda, la cual busca identificar el multiplicador tarifario que balancee las solicitudes entrantes con la disponibilidad efectiva de unidades. Dado que las funciones reales de oferta y demanda suelen carecer de soluciones analíticas cerradas debido a la no linealidad del tráfico y la dispersión geográfica, el análisis numérico proporciona herramientas iterativas para aproximar raíces de equilibrio y estimar coeficientes de sensibilidad marginal (elasticidad) a partir de observaciones discretas.
+Para evaluar el impacto del multiplicador tarifario sobre las cancelaciones, se recurre a la teoría de *Mínimos Cuadrados Ordinarios (MCO)*. En el modelo de regresión lineal simple:
 
-=== Optimización en Redes y Teoría de Grafos
-En los sistemas de transporte bajo demanda, la eficiencia del servicio depende críticamente de la capacidad de enrutamiento y asignación sobre la red vial urbana. La teoría de grafos y la investigación de operaciones proveen marcos cuantitativos para modelar la infraestructura de transporte como una red dirigida y ponderada $G = (V, E)$, donde los vértices representan cuadrantes o centroides de demanda y las aristas corresponden a corredores viales. Los algoritmos de ruta más corta, como el algoritmo de Dijkstra, permiten determinar las trayectorias de mínima impedancia (tiempo o distancia) y cuantificar el impacto operativo cuando perturbaciones climáticas o saturación vial incrementan drásticamente los costos de traslado en arterias clave.
+$ Y_t = beta_0 + beta_1 X_t + epsilon_t $ <eq-mco-teoria>
+
+donde $Y_t$ es la tasa de cancelación observada en el día $t$, $X_t = overline(m)_t$ es el multiplicador dinámico promedio diario, y $epsilon_t$ es la perturbación estocástica con esperanza nula y varianza constante ($sigma^2$).
+
+Los estimadores de los parámetros se obtienen minimizando la suma de los errores al cuadrado:
+
+$ hat(beta)_1 = frac(sum_(t=1)^n (X_t - overline(X))(Y_t - overline(Y)), sum_(t=1)^n (X_t - overline(X))^2), quad hat(beta)_0 = overline(Y) - hat(beta)_1 overline(X) $
+
+La significancia global y la capacidad explicativa del modelo se contrastan formalmente a través del *Análisis de Varianza (ANOVA)*, que descompone la variabilidad total observada ($S S T$) en la variabilidad explicada por la regresión ($S S R$) y la variabilidad residual no explicada ($S S E$):
+
+$ S S T = S S R + S S E $
+
+El estadístico $F$ de Fisher-Snedecor contrasta la hipótesis nula de ausencia de relación ($H_0: beta_1 = 0$ frente a $H_1: beta_1 eq.not 0$):
+
+$ F = frac(M S R, M S E) = frac(S S R \/ 1, S S E \/ (n - 2)) $
+
+con un coeficiente de determinación $R^2 = frac(S S R, S S T)$ que mide la proporción de la varianza en cancelaciones explicada por la tarifa dinámica.
+
+=== Análisis Numérico de Equilibrio de Mercado y Búsqueda de Raíces
+
+En los sistemas de transporte bajo demanda, la condición de balance entre la demanda de pasajeros $D(m)$ y la oferta de unidades $S(m)$ se formula como una ecuación no lineal continua:
+
+$ f(m) = D(m) - S(m) = 0 $ <eq-balance-mercado>
+
+Al carecer de solución analítica directa en forma cerrada, la determinación del multiplicador de equilibrio $m^*$ requiere algoritmos iterativos de búsqueda de raíces:
+
++ *Método de la Bisección (Método Cerrado):* Fundamentado en el *Teorema del Valor Intermedio (Bolzano)*. Si $f(m)$ es continua en el intervalo $[a_0, b_0]$ y $f(a_0) dot f(b_0) < 0$, existe al menos una raíz en el intervalo. En cada paso se evalúa el punto medio $m_k = frac(a_k + b_k, 2)$, reduciendo el intervalo a la mitad con convergencia lineal de orden $r = 1$, garantizando estabilidad incondicional.
++ *Método de Newton-Raphson (Método Abierto):* Aproxima la función localmente mediante su recta tangente utilizando la primera derivada analítica $f'(m)$:
+  $ m_(k+1) = m_k - frac(f(m_k), f'(m_k)) $
+  Presenta convergencia cuadrática de orden $r = 2$ en las proximidades de la raíz, requiriendo significativamente menos iteraciones para alcanzar una tolerancia de parada dada ($|f(m_k)| < epsilon$ con $epsilon = 10^(-6)$).
+
+=== Optimización Espacial en Redes y Algoritmo de Ruta Más Corta (Dijkstra)
+
+La infraestructura vial urbana de Managua se modela formalmente como una red espacial mediante un *grafo dirigido y ponderado* $G = (V, E)$, donde:
+- $V = {v_1, v_2, dots, v_(12)}$ representa el conjunto de vértices correspondientes a los 12 centroides zonales de la capital.
+- $E subset.eq V times V$ representa el conjunto de corredores y arterias viales transitables.
+- Cada arista $(i, j) in E$ posee una función de costo o impedancia temporal $tau_(i j)$ que cuantifica el tiempo de viaje estimado en minutos:
+  $ tau_(i j) (c) = frac(d_(i j), v_(i j) (c)) dot 60 $
+  donde $d_(i j)$ es la distancia vial entre zonas y $v_(i j)(c)$ es la velocidad de circulación condicionada por el régimen meteorológico $c in {"seco", "tormenta"}$.
+
+Para determinar la trayectoria de mínima impedancia entre un punto de partida y un destino, se implementa el *Algoritmo de Dijkstra*, el cual mantiene una estimación de distancia tentativa desde el origen y actualiza progresivamente las etiquetas de los nodos adyacentes mediante la operación de *relajación de aristas*:
+
+$ "dist"[j] = min("dist"[j], "dist"[i] + tau_(i j)) $
+
+Este enfoque permite cuantificar el incremento en el tiempo de viaje y los desvíos obligados cuando arterias neurálgicas sufren anegamientos severos.
+
+=== Arquitectura DataOps y Reproducibilidad Computacional
+
+El marco de ingeniería del proyecto se sustenta en los principios de automatización y reproducibilidad de la computación científica en entornos tipo Unix/Linux:
+- *Orquestación Declarativa vía `justfile`:* Automatiza la ejecución end-to-end de tareas analíticas y de compilación mediante un ejecutor de comandos centralizado.
+- *Shell Scripting Profesional en Bash:* Implementación de scripts de extracción y carga con directivas estrictas (`set -euo pipefail`) para garantizar fallas tempranas ante cualquier inconsistencia.
+- *Motor Analítico Columnar DuckDB:* Ejecuta consultas de agregación analítica OLAP de alto rendimiento directamente sobre el archivo de base de datos en proceso (`pipeline/data/analytics.duckdb`), exportando contratos de datos estructurados en formato JSON.
+- *Paradigma Data-to-Document en Typst:* El documento final no almacena cifras estáticas manuales; todas las métricas, parámetros de regresión, raíces y tiempos de ruta se leen dinámicamente en tiempo de compilación desde los archivos JSON, garantizando un flujo determinístico sin margen de error por transcripción humana (*zero human drift*).

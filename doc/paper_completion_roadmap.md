@@ -1,6 +1,6 @@
 # MoviGo Research Paper: Master Completion Roadmap & Technical Specifications
 
-**Document Version:** 2.0.0 (Comprehensive Specification)  
+**Document Version:** 3.0.0 (DataOps Architecture & Lean Curricular Integration)  
 **Project:** Modelación del Impacto de la Tarifa Dinámica sobre la Tasa de Cancelación de Viajes en el Servicio MoviGo en Managua (2024)  
 **Authors:** Br. Miranda Pérez, J. D.; Br. Aguilar Rodríguez, K. E.; Br. Oyarzo Morales, R. A.; Br. Medrano Dávila, L. D.  
 **Tutor:** MSc. Gerardo Mendoza Jiménez  
@@ -12,12 +12,12 @@
 
 This roadmap defines the complete, rigorous, and unambiguous implementation plan to finalize the undergraduate research paper on the **MoviGo** ride-hailing service in Managua, Nicaragua.
 
-Following a thorough alignment process, the technical and mathematical scope has been deliberately calibrated to match the concepts covered in university courses, eliminating academic over-engineering while preserving scientific rigor:
-- **Data Engineering / DataOps:** Kimball Star Schema deployed in Azure Database for PostgreSQL via dbt Core, captured in a local DuckDB snapshot (`pipeline/data/analytics.duckdb`) and hydrated dynamically into `typst/data/`.
-- **Applied Statistics:** Basic Multiple Linear Regression (Ordinary Least Squares - OLS) with an ANOVA table ($F$-test) assessing how daily surge pricing and rainfall impact trip cancellations.
-- **Numerical Methods:** Basic Root-Finding (Bisection and Newton-Raphson methods) solving the excess demand balance equation $f(m) = 0$ to identify the critical market equilibrium multiplier $m^*$.
-- **Operations Optimization:** Graph Theory applying Dijkstra's Shortest Path Algorithm across Managua's 12 urban quadrants under baseline versus storm/flooding scenarios.
-- **Document Engine (Typst):** Zero manual data copying (*single source of truth*). Tables and indicators are bound dynamically to JSON datasets, and complex visual figures are generated as publication-quality vector SVGs.
+Following a thorough strategic re-alignment, the paper places its primary spotlight on **Data Engineering, DataOps, and Reproducibility Tools**:
+- **Data Engineering / DataOps (Primary Spotlight):** Kimball Star Schema deployed in Azure Database for PostgreSQL (3NF raw schema) via dbt Core (staging views $\to$ marts tables with MD5 surrogate keys and automated test suites), captured in an in-process local DuckDB columnar snapshot (`pipeline/data/analytics.duckdb`), and hydrated dynamically into `typst/data/` via Bash automation (`pipeline/hydrate_paper_data.sh`) and `justfile`.
+- **Applied Statistics (Lean Syllabus Requirement):** Simple Linear Regression (Ordinary Least Squares - OLS) with an ANOVA table ($F$-test) assessing how daily surge pricing impacts trip cancellations ($R^2 = 0.623$, $F = 601.53$).
+- **Numerical Methods (Lean Syllabus Requirement):** Root-Finding (Bisection and Newton-Raphson methods) solving the excess demand balance equation $f(m) = 0$ to identify the critical market equilibrium multiplier $m^* = 1.35\times$ with a $7\times$ speedup for Newton.
+- **Operations Optimization (Lean Syllabus Requirement):** Graph Theory applying Dijkstra's Shortest Path Algorithm across Managua's 12 urban quadrants under baseline versus storm/flooding scenarios (+49.3% delay and dynamic rerouting).
+- **Document Engine (Typst):** Zero manual data copying (*single source of truth*). All tables, indicators, and callouts are dynamically bound to JSON datasets with zero human drift.
 
 ---
 

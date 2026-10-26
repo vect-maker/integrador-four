@@ -55,12 +55,12 @@ Para consolidar el repositorio analítico de operaciones 2024 a partir de las fu
 
 #fig-marts-models <lst-dbt-marts>
 
-=== Fase 2: Modelación Estadística y Regresión Lineal Múltiple (Objetivo 2)
-A partir de las series agregadas diarias del repositorio analítico ($n = 366$ días correspondientes al año bisiesto 2024), se formula un modelo de regresión lineal múltiple estimado por Mínimos Cuadrados Ordinarios (MCO) para cuantificar la sensibilidad de la tasa de cancelación de viajes frente al multiplicador tarifario y las condiciones meteorológicas:
+=== Fase 2: Modelación Estadística y Regresión Lineal Simple (Objetivo 2)
+A partir de las series agregadas diarias del repositorio analítico ($n = 366$ días correspondientes al año bisiesto 2024), se formula un modelo de regresión lineal simple estimado por Mínimos Cuadrados Ordinarios (MCO) para cuantificar la sensibilidad de la tasa de cancelación de viajes frente al multiplicador tarifario:
 + *Especificación del Modelo MCO:* 
-  $ "TasaCancelacion"_t = beta_0 + beta_1 dot overline(m)_t + beta_2 dot "precipitacion"_t + epsilon_t $
-  donde $"TasaCancelacion"_t$ representa el porcentaje diario de servicios cancelados respecto al total solicitado, $overline(m)_t$ es el multiplicador dinámico promedio ponderado del día, $"precipitacion"_t$ denota la lluvia acumulada en milímetros según `dim_clima`, y $epsilon_t$ es el término de error estocástico.
-+ *Inferencia y Descomposición ANOVA:* Cálculo de los errores estándar de los estimadores, estadísticos $t$ y valores $p$ asociados para contrastar la significancia individual de las variables exógenas. Asimismo, se estructura la tabla de Análisis de Varianza (ANOVA) para descomponer la variabilidad total ($S S T = S S R + S S E$) y contrastar la significancia global del modelo mediante la prueba $F$ y el coeficiente de determinación ($R^2$ y $R^2_("adj")$).
+  $ "TasaCancelacion"_t = beta_0 + beta_1 dot overline(m)_t + epsilon_t $
+  donde $"TasaCancelacion"_t$ representa el porcentaje diario de servicios cancelados respecto al total solicitado, $overline(m)_t$ es el multiplicador dinámico promedio ponderado del día, y $epsilon_t$ es el término de error estocástico.
++ *Inferencia y Descomposición ANOVA:* Cálculo de los errores estándar de los estimadores, estadísticos $t$ y valores $p$ asociados para contrastar la significancia individual de la tarifa dinámica. Asimismo, se estructura la tabla de Análisis de Varianza (ANOVA) para descomponer la variabilidad total ($S S T = S S R + S S E$) y contrastar la significancia global del modelo mediante la prueba $F$ y el coeficiente de determinación ($R^2$ y $R^2_("adj")$).
 
 === Fase 3: Cálculo Numérico del Umbral Tarifario de Equilibrio (Objetivo 3)
 Para resolver la rigidez de las soluciones analíticas continuas en presencia de congestión y lluvia:

@@ -36,11 +36,11 @@ Esta situación produce un doble desajuste:
 
 La combinación de tarifas en su punto máximo y tiempos de llegada prolongados genera un colapso en la tasa de finalización de viajes. El servicio experimenta un incremento pronunciado de cancelaciones tanto de usuarios frustrados por la espera como de choferes que se rehúsan a transitar por vías anegadas.
 
-== Desbalance entre Tarificación Punitiva e Incentivos Presupuestarios
+== Estrangulamiento de la Red Vial y Demoras Críticas en Tiempos de Llegada
 
-Actualmente, la estrategia de MoviGo para mitigar la escasez de vehículos descansa casi exclusivamente en el incremento de la tarifa dinámica trasladada al usuario. No obstante, la empresa dispone en su catálogo operativo (`/movigo/campanas`) de programas de incentivos y bonos para choferes (`meta_viajes`, `hora_pico_lluvia`, `zona_alta_demanda`) diseñados para incrementar las horas de conexión de la flota mediante estímulos positivos.
+Actualmente, el incremento de la tarifa dinámica trasladada al usuario no resuelve la rigidez espacial de la red vial urbana de Managua. Durante eventos de congestión o lluvia torrencial, los corredores arteriales sufren anegamientos e interrupciones que duplican los tiempos de traslado vehicular. 
 
-El problema radica en que estos programas de incentivos se administran de manera aislada y sin un modelo de optimización matemática que permita seleccionar la cartera de campañas que maximice las horas de conexión vehicular bajo una *restricción presupuestaria finita (C\$ 120,000 NIO)*. Al no optimizar los incentivos de oferta, la plataforma sobrecarga el mecanismo de _surge pricing_, encareciendo innecesariamente el servicio para los pasajeros de Managua.
+El problema radica en que el sistema de asignación de viajes no anticipa los cuellos de botella ni optimiza las rutas mediante algoritmos de grafos, provocando que los vehículos queden varados en tramos críticos. La dilatación resultante en los tiempos de espera hasta la recogida desborda la paciencia de los pasajeros, detonando cancelaciones masivas que inutilizan el incentivo tarifario.
 
 == Dispersión Transaccional y Necesidad de un Enfoque de Ciencia de Datos
 
@@ -50,10 +50,10 @@ Los datos que reflejan este fenómeno se encuentran fragmentados en endpoints de
 - Factores exógenos diarios de lluvia y tráfico en `/movigo/clima`.
 - Zonas, usuarios, conductores y campañas en sus respectivos directorios.
 
-Sin un pipeline automatizado de ingeniería de datos (ingesta en Python, almacenamiento en Azure PostgreSQL y transformación dimensional auditable con *dbt Core*), resulta imposible cuantificar rigurosamente la probabilidad de cancelación, estimar numéricamente el multiplicador de equilibrio ni optimizar la cartera presupuestaria de incentivos.
+Sin un pipeline automatizado de ingeniería de datos (ingesta en Python, almacenamiento en Azure PostgreSQL y transformación dimensional auditable con *dbt Core* y *DuckDB*), resulta inviable cuantificar con precisión la tasa de cancelación, modelar el comportamiento del usuario, estimar numéricamente el multiplicador de equilibrio ni optimizar las rutas de desplazamiento sobre la red urbana.
 
 == Formulación del Problema Central de Investigación
 
 A partir de las problemáticas descritas, el problema central de investigación se sintetiza en la siguiente interrogante formulada:
 
-¿Cuál es el impacto del esquema de tarificación dinámica (*surge pricing*) sobre la probabilidad de cancelación de viajes en el servicio MoviGo en el municipio de Managua durante 2024, y de qué manera pueden determinarse umbrales tarifarios de equilibrio mediante métodos numéricos y optimizarse la asignación presupuestaria de incentivos a la flota para mitigar el abandono del servicio bajo perturbaciones climáticas y asimetrías socioeconómicas?
+¿Cuál es el impacto del esquema de tarificación dinámica (*surge pricing*) sobre la tasa de cancelación de viajes en el servicio MoviGo en el municipio de Managua durante 2024, y de qué manera pueden determinarse umbrales tarifarios de equilibrio mediante métodos numéricos y optimizarse las rutas de desplazamiento en la red vial urbana mediante teoría de grafos para mitigar el abandono del servicio bajo perturbaciones climáticas y asimetrías territoriales?

@@ -8,7 +8,7 @@
 
 + *Implementar* un pipeline de ingeniería de datos bajo el paradigma ELT (API REST, Apache Parquet, Azure Database for PostgreSQL y dbt Core) para la consolidación del repositorio analítico de operaciones 2024.
 
-+ *Modelar* la tasa de cancelación de viajes frente a variaciones en el multiplicador dinámico y perturbaciones meteorológicas mediante técnicas de regresión lineal múltiple (MCO) y análisis de varianza.
++ *Modelar* la tasa de cancelación de viajes frente a variaciones en el multiplicador dinámico mediante técnicas de regresión lineal simple (MCO) y análisis de varianza.
 
 + *Calcular* el umbral crítico de multiplicador tarifario de equilibrio en la función de exceso de demanda mediante algoritmos numéricos de búsqueda de raíces.
 

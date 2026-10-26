@@ -1,167 +1,19 @@
 {
-  "description": "Modelación Econométrica de Tasa de Cancelación vs Tarifa Dinámica en Managua (2024)",
   "sample_size": 366,
-  "correlations": {
-    "r_surge_precipitacion": 0.9981,
-    "r_surge_cancelacion": 0.7893,
-    "r_precipitacion_cancelacion": 0.7833
-  },
-  "vif": {
-    "multiplicador_promedio": 268.79,
-    "precipitacion_mm": 268.79,
-    "diagnostico": "Multicolinealidad severa (VIF >> 10) debido a la respuesta algorítmica tarifaria a la lluvia"
-  },
-  "outliers": {
-    "tukey_upper_fence_pct": 9.59,
-    "outlier_days_count": 31,
-    "cook_threshold": 0.0109,
-    "high_influence_days_count": 16,
-    "robust_sample_size": 350,
-    "robust_beta_multiplicador": 8.0878,
-    "robust_r_squared": 0.5521
-  },
-  "model_simple": {
-    "formula": "tasa_cancelacion_pct ~ multiplicador_promedio",
-    "k": 1,
-    "df_resid": 364,
-    "coefficients": {
-      "intercept": {
-        "estimate": -6.8997,
-        "std_error": 0.4772,
-        "t_stat": -14.459,
-        "p_value": 9.2339e-38,
-        "ci_95": [
-          -7.8381,
-          -5.9613
-        ]
-      },
-      "multiplicador": {
-        "estimate": 8.5867,
-        "std_error": 0.3501,
-        "t_stat": 24.526,
-        "p_value": 4.1313e-79,
-        "ci_95": [
-          7.8983,
-          9.2752
-        ]
-      }
-    },
-    "metrics": {
-      "r_squared": 0.623,
-      "adj_r_squared": 0.622,
-      "residual_std_error": 1.7857,
-      "f_statistic": 601.531,
-      "f_p_value": 4.1313e-79,
-      "aic": 1465.1,
-      "bic": 1472.9
-    },
-    "anova": {
-      "regression": {
-        "ss": 1918.2069,
-        "df": 1,
-        "ms": 1918.2069,
-        "f": 601.531,
-        "p_value": 4.1313e-79
-      },
-      "residuals": {
-        "ss": 1160.7494,
-        "df": 364,
-        "ms": 3.1889
-      },
-      "total": {
-        "ss": 3078.9563,
-        "df": 365
-      }
-    },
-    "diagnostics": {
-      "durbin_watson": 1.759,
-      "jarque_bera": {
-        "statistic": 3.025,
-        "p_value": 0.2203,
-        "skewness": 0.22,
-        "kurtosis": 3.065
-      }
-    }
-  },
-  "model_multiple": {
-    "formula": "tasa_cancelacion_pct ~ multiplicador_promedio + precipitacion_mm",
-    "k": 2,
-    "df_resid": 363,
-    "coefficients": {
-      "intercept": {
-        "estimate": -22.3038,
-        "std_error": 6.6437,
-        "t_stat": -3.357,
-        "p_value": 0.00087082,
-        "ci_95": [
-          -35.3687,
-          -9.2389
-        ]
-      },
-      "multiplicador": {
-        "estimate": 21.8247,
-        "std_error": 5.7055,
-        "t_stat": 3.825,
-        "p_value": 0.00015378,
-        "ci_95": [
-          10.6048,
-          33.0446
-        ]
-      },
-      "precipitacion_mm": {
-        "estimate": -0.4291,
-        "std_error": 0.1846,
-        "t_stat": -2.325,
-        "p_value": 0.020647,
-        "ci_95": [
-          -0.7921,
-          -0.0661
-        ]
-      }
-    },
-    "metrics": {
-      "r_squared": 0.6285,
-      "adj_r_squared": 0.6265,
-      "residual_std_error": 1.775,
-      "f_statistic": 307.106,
-      "f_p_value": 8.7112e-79,
-      "aic": 1461.69,
-      "bic": 1473.4
-    },
-    "anova": {
-      "regression": {
-        "ss": 1935.2321,
-        "df": 2,
-        "ms": 967.616,
-        "f": 307.106,
-        "p_value": 8.7112e-79
-      },
-      "residuals": {
-        "ss": 1143.7242,
-        "df": 363,
-        "ms": 3.1508
-      },
-      "total": {
-        "ss": 3078.9563,
-        "df": 365
-      }
-    },
-    "diagnostics": {
-      "durbin_watson": 1.806,
-      "jarque_bera": {
-        "statistic": 5.383,
-        "p_value": 0.0678,
-        "skewness": 0.296,
-        "kurtosis": 3.06
-      }
-    }
-  },
+  "dependent_variable": "tasa_cancelacion_pct",
+  "independent_variable": "multiplicador_promedio",
+  "pearson_r": 0.7893,
+  "r_squared": 0.623,
+  "adj_r_squared": 0.622,
+  "residual_std_error": 1.7857,
+  "f_statistic": 601.53,
+  "f_p_value": 4.1313222405807917e-79,
   "coefficients": {
     "intercept": {
       "estimate": -6.8997,
       "std_error": 0.4772,
-      "t_stat": -14.459,
-      "p_value": 9.2339e-38,
+      "t_stat": -14.46,
+      "p_value": 9.233937100879999e-38,
       "ci_95": [
         -7.8381,
         -5.9613
@@ -170,48 +22,30 @@
     "multiplicador": {
       "estimate": 8.5867,
       "std_error": 0.3501,
-      "t_stat": 24.526,
-      "p_value": 4.1313e-79,
+      "t_stat": 24.53,
+      "p_value": 4.1313222405807917e-79,
       "ci_95": [
         7.8983,
         9.2752
       ]
     }
   },
-  "metrics": {
-    "r_squared": 0.623,
-    "adj_r_squared": 0.622,
-    "residual_std_error": 1.7857,
-    "f_statistic": 601.531,
-    "f_p_value": 4.1313e-79,
-    "aic": 1465.1,
-    "bic": 1472.9
-  },
   "anova": {
     "regression": {
-      "ss": 1918.2069,
+      "ss": 1918.21,
       "df": 1,
-      "ms": 1918.2069,
-      "f": 601.531,
-      "p_value": 4.1313e-79
+      "ms": 1918.21,
+      "f": 601.53,
+      "p_value": 4.1313222405807917e-79
     },
     "residuals": {
-      "ss": 1160.7494,
+      "ss": 1160.75,
       "df": 364,
       "ms": 3.1889
     },
     "total": {
-      "ss": 3078.9563,
+      "ss": 3078.96,
       "df": 365
-    }
-  },
-  "diagnostics": {
-    "durbin_watson": 1.759,
-    "jarque_bera": {
-      "statistic": 3.025,
-      "p_value": 0.2203,
-      "skewness": 0.22,
-      "kurtosis": 3.065
     }
   }
 }

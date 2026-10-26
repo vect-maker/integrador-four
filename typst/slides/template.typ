@@ -1,5 +1,3 @@
-// Helper styling and UI components for MoviGo Typst Presentation
-
 #let brand-red = rgb("#d9383a")
 #let brand-blue = rgb("#2563eb")
 #let brand-dark = rgb("#1f2937")

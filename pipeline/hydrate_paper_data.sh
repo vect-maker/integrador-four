@@ -125,7 +125,6 @@ JSON_FILES=(
 
 PNG_FILES=(
     "regression_fit.png"
-    "regression_residuals.png"
     "market_equilibrium_curves.png"
     "numerical_convergence.png"
     "urban_network_topology.png"
@@ -154,7 +153,7 @@ for pf in "${PNG_FILES[@]}"; do
         exit 1
     fi
 done
-echo "   ✅ All 6 high-resolution PNG plots validated (non-empty binaries)."
+echo "   ✅ All 5 high-resolution PNG plots validated (non-empty binaries)."
 
 # -----------------------------------------------------------------------------
 # 6. Final Summary & Execution Time
