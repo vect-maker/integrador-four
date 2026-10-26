@@ -4,13 +4,31 @@
 set dotenv-load
 export PATH := justfile_directory() + "/.venv/bin:" + env('PATH')
 
+# ==============================================================================
+# CONFIGURACIÓN Y CONSTANTES DE CONTENEDORES (PODMAN)
+# ==============================================================================
+TYPST_IMAGE         := "ghcr.io/typst/typst:latest"
+DBT_IMAGE           := "ghcr.io/dbt-labs/dbt-postgres:latest"
+export DUCKDB_IMAGE := "docker.io/duckdb/duckdb:latest"
+
 # Mostrar lista de comandos disponibles
 default:
     @just --list
 
 # ==============================================================================
-# DOCUMENTACIÓN & DIAPOSITIVAS (TYPST EN typst/)
+# DOCUMENTACIÓN & DIAPOSITIVAS (TYPST MEDIANTE CONTENEDOR OFICIAL CON PODMAN)
 # ==============================================================================
+
+# Ejecutar comando de Typst en Podman (reutilizado por todas las recetas de compilación)
+typst *args="--help":
+    @mkdir -p doc/output "$HOME/.cache/typst"
+    podman run --rm -i \
+        -v ".:/workspace:Z" \
+        -v "/usr/share/fonts:/usr/share/fonts:ro" \
+        -v "$HOME/.cache/typst:/root/.cache/typst:Z" \
+        -w /workspace \
+        {{ TYPST_IMAGE }} \
+        {{ args }}
 
 # Compilar tanto el documento como las diapositivas
 build-all: build-doc build-slides
@@ -18,33 +36,21 @@ build-all: build-doc build-slides
 
 # Compilar el documento de investigación a PDF
 build-doc:
-    @mkdir -p doc/output
-    typst compile typst/document.typ doc/output/document.pdf
+    @just typst compile typst/document.typ doc/output/document.pdf
     @echo "✅ Documento generado en doc/output/document.pdf"
 
-# Compilar el documento en modo observador en tiempo real (Live Reload, < 30ms)
+# Compilar el documento en modo observador en tiempo real (Live Reload)
 watch-doc:
-    @mkdir -p doc/output
-    typst watch typst/document.typ doc/output/document.pdf
-
-# Mostrar metadatos y páginas del documento
-info-doc:
-    @pdfinfo doc/output/document.pdf 2>/dev/null || echo "⚠️  No se encontró doc/output/document.pdf. Ejecuta 'just build-doc' primero."
+    just typst watch typst/document.typ doc/output/document.pdf
 
 # Compilar las diapositivas a PDF (16:9)
 build-slides:
-    @mkdir -p doc/output
-    typst compile typst/slides.typ doc/output/slides.pdf
+    @just typst compile typst/slides.typ doc/output/slides.pdf
     @echo "✅ Diapositivas generadas en doc/output/slides.pdf"
 
 # Compilar diapositivas en modo observador en tiempo real (Live Reload)
 watch-slides:
-    @mkdir -p doc/output
-    typst watch typst/slides.typ doc/output/slides.pdf
-
-# Mostrar metadatos y páginas de las diapositivas
-info-slides:
-    @pdfinfo doc/output/slides.pdf 2>/dev/null || echo "⚠️  No se encontró doc/output/slides.pdf. Ejecuta 'just build-slides' primero."
+    just typst watch typst/slides.typ doc/output/slides.pdf
 
 # Configurar entorno virtual local (.venv) instalando uv automáticamente si no existe y dependencias
 setup-env:
@@ -76,7 +82,7 @@ dbt *args="debug":
         -e DBT_PROFILES_DIR=. \
         -v ./pipeline/dbt:/usr/app/dbt:z \
         -w /usr/app/dbt \
-        ghcr.io/dbt-labs/dbt-postgres:latest \
+        {{ DBT_IMAGE }} \
         {{ args }}
 
 # ==============================================================================
@@ -115,10 +121,22 @@ check-data:
 check-types:
     @uvx basedpyright pipeline/
 
-# Abrir CLI interactivo en el snapshot local de DuckDB
-duckdb:
-    duckdb pipeline/data/analytics.duckdb
+# Abrir CLI interactivo en el snapshot local de DuckDB mediante Podman
+duckdb *args="":
+    @mkdir -p "$HOME/.duckdb"
+    podman run --rm -it \
+        -v ".:/workspace:Z" \
+        -v "$HOME/.duckdb:/root/.duckdb:Z" \
+        -w /workspace \
+        {{ DUCKDB_IMAGE }} \
+        /duckdb pipeline/data/analytics.duckdb {{ args }}
 
-# Ejecutar una consulta SQL en el snapshot local de DuckDB
+# Ejecutar una consulta SQL en el snapshot local de DuckDB mediante Podman
 duckdb-sql query:
-    duckdb -dark-mode pipeline/data/analytics.duckdb -c "{{ query }}"
+    @mkdir -p "$HOME/.duckdb"
+    podman run --rm -i \
+        -v ".:/workspace:Z" \
+        -v "$HOME/.duckdb:/root/.duckdb:Z" \
+        -w /workspace \
+        {{ DUCKDB_IMAGE }} \
+        /duckdb pipeline/data/analytics.duckdb -c "{{ query }}"

@@ -16,9 +16,22 @@ fi
 DB_FILE="${ROOT_DIR}/pipeline/data/analytics.duckdb"
 mkdir -p "${ROOT_DIR}/pipeline/data"
 
+# Configuración del contenedor DuckDB heredada de justfile
+DUCKDB_IMAGE="${DUCKDB_IMAGE:-docker.io/duckdb/duckdb:latest}"
+
+run_duckdb() {
+    mkdir -p "${HOME}/.duckdb"
+    podman run --rm -i \
+        -v "${ROOT_DIR}:/workspace:Z" \
+        -v "${HOME}/.duckdb:/root/.duckdb:Z" \
+        -w /workspace \
+        "${DUCKDB_IMAGE}" \
+        /duckdb "$@"
+}
+
 echo "📦 Conectando a Azure Database for PostgreSQL (${PGHOST})..."
 
-duckdb -dark-mode "${DB_FILE}" <<EOF
+run_duckdb pipeline/data/analytics.duckdb <<EOF
 INSTALL postgres;
 LOAD postgres;
 ATTACH 'dbname=${PGDATABASE} host=${PGHOST} port=${PGPORT} user=${PGUSER} password=${PGPASSWORD} sslmode=${PGSSLMODE}' AS azure_pg (TYPE POSTGRES, READ_ONLY);

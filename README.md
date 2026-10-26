@@ -6,21 +6,20 @@ Este repositorio contiene la investigación de grado en Ingeniería en Ciencia d
 
 ## 📋 Requisitos del Sistema y Entorno de Ejecución
 
-Para garantizar la máxima velocidad y reproducibilidad sin sobrecargar el sistema, el proyecto separa claramente qué se ejecuta nativamente en el host y qué requiere contenedor:
+Para simplificar la configuración y evitar la instalación manual de múltiples herramientas de línea de comandos, el proyecto unifica la ejecución de dependencias:
 
 1. **Gestor de Entornos Python (`uv`):**
-   - Todos los scripts de extracción (`fetcher.py`), carga relacional (`loader.py`) y modelado analítico (`pipeline/analysis/*.py`) se ejecutan **directamente en el host dentro del entorno virtual `.venv`**, sin contenedor.
-   - Es necesario tener [`uv`](https://docs.astral.sh/uv/) instalado en el sistema.
-   - Si no tienes `uv`, la receta `just setup-env` **lo descargará e instalará automáticamente** en tu usuario (`~/.local/bin`).
+   - Ejecuta los scripts de extracción (`fetcher.py`), carga relacional (`loader.py`) y modelado analítico (`pipeline/analysis/*.py`) en el host dentro del entorno virtual `.venv`.
+   - Si no tienes `uv` instalado, la receta `just setup-env` **lo descargará e instalará automáticamente** en tu usuario (`~/.local/bin`).
 
 2. **Automatizador de Tareas (`just`):**
-   - Utilizado como interfaz unificada para compilar documentos, correr análisis y gestionar datos.
+   - Utilizado como interfaz unificada para compilar documentos, correr análisis y gestionar el pipeline.
 
-3. **Compilador Científico (`typst`):**
-   - Requerido para compilar el paper académico (`doc/output/document.pdf`) y las diapositivas (`doc/output/slides.pdf`).
-
-4. **Contenedor Podman / Docker (Únicamente para dbt):**
-   - El uso de contenedores está **estrictamente limitado** al contenedor oficial de dbt Labs (`ghcr.io/dbt-labs/dbt-postgres`) para compilar los modelos del *Star Schema* en PostgreSQL (`just dbt ...`). Los scripts de Python no utilizan contenedores.
+3. **Motor de Contenedores (`podman`):**
+   - El único requisito externo del sistema es tener **Podman** instalado. Con Podman se ejecutan de manera transparente los contenedores oficiales:
+     - **Typst CLI Oficial (`ghcr.io/typst/typst:latest`):** Compila el paper (`doc/output/document.pdf`) y las diapositivas (`doc/output/slides.pdf`) montando el volumen del proyecto, las fuentes del sistema y la caché sin necesidad de instalar el binario local de Typst.
+     - **DuckDB CLI Oficial (`docker.io/duckdb/duckdb:latest`):** Ejecuta consultas SQL analíticas, consola interactiva e hidratación de datos (`just duckdb`, `just duckdb-sql`, `just hydrate-data`) sin requerir el CLI local.
+     - **dbt Core Oficial (`ghcr.io/dbt-labs/dbt-postgres:latest`):** Compila y ejecuta los modelos del *Star Schema* en PostgreSQL (`just dbt ...`).
 
 ---
 
@@ -105,6 +104,7 @@ Ejecuta `just` o `just --list` en la raíz del repositorio para ver todas las re
 | `just watch-doc` | Modo observador con recarga en vivo para el informe (< 30ms). |
 | `just build-slides` | Compila las diapositivas de defensa a PDF (`doc/output/slides.pdf`). |
 | `just watch-slides` | Modo observador con recarga en vivo para las diapositivas. |
+| `just typst [args]` | Ejecuta cualquier comando del CLI oficial de Typst mediante Podman. |
 | `just pipeline-fetch` | Extrae las colecciones paginadas de la API REST a archivos Parquet. |
 | `just pipeline-load` | Carga el esquema DDL y los datos Parquet en Azure PostgreSQL. |
 | `just dbt [args]` | Ejecuta comandos de dbt (`run`, `test`, `debug`) mediante Podman. |

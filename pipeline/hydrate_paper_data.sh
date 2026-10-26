@@ -20,6 +20,19 @@ DATA_DIR="${ROOT_DIR}/typst/data"
 GRAPHS_DIR="${ROOT_DIR}/typst/graphs"
 PYTHON_BIN="${ROOT_DIR}/.venv/bin/python"
 
+# Configuración del contenedor DuckDB heredada de justfile
+DUCKDB_IMAGE="${DUCKDB_IMAGE:-docker.io/duckdb/duckdb:latest}"
+
+run_duckdb() {
+    mkdir -p "${HOME}/.duckdb"
+    podman run --rm -i \
+        -v "${ROOT_DIR}:/workspace:Z" \
+        -v "${HOME}/.duckdb:/root/.duckdb:Z" \
+        -w /workspace \
+        "${DUCKDB_IMAGE}" \
+        /duckdb "$@"
+}
+
 mkdir -p "${DATA_DIR}" "${GRAPHS_DIR}"
 
 echo "================================================================================"
@@ -47,38 +60,38 @@ fi
 # 3. DuckDB SQL Analytics Hydration (6 Core Datasets)
 # -----------------------------------------------------------------------------
 echo ""
-echo "📊 Step 2: Hydrating core dimensional datasets from DuckDB SQL..."
+echo "📊 Step 2: Hydrating core dimensional datasets from DuckDB SQL (via Podman ${DUCKDB_IMAGE})..."
 
-duckdb -dark-mode "${DB_FILE}" <<EOF
+run_duckdb pipeline/data/analytics.duckdb <<EOF
 -- 1. General Operational KPIs
 COPY (
 $(cat "${SQL_DIR}/01_general_kpis.sql")
-) TO '${DATA_DIR}/general_kpis.json' (FORMAT JSON, ARRAY TRUE);
+) TO 'typst/data/general_kpis.json' (FORMAT JSON, ARRAY TRUE);
 
 -- 2. Cancellations by Hour
 COPY (
 $(cat "${SQL_DIR}/02_cancellations_by_hour.sql")
-) TO '${DATA_DIR}/cancellations_by_hour.json' (FORMAT JSON, ARRAY TRUE);
+) TO 'typst/data/cancellations_by_hour.json' (FORMAT JSON, ARRAY TRUE);
 
 -- 3. Cancellations by Socioeconomic Stratum
 COPY (
 $(cat "${SQL_DIR}/03_cancellations_by_stratum.sql")
-) TO '${DATA_DIR}/cancellations_by_stratum.json' (FORMAT JSON, ARRAY TRUE);
+) TO 'typst/data/cancellations_by_stratum.json' (FORMAT JSON, ARRAY TRUE);
 
 -- 4. Cancellations by Weather and Rainfall
 COPY (
 $(cat "${SQL_DIR}/04_cancellations_by_weather.sql")
-) TO '${DATA_DIR}/cancellations_by_weather.json' (FORMAT JSON, ARRAY TRUE);
+) TO 'typst/data/cancellations_by_weather.json' (FORMAT JSON, ARRAY TRUE);
 
 -- 5. Incentive Campaigns for Knapsack Optimization
 COPY (
 $(cat "${SQL_DIR}/05_campaigns_optimization.sql")
-) TO '${DATA_DIR}/campaigns_optimization.json' (FORMAT JSON, ARRAY TRUE);
+) TO 'typst/data/campaigns_optimization.json' (FORMAT JSON, ARRAY TRUE);
 
 -- 6. Territorial and Base Fare Zones Catalog
 COPY (
 $(cat "${SQL_DIR}/06_zones_catalog.sql")
-) TO '${DATA_DIR}/zones.json' (FORMAT JSON, ARRAY TRUE);
+) TO 'typst/data/zones.json' (FORMAT JSON, ARRAY TRUE);
 EOF
 echo "   ✅ 6 SQL analytical datasets exported to ${DATA_DIR}."
 
