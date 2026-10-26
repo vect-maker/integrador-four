@@ -1,6 +1,7 @@
 #show bibliography: none
 #bibliography("../../references.bib")
 #import "../../data_bindings.typ": total-trips-fmt, total-zones
+#import "../../tables/index.typ": fig-zones-catalog
 
 = Marco Teórico
 
@@ -38,13 +39,20 @@ Donde el multiplicador dinámico oscila habitualmente entre $1.00times$ y $2.80t
 
 La teoría de la justicia espacial y el acceso al transporte urbano postula que las tarifas y la disponibilidad de los servicios de movilidad no deben discriminar ni excluir a las poblaciones de menores recursos.
 
-En el municipio de Managua, la estructura urbana se caracteriza por una marcada heterogeneidad y fragmentación espacial. MoviGo divide la capital en 12 cuadrantes operativos agrupados en cuatro estratos socioeconómicos:
-- *Alto:* Villa Fontana, Las Colinas, Santo Domingo (bajada de bandera de C\$ 70 a C\$ 80 NIO).
-- *Medio:* Los Robles, Altamira, Bolonia, Bello Horizonte, Linda Vista (bajada de bandera de C\$ 48 a C\$ 55 NIO).
-- *Comercial:* Metrocentro / Eje Corporativo UCA (bajada de bandera de C\$ 60 NIO).
-- *Popular:* Ciudad Jardín, Mercado Oriental, Mercado Roberto Huembes (bajada de bandera de C\$ 35 a C\$ 40 NIO).
+En el municipio de Managua, la estructura urbana se caracteriza por una marcada heterogeneidad y fragmentación espacial. MoviGo divide la capital en 12 cuadrantes operativos agrupados en cuatro estratos socioeconómicos (@tbl-zones-catalog):
+- *Alto:* Villa Fontana, Las Colinas, Santo Domingo (bajada de bandera base de C\$ 70.0 a C\$ 80.0 NIO).
+- *Medio:* Los Robles, Altamira, Bolonia, Bello Horizonte, Linda Vista (bajada de bandera base de C\$ 48.0 a C\$ 55.0 NIO).
+- *Comercial:* Metrocentro / Eje Corporativo UCA (bajada de bandera base de C\$ 60.0 NIO).
+- *Popular:* Ciudad Jardín, Mercado Oriental, Mercado Roberto Huembes (bajada de bandera base de C\$ 35.0 a C\$ 40.0 NIO).
 
-El estrato del cuadrante no solo condiciona la tarifa inicial, sino también los métodos de pago dominantes: en cuadrantes populares predomina el uso de *efectivo*, mientras que en estratos altos predomina la *tarjeta de crédito/débito* y las *billeteras digitales*. Un aumento abrupto en el multiplicador dinámico tiene un impacto asimétrico: mientras un usuario con tarjeta puede absorber el cargo marginal, un usuario con efectivo en un mercado popular que dispone de un monto exacto se ve obligado a cancelar el viaje al verse sobrepasado su presupuesto líquido.
+#fig-zones-catalog <tbl-zones-catalog>
+
+En la arquitectura del servicio, la *zona de origen* del viaje ($z_"origen"$) es el factor determinante que fija el costo inicial del servicio mediante la tarifa de bajada de bandera ($"BajadaBandera"_(z_"origen")$). Este costo base, sumado a los cargos paramétricos por distancia ($18.00 "NIO/km"$) y tiempo ($4.50 "NIO/min"$), constituye la base imponible sobre la cual se aplica el multiplicador dinámico ($m$).
+
+Esta estructuración genera una fuerte *asimetría en la propensión a la cancelación de viajes*:
++ *Condicionamiento del Medio de Pago:* En los cuadrantes populares de origen predomina el pago en *efectivo*, donde los usuarios planifican sus gastos con presupuestos líquidos estrictos. Cuando la plataforma aplica un multiplicador dinámico elevado ($m > 1.30times$), el sobrecosto sobrepasa la liquidez inmediata del pasajero, forzando la cancelación inmediata de la solicitud.
++ *Inelasticidad en Cuadrantes Altos:* Por el contrario, en los cuadrantes de estrato alto y comercial predomina el pago digital con *tarjeta de crédito o débito*, donde los usuarios presentan menor elasticidad-precio y mayor capacidad de absorber incrementos en la tarifa final sin recurrir a la cancelación.
++ *Doble Rol Dimensional:* Dentro del modelo analítico, la zona de origen actúa como la entidad generadora del viaje y rectora del precio base, mientras que la zona de destino determina la longitud del trayecto y las rutas de desplazamiento sobre la red vial capitalina.
 
 == Arquitectura de Datos y Paradigma ELT vía API REST
 
