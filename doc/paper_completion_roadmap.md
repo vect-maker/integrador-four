@@ -70,27 +70,26 @@ flowchart TD
 
 ## 3. Detailed Technical & Mathematical Specifications
 
-### 3.1 Applied Statistics: Multiple Linear Regression (OLS)
+### 3.1 Applied Statistics: Simple Linear Regression (OLS) & ANOVA
 
 #### Theoretical Formulation
 Daily aggregate model across $n = 366$ days of the leap year 2024:
-$$Y_t = \beta_0 + \beta_1 \cdot X_{1,t} + \beta_2 \cdot X_{2,t} + \epsilon_t$$
+$$Y_t = \beta_0 + \beta_1 \cdot X_t + \epsilon_t$$
 Where:
 - $Y_t$: Daily trip cancellation rate in percentage ($\% = \frac{\sum \text{cancelled}_t}{\sum \text{trips}_t} \times 100$).
-- $X_{1,t} = \overline{m}_t$: Average surge multiplier on day $t$ ($\overline{m} \in [1.00, 2.50]$).
-- $X_{2,t} = \text{rain}_t$: Daily rainfall in millimeters ($mm$) from `dim_clima`.
+- $X_t = \overline{m}_t$: Average surge multiplier on day $t$ ($\overline{m} \in [1.00, 2.50]$).
 - $\epsilon_t \sim \mathcal{N}(0, \sigma^2)$: Random disturbance.
 
-#### Matrix Derivation (OLS)
-$$\hat{\boldsymbol{\beta}} = (\mathbf{X}^T \mathbf{X})^{-1} \mathbf{X}^T \mathbf{Y}$$
-$$\widehat{\text{Var}}(\hat{\boldsymbol{\beta}}) = s^2 (\mathbf{X}^T \mathbf{X})^{-1}, \quad s^2 = \frac{\mathbf{e}^T \mathbf{e}}{n - k - 1} = \text{MSE}$$
-$$t_{\hat{\beta}_j} = \frac{\hat{\beta}_j}{\text{SE}(\hat{\beta}_j)}, \quad p\text{-value} = 2 \cdot (1 - F_t(|t|, \text{df}=n - 3))$$
+#### Parameter Estimation (OLS)
+$$\hat{\beta}_1 = \frac{\sum_{t=1}^n (X_t - \overline{X})(Y_t - \overline{Y})}{\sum_{t=1}^n (X_t - \overline{X})^2} = +8.5867, \quad \hat{\beta}_0 = \overline{Y} - \hat{\beta}_1 \overline{X} = -6.8997$$
+$$\text{SE}(\hat{\beta}_1) = 0.3501, \quad t_{\hat{\beta}_1} = 24.53 \quad (p < 0.0001)$$
+$$\text{Pearson } r = 0.7893, \quad R^2 = 0.6230, \quad R^2_{\text{adj}} = 0.6220$$
 
 #### ANOVA Table Formulation
-$$\text{SST} = \sum_{t=1}^n (Y_t - \overline{Y})^2, \quad \text{df}_{\text{tot}} = n - 1 = 365$$
-$$\text{SSR} = \sum_{t=1}^n (\hat{Y}_t - \overline{Y})^2, \quad \text{df}_{\text{reg}} = k = 2$$
-$$\text{SSE} = \sum_{t=1}^n (Y_t - \hat{Y}_t)^2, \quad \text{df}_{\text{err}} = n - k - 1 = 363$$
-$$F = \frac{\text{MSR}}{\text{MSE}} = \frac{\text{SSR} / 2}{\text{SSE} / 363}, \quad R^2 = \frac{\text{SSR}}{\text{SST}}, \quad R^2_{\text{adj}} = 1 - \frac{\text{MSE}}{\text{MST}}$$
+$$\text{SST} = \sum_{t=1}^n (Y_t - \overline{Y})^2 = 3078.96, \quad \text{df}_{\text{tot}} = n - 1 = 365$$
+$$\text{SSR} = \sum_{t=1}^n (\hat{Y}_t - \overline{Y})^2 = 1918.21, \quad \text{df}_{\text{reg}} = 1, \quad \text{MSR} = 1918.21$$
+$$\text{SSE} = \sum_{t=1}^n (Y_t - \hat{Y}_t)^2 = 1160.75, \quad \text{df}_{\text{err}} = n - 2 = 364, \quad \text{MSE} = 3.1889$$
+$$F = \frac{\text{MSR}}{\text{MSE}} = 601.53 \quad (p < 0.0001)$$
 
 #### SQL Extraction Query
 ```sql
@@ -99,12 +98,9 @@ SELECT
     count(*) AS total_viajes,
     sum(CASE WHEN v.es_cancelado THEN 1 ELSE 0 END) AS total_cancelados,
     round(100.0 * sum(CASE WHEN v.es_cancelado THEN 1 ELSE 0 END) / count(*), 4) AS tasa_cancelacion_pct,
-    round(avg(v.multiplicador_dinamico), 4) AS multiplicador_promedio,
-    c.precipitacion_mm,
-    c.indice_congestion
+    round(avg(v.multiplicador_dinamico), 4) AS multiplicador_promedio
 FROM fct_viajes v
-JOIN dim_clima c ON v.fecha_solicitud = c.fecha
-GROUP BY v.fecha_solicitud, c.precipitacion_mm, c.indice_congestion
+GROUP BY v.fecha_solicitud
 ORDER BY v.fecha_solicitud;
 ```
 
@@ -113,23 +109,21 @@ ORDER BY v.fecha_solicitud;
 {
   "sample_size": 366,
   "dependent_variable": "tasa_cancelacion_pct",
-  "independent_variables": ["multiplicador_promedio", "precipitacion_mm"],
+  "independent_variable": "multiplicador_promedio",
+  "pearson_r": 0.7893,
+  "r_squared": 0.623,
+  "adj_r_squared": 0.622,
+  "residual_std_error": 1.7857,
+  "f_statistic": 601.53,
+  "f_p_value": 4.13e-79,
   "coefficients": {
-    "intercept": {"estimate": 1.245, "std_error": 0.312, "t_stat": 3.99, "p_value": 0.0001, "ci_95": [0.63, 1.86]},
-    "multiplicador": {"estimate": 2.583, "std_error": 0.221, "t_stat": 11.68, "p_value": 0.0000, "ci_95": [2.15, 3.02]},
-    "precipitacion_mm": {"estimate": 0.038, "std_error": 0.007, "t_stat": 5.42, "p_value": 0.0000, "ci_95": [0.024, 0.052]}
-  },
-  "metrics": {
-    "r_squared": 0.482,
-    "adj_r_squared": 0.479,
-    "residual_std_error": 0.741,
-    "f_statistic": 169.34,
-    "f_p_value": 0.0000
+    "intercept": {"estimate": -6.8997, "std_error": 0.4772, "t_stat": -14.46, "p_value": 9.23e-38, "ci_95": [-7.8381, -5.9613]},
+    "multiplicador": {"estimate": 8.5867, "std_error": 0.3501, "t_stat": 24.53, "p_value": 4.13e-79, "ci_95": [7.8983, 9.2752]}
   },
   "anova": {
-    "regression": {"ss": 185.82, "df": 2, "ms": 92.91, "f": 169.34, "p_value": 0.0000},
-    "residuals": {"ss": 199.15, "df": 363, "ms": 0.5486},
-    "total": {"ss": 384.97, "df": 365}
+    "regression": {"ss": 1918.21, "df": 1, "ms": 1918.21, "f": 601.53, "p_value": 4.13e-79},
+    "residuals": {"ss": 1160.75, "df": 364, "ms": 3.1889},
+    "total": {"ss": 3078.96, "df": 365}
   }
 }
 ```
@@ -297,34 +291,38 @@ flowchart LR
 - [x] Update `pipeline/hydrate_paper_data.sh` to selectively purge stale files (preserving README.md), run DuckDB SQL exports, execute the Python modeling suite, and validate all outputs.
 - [x] Run `just hydrate-data` and verify that all 9 files in `typst/data/` and 6 files in `typst/graphs/` are generated and validated in ~7s.
 
-### Milestone 3: Typst Modular Tables & Data Bindings
-- [ ] Update `typst/data_bindings.typ` with parsed bindings from new JSON files.
-- [ ] Create `typst/tables/econometric_results.typ` (ANOVA table and OLS parameters).
-- [ ] Create `typst/tables/numerical_convergence.typ` (Bisection vs. Newton comparison table).
-- [ ] Create `typst/tables/routing_comparison.typ` (OD normal vs. storm route travel times).
-- [ ] Create `typst/graphs/index.typ` to export figures.
+### Milestone 3: Typst Modular Tables, Data Bindings & Curricular Decoupling
+- [x] Update `typst/data_bindings.typ` with parsed bindings from new JSON files.
+- [x] Create `typst/tables/econometric_results.typ` (ANOVA table and OLS parameters).
+- [x] Create `typst/tables/numerical_convergence.typ` (Bisection vs. Newton comparison table).
+- [x] Create `typst/tables/routing_comparison.typ` (OD normal vs. storm route travel times).
+- [x] Create `typst/graphs/index.typ` to export figures.
+- [x] Refactor Python suite to lean math expectations (Simple OLS, balance root, Dijkstra).
+- [x] Add static typing verification (`just check-types`: 0 errors via Basedpyright).
+- [x] Decouple curricular mapping into dedicated `doc/curricular_integration.md`, leaving paper and slides with a natural scientific narrative.
 
 ### Milestone 4: Chapter 8 Drafting (`08_resultados.typ`)
-- [ ] Create `typst/document/chapters/08_resultados.typ` with four subsections:
-  - 8.1 Análisis Descriptivo y Almacén Analítico.
-  - 8.2 Modelación Econométrica y Regresión Múltiple.
-  - 8.3 Búsqueda Numérica del Umbral Tarifario de Equilibrio.
-  - 8.4 Optimización de Rutas en la Red Vial Urbana.
+- [ ] Create `typst/document/chapters/08_resultados.typ` with five natural subsections:
+  - 8.1 Resultados de Ingeniería de Datos y Repositorio Analítico (DW, Kimball, DuckDB).
+  - 8.2 Modelación Econométrica y Descomposición de Varianza (Simple OLS, ANOVA).
+  - 8.3 Equilibrio Numérico de Mercado (Exceso de demanda, Bisección vs. Newton-Raphson).
+  - 8.4 Optimización Espacial en Redes y Resiliencia Vial (Dijkstra, demoras por lluvia).
+  - 8.5 Ecosistema DataOps y Reproducibilidad Computacional (CLI, automatización, zero drift).
 - [ ] Verify zero hardcoded numbers; all figures, tables, and callouts linked to data.
 
 ### Milestone 5: Chapter 9 Drafting (`09_conclusiones.typ`)
 - [ ] Create `typst/document/chapters/09_conclusiones.typ`:
   - 9.1 Conclusiones por Objetivo de Investigación.
-  - 9.2 Recomendaciones Operativas para MoviGo.
-  - 9.3 Líneas Futuras de Investigación.
+  - 9.2 Recomendaciones Operativas para la Plataforma MoviGo.
+  - 9.3 Síntesis de Aportes Metodológicos y Líneas Futuras.
 
 ### Milestone 6: Master Document Integration & Quality Assurance
 - [ ] Include Chapters 8 and 9 in `typst/document.typ`.
 - [ ] Compile with `just build-doc`.
-- [ ] Verify clean layout, zero broken citations, zero missing references.
+- [ ] Verify clean layout, zero broken citations, zero missing references (APA 7ma).
 
 ### Milestone 7: Presentation Slides Synchronization (`typst/slides/`)
-- [ ] Update slides to present empirical results rather than proposed design.
+- [ ] Update slides to present empirical results naturally.
 - [ ] Run `just build-slides` and `just build-all`.
 
 ---
@@ -335,8 +333,8 @@ flowchart LR
 | :--- | :--- | :--- | :--- | :--- |
 | **Session 1** (Completed) | Setup, Roadmap & Objective Alignment | **M0** | ✅ **Completed** | Dependencies installed, `doc/paper_completion_roadmap.md`, objectives aligned in Ch. 5, 6, 7; verified with `just build-all`. |
 | **Session 2** (Completed) | Computational Modeling Suite in Python | **M1** | ✅ **Completed** | `01_econometrics.py`, `02_numerical_methods.py`, `03_optimization.py`, 3 JSONs, 6 PNGs (300 DPI); verified with `just run-analysis`. |
-| **Session 3** (In Progress) | Automated Hydration, Tables & Data Bindings | **M2, M3** | 🔄 In Progress | **M2 Completed:** Unified `just hydrate-data` (9 JSONs + 6 PNGs validated in 7s). **M3 Scheduled:** `data_bindings.typ` and modular tables. |
-| **Session 4** | Chapter 8 Drafting (Resultados y Discusión) | **M4** | ⏳ Scheduled | `08_resultados.typ` (Sections 8.1, 8.2, 8.3, 8.4) |
+| **Session 3** (Completed) | Automated Hydration, Tables, Bindings & Curriculum | **M2, M3** | ✅ **Completed** | **M2 Completed:** Unified `just hydrate-data` (9 JSONs + 5 PNGs validated in 7s). **M3 Completed:** `data_bindings.typ`, modular tables (`typst/tables/`), `doc/curricular_integration.md`, `just check-types` (0 errors), natural narrative in Ch. 3-7. |
+| **Session 4** (Next) | Chapter 8 Drafting (Resultados y Discusión) | **M4** | ⏳ Scheduled | `08_resultados.typ` (Sections 8.1, 8.2, 8.3, 8.4, 8.5) |
 | **Session 5** | Chapter 9, Master PDF QA & Final Verification | **M5, M6** | ⏳ Scheduled | `09_conclusiones.typ`, `document.pdf` compiled cleanly |
 | **Session 6** | Defense Slides Synchronization | **M7** | ⏳ Scheduled | `slides.pdf` updated with real empirical results |
 
