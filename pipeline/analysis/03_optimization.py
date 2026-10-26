@@ -25,6 +25,7 @@ from pathlib import Path
 import duckdb
 import matplotlib.pyplot as plt
 import networkx as nx
+from PIL import Image
 
 # -----------------------------------------------------------------------------
 # Spatial Utility Functions
@@ -247,12 +248,49 @@ def run_dijkstra_analysis(G: nx.Graph, zones: dict[int, dict]) -> list[dict]:
 
 
 # -----------------------------------------------------------------------------
+# Basemap Cache Loader
+# -----------------------------------------------------------------------------
+def load_cached_basemap(
+    root: Path,
+) -> tuple[Image.Image | None, dict[str, float] | None]:
+    """
+    Loads pre-cached Managua raster basemap and geographic bounding coordinates.
+    Falls back gracefully if the cache is missing.
+    """
+    img_path = root / "pipeline" / "data" / "managua_basemap.png"
+    bounds_path = root / "pipeline" / "data" / "managua_basemap_bounds.json"
+
+    if not img_path.exists() or not bounds_path.exists():
+        try:
+            from pipeline.analysis.cache_basemap import cache_basemap
+
+            img_path, bounds_path = cache_basemap()
+        except Exception:
+            return None, None
+
+    try:
+        img = Image.open(img_path).convert("RGB")
+        with open(bounds_path, "r", encoding="utf-8") as f:
+            bounds = json.load(f)
+        return img, bounds
+    except Exception:
+        return None, None
+
+
+# -----------------------------------------------------------------------------
 # Visualization Functions (Standalone PNGs at 300 DPI)
 # -----------------------------------------------------------------------------
-def generate_topology_plot(G: nx.Graph, zones: dict[int, dict], output_path: Path):
+def generate_topology_plot(
+    G: nx.Graph,
+    zones: dict[int, dict],
+    output_path: Path,
+    basemap_img: Image.Image | None = None,
+    bounds: dict[str, float] | None = None,
+):
     """
     Renders standalone PNG: Spatial network topology of the 12 Managua quadrants
     with arterial road connections, node strata colors, and flood-prone corridors flagged.
+    Overlays onto the pre-cached urban street basemap when available.
     """
     output_path.parent.mkdir(parents=True, exist_ok=True)
     plt.style.use(
@@ -260,7 +298,20 @@ def generate_topology_plot(G: nx.Graph, zones: dict[int, dict], output_path: Pat
         if "seaborn-v0_8-whitegrid" in plt.style.available
         else "default"
     )
-    fig, ax = plt.subplots(figsize=(8.0, 5.8), dpi=300)
+    fig, ax = plt.subplots(figsize=(8.4, 6.2), dpi=300)
+
+    # Render urban street basemap if cached
+    if basemap_img is not None and bounds is not None:
+        extent = (bounds["west"], bounds["east"], bounds["south"], bounds["north"])
+        ax.imshow(
+            basemap_img,
+            extent=extent,
+            alpha=0.55,
+            zorder=0,
+            aspect="equal",
+        )
+        ax.set_xlim(-86.315, -86.210)
+        ax.set_ylim(12.090, 12.165)
 
     pos = nx.get_node_attributes(G, "pos")
 
@@ -280,9 +331,9 @@ def generate_topology_plot(G: nx.Graph, zones: dict[int, dict], output_path: Pat
         G,
         pos,
         edgelist=safe_edges,
-        width=1.8,
-        alpha=0.6,
-        edge_color="#616161",
+        width=2.0,
+        alpha=0.70,
+        edge_color="#424242",
         ax=ax,
         label="Corredor Arterial Drenado",
     )
@@ -290,8 +341,8 @@ def generate_topology_plot(G: nx.Graph, zones: dict[int, dict], output_path: Pat
         G,
         pos,
         edgelist=flood_edges,
-        width=2.4,
-        alpha=0.85,
+        width=2.6,
+        alpha=0.90,
         edge_color="#d32f2f",
         style="--",
         ax=ax,
@@ -330,18 +381,19 @@ def generate_topology_plot(G: nx.Graph, zones: dict[int, dict], output_path: Pat
         name = zones[n]["nombre"].split(" / ")[0]  # shorter name
         ax.text(
             x,
-            y + 0.0025,
+            y + 0.0028,
             name,
             fontsize=7.5,
             fontweight="semibold",
             ha="center",
             va="bottom",
             bbox=dict(
-                boxstyle="round,pad=0.2",
+                boxstyle="round,pad=0.25",
                 facecolor="white",
-                edgecolor="#e0e0e0",
-                alpha=0.85,
+                edgecolor="#b0bec5",
+                alpha=0.90,
             ),
+            zorder=5,
         )
 
     ax.set_title(
@@ -352,8 +404,14 @@ def generate_topology_plot(G: nx.Graph, zones: dict[int, dict], output_path: Pat
     )
     ax.set_xlabel("Longitud Oeste (WGS84)", fontsize=9)
     ax.set_ylabel("Latitud Norte (WGS84)", fontsize=9)
-    ax.legend(loc="upper left", frameon=True, fontsize=7.5)
-    ax.grid(True, linestyle="--", alpha=0.4)
+    ax.legend(
+        loc="upper right",
+        frameon=True,
+        facecolor="white",
+        framealpha=0.92,
+        fontsize=7.5,
+    )
+    ax.grid(True, linestyle="--", alpha=0.35)
 
     plt.tight_layout()
     plt.savefig(output_path, format="png", dpi=300, bbox_inches="tight")
@@ -365,10 +423,13 @@ def generate_dijkstra_plot(
     zones: dict[int, dict],
     od_result: dict,
     output_path: Path,
+    basemap_img: Image.Image | None = None,
+    bounds: dict[str, float] | None = None,
 ):
     """
     Renders standalone PNG: Visual route comparison between the baseline dry path
     (solid green) and storm rerouted path (dashed red/amber) for OD_1.
+    Overlays onto the pre-cached urban street basemap when available.
     """
     output_path.parent.mkdir(parents=True, exist_ok=True)
     plt.style.use(
@@ -376,12 +437,25 @@ def generate_dijkstra_plot(
         if "seaborn-v0_8-whitegrid" in plt.style.available
         else "default"
     )
-    fig, ax = plt.subplots(figsize=(8.2, 6.0), dpi=300)
+    fig, ax = plt.subplots(figsize=(8.4, 6.2), dpi=300)
+
+    # Render urban street basemap if cached
+    if basemap_img is not None and bounds is not None:
+        extent = (bounds["west"], bounds["east"], bounds["south"], bounds["north"])
+        ax.imshow(
+            basemap_img,
+            extent=extent,
+            alpha=0.55,
+            zorder=0,
+            aspect="equal",
+        )
+        ax.set_xlim(-86.315, -86.210)
+        ax.set_ylim(12.090, 12.165)
 
     pos = nx.get_node_attributes(G, "pos")
 
     # Draw all background edges lightly
-    nx.draw_networkx_edges(G, pos, width=1.0, alpha=0.25, edge_color="#9e9e9e", ax=ax)
+    nx.draw_networkx_edges(G, pos, width=1.2, alpha=0.35, edge_color="#757575", ax=ax)
 
     # Extract paths
     dry_path = od_result["dry_scenario"]["path_nodes"]
@@ -395,8 +469,8 @@ def generate_dijkstra_plot(
         G,
         pos,
         edgelist=dry_edges,
-        width=3.5,
-        alpha=0.85,
+        width=3.8,
+        alpha=0.90,
         edge_color="#2e7d32",
         ax=ax,
         label=f"Ruta Óptima en Seco ({od_result['dry_scenario']['travel_time_minutes']} min, {od_result['dry_scenario']['distance_km']} km)",
@@ -407,8 +481,8 @@ def generate_dijkstra_plot(
         G,
         pos,
         edgelist=storm_edges,
-        width=3.0,
-        alpha=0.9,
+        width=3.2,
+        alpha=0.95,
         edge_color="#d84315",
         style="--",
         ax=ax,
@@ -464,7 +538,7 @@ def generate_dijkstra_plot(
         ax=ax,
     )
 
-    # Annotation box with comparative metrics
+    # Annotation box with comparative metrics in lower left
     info_text = (
         f"Evaluación Dijkstra ({od_result['origin']['name']} -> {od_result['destination']['name']}):\n"
         f"• Tiempo en Seco: {od_result['dry_scenario']['travel_time_minutes']} min ({od_result['dry_scenario']['avg_speed_kmh']} km/h)\n"
@@ -483,8 +557,9 @@ def generate_dijkstra_plot(
             boxstyle="round,pad=0.5",
             facecolor="#ffffff",
             edgecolor="#b0bec5",
-            alpha=0.92,
+            alpha=0.94,
         ),
+        zorder=5,
     )
 
     ax.set_title(
@@ -495,8 +570,14 @@ def generate_dijkstra_plot(
     )
     ax.set_xlabel("Longitud Oeste (WGS84)", fontsize=9)
     ax.set_ylabel("Latitud Norte (WGS84)", fontsize=9)
-    ax.legend(loc="upper left", frameon=True, fontsize=7.5)
-    ax.grid(True, linestyle="--", alpha=0.4)
+    ax.legend(
+        loc="upper right",
+        frameon=True,
+        facecolor="white",
+        framealpha=0.92,
+        fontsize=7.5,
+    )
+    ax.grid(True, linestyle="--", alpha=0.35)
 
     plt.tight_layout()
     plt.savefig(output_path, format="png", dpi=300, bbox_inches="tight")
@@ -563,11 +644,20 @@ def main():
         json.dump(payload, f, indent=2, ensure_ascii=False)
     print(f"\n✅ JSON metrics saved to: {json_path.relative_to(root)}")
 
+    # Load pre-cached urban street basemap
+    basemap_img, bounds = load_cached_basemap(root)
+    if basemap_img is not None and bounds is not None:
+        print("✅ Pre-cached Managua street basemap loaded.")
+    else:
+        print("ℹ️  Running without basemap background (fallback mode).")
+
     # Render PNGs
-    generate_topology_plot(G, zones, topo_plot_path)
+    generate_topology_plot(G, zones, topo_plot_path, basemap_img, bounds)
     print(f"✅ Urban network topology saved to: {topo_plot_path.relative_to(root)}")
 
-    generate_dijkstra_plot(G, zones, routes_results[0], dijkstra_plot_path)
+    generate_dijkstra_plot(
+        G, zones, routes_results[0], dijkstra_plot_path, basemap_img, bounds
+    )
     print(
         f"✅ Dijkstra routing comparison saved to: {dijkstra_plot_path.relative_to(root)}"
     )
