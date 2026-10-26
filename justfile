@@ -14,33 +14,37 @@ default:
 
 # Compilar tanto el documento como las diapositivas
 build-all: build-doc build-slides
-    @echo "🎉 Proyecto Typst completo compilado (document.pdf y slides.pdf)."
+    @echo "🎉 Proyecto Typst completo compilado (doc/output/document.pdf y doc/output/slides.pdf)."
 
 # Compilar el documento de investigación a PDF
 build-doc:
-    typst compile typst/document.typ typst/document.pdf
-    @echo "✅ Documento generado en typst/document.pdf"
+    @mkdir -p doc/output
+    typst compile typst/document.typ doc/output/document.pdf
+    @echo "✅ Documento generado en doc/output/document.pdf"
 
 # Compilar el documento en modo observador en tiempo real (Live Reload, < 30ms)
 watch-doc:
-    typst watch typst/document.typ typst/document.pdf
+    @mkdir -p doc/output
+    typst watch typst/document.typ doc/output/document.pdf
 
 # Mostrar metadatos y páginas del documento
 info-doc:
-    @pdfinfo typst/document.pdf 2>/dev/null || echo "⚠️  No se encontró typst/document.pdf. Ejecuta 'just build-doc' primero."
+    @pdfinfo doc/output/document.pdf 2>/dev/null || echo "⚠️  No se encontró doc/output/document.pdf. Ejecuta 'just build-doc' primero."
 
 # Compilar las diapositivas a PDF (16:9)
 build-slides:
-    typst compile typst/slides.typ typst/slides.pdf
-    @echo "✅ Diapositivas generadas en typst/slides.pdf"
+    @mkdir -p doc/output
+    typst compile typst/slides.typ doc/output/slides.pdf
+    @echo "✅ Diapositivas generadas en doc/output/slides.pdf"
 
 # Compilar diapositivas en modo observador en tiempo real (Live Reload)
 watch-slides:
-    typst watch typst/slides.typ typst/slides.pdf
+    @mkdir -p doc/output
+    typst watch typst/slides.typ doc/output/slides.pdf
 
 # Mostrar metadatos y páginas de las diapositivas
 info-slides:
-    @pdfinfo typst/slides.pdf 2>/dev/null || echo "⚠️  No se encontró typst/slides.pdf. Ejecuta 'just build-slides' primero."
+    @pdfinfo doc/output/slides.pdf 2>/dev/null || echo "⚠️  No se encontró doc/output/slides.pdf. Ejecuta 'just build-slides' primero."
 
 # Configurar entorno virtual local (.venv) instalando uv automáticamente si no existe y dependencias
 setup-env:
