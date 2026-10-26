@@ -1,5 +1,6 @@
 #import "@preview/touying:0.6.1": *
 #import "template.typ": *
+#import "../metadata.typ": repo-url
 
 == 11. Cierre & Sesión de Preguntas
 
@@ -47,5 +48,8 @@ Muchas gracias a los profesores y miembros del jurado evaluador. Abrimos con gus
 
 #v(2pt)
 #callout-box(accent: brand-dark)[
-  *Contacto:* Área de Conocimiento de Ciencias Básicas y Tecnología • UNAN-Managua • 2026.
+  #text(size: 8pt)[
+    *Contacto:* Área de Conocimiento de Ciencias Básicas y Tecnología • UNAN-Managua • 2026 \
+    *Código Abierto & Pipeline Reproducible:* #link(repo-url)
+  ]
 ]

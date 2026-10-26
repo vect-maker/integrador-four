@@ -9,6 +9,7 @@
 #import "../../diagrams/star_schema.typ": fig-star-schema
 #import "../../tables/star_schema.typ": fig-star-schema-table
 #import "../../data_bindings.typ": total-trips-fmt, total-zones, total-campaigns
+#import "../../metadata.typ": repo-url
 
 = Diseño Metodológico
 
@@ -16,9 +17,9 @@ El diseño metodológico establece la secuencia técnica, analítica y computaci
 
 == Enfoque, Tipo y Alcance
 
-- *Enfoque Cuantitativo:* Sustentado en el modelado estadístico, numérico y de optimización sobre datos empíricos de operaciones de transporte selectivo.
-- *Diseño No Experimental y Longitudinal:* Observa transacciones y eventos climáticos registrados a lo largo de un ciclo operativo anual (2024), sin manipulación deliberada de variables.
-- *Alcance Correlacional y Prescriptivo:* Evalúa la relación entre la tarifa dinámica y las tasas de cancelación, proponiendo umbrales de equilibrio numérico y asignación óptima de incentivos.
+- *Enfoque Mixto (con predominio cuantitativo):* De acuerdo con la tipología metodológica de @sampieri2014, la investigación adopta un diseño mixto donde convergen el rigor analítico formal del modelado econométrico (MCO), la aproximación numérica de equilibrio y la optimización en redes viales sobre $N = #total-trips-fmt$ registros transaccionales, complementado con la contextualización cualitativa y socio-espacial de los estratos urbanos, las barreras de bancarización y la vulnerabilidad ante anegamientos en Managua.
+- *Diseño No Experimental y Longitudinal:* Se observan transacciones operativas y registros meteorológicos a lo largo del ciclo anual 2024 ($n = 366$ días), sin manipulación deliberada ni intervención exógena sobre las variables del sistema de transporte.
+- *Alcance Mixto (Descriptivo, Correlacional y Prescriptivo):* Trasciende la descripción exploratoria del comportamiento del servicio; cuantifica e infiere la relación estadística entre el multiplicador tarifario y la tasa de cancelación (alcance correlacional), determina numéricamente el punto de equilibrio operativo de mercado y prescribe rutas óptimas de contingencia vial ante disrupciones climáticas (alcance prescriptivo).
 - *Unidad de Análisis:* El viaje individual o solicitud de traslado ($N = #total-trips-fmt$ registros), caracterizado por su origen, destino, marca temporal, multiplicador dinámico aplicado, condiciones climáticas concurrentes y estado final de atención o cancelación.
 
 == Fases Metodológicas de la Investigación
@@ -82,7 +83,7 @@ Para asegurar la validez metodológica y la reproducibilidad científica estrict
 + *Análisis Exploratorio y Consultas OLAP de Baja Latencia (DuckDB CLI):* Para la exploración inicial y la generación de agregaciones multidimensionales sobre los #total-trips-fmt registros, se emplea *DuckDB CLI*. Su motor columnar en proceso permite ejecutar analítica OLAP de alto rendimiento con latencias de milisegundos directamente sobre el almacén analítico. A través de DuckDB se extraen agregaciones espaciotemporales consolidadas (distribución de cancelaciones por estrato, franja horaria y condición meteorológica), las cuales se exportan de forma automatizada hacia artefactos estructurados en formato `.json`.
 
 + *Inferencia Econométrica, Métodos Numéricos y Optimización (Python):* El cálculo científico avanzado se ejecuta mediante scripts modulares en *Python* soportados en librerías especializadas (`statsmodels`, `scipy`, `networkx`, `matplotlib`). Este entorno recibe las tablas analíticas depuradas para:
-  - Estimar los coeficientes de regresión múltiple, errores estándar y descomposición ANOVA para el impacto del multiplicador tarifario y la lluvia en cancelaciones (Fase 2).
+  - Estimar los coeficientes de regresión lineal simple (MCO), errores estándar y descomposición ANOVA para cuantificar el impacto del multiplicador tarifario en las cancelaciones (Fase 2).
   - Ejecutar los algoritmos numéricos de búsqueda de raíces (Bisección y Newton-Raphson) para hallar el umbral crítico tarifario de equilibrio $m^*$ (Fase 3).
   - Resolver el problema de ruta más corta en la red vial urbana mediante el algoritmo de Dijkstra bajo condiciones normales y meteorología extrema (Fase 4).
 
@@ -90,3 +91,7 @@ Para asegurar la validez metodológica y la reproducibilidad científica estrict
   - Typst consume directamente los archivos `.json` generados por DuckDB y los parámetros cuantitativos calculados por Python mediante funciones nativas de ingesta de datos (`#json(...)`).
   - Las tablas estadísticas, indicadores cuantitativos y visualizaciones gráficas del paper se sintetizan algorítmicamente en tiempo de compilación (`just build-doc`).
   - Esta arquitectura programática establece una *fuente única de verdad* (_single source of truth_), eliminando por completo el riesgo de transcripción manual o desalineación de cifras (*human drift*), garantizando que toda actualización en los datos o en los modelos se refleje de manera inmediata, exacta y determinística en el documento final.
+
+== Disponibilidad de Código, Datos y Reproducibilidad
+
+En concordancia con los principios de reproducibilidad científica y ciencia abierta, la totalidad de los artefactos computacionales de la investigación —incluyendo los scripts de extracción y carga, las definiciones DDL y transformaciones en dbt Core, el almacén de datos columnar en DuckDB, los scripts de modelación econométrica, numérica y de optimización en Python, así como los archivos fuentes de maquetación y generación de figuras en Typst— se encuentran versionados y disponibles públicamente en el repositorio oficial del proyecto @movigo2024repo (#link(repo-url)).

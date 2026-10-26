@@ -61,7 +61,7 @@ just build-slides   # Compilar únicamente las diapositivas (typst/slides.pdf)
 ## 📁 Estructura del Repositorio
 
 ```text
-integrador-four/
+movigo-analytics/
 ├── doc/                        # Documentación central y notas técnicas
 │   ├── paper_completion_roadmap.md  # Hoja de ruta maestra, especificaciones y plan de hitos
 │   ├── movigo_information.md        # Especificación técnica de la API REST sintética

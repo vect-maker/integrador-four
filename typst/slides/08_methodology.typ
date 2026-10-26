@@ -6,15 +6,15 @@
 #speaker-note[
 ⏱ *07:30 - 08:45* | Duración: 1:15 min | *Fase: Metodología*
 
-Adoptamos un *enfoque cuantitativo-analítico* con un diseño no experimental longitudinal.
+Adoptamos un *enfoque mixto con predominio cuantitativo* y un *alcance correlacional-prescriptivo* bajo un diseño no experimental longitudinal.
 
-La investigación se articula en *cuatro fases secuenciales* alineadas a los objetivos específicos:
-*Fase 1: Ingesta de Datos*. Extracción sistemática vía API REST `/movigo` con paginación controlada.
-*Fase 2: Transformación y Calidad con dbt*. Modelado analítico dimensional y auditoría con dbt Core sobre PostgreSQL.
-*Fase 3: Análisis Espaciotemporal y Tarifario*. Caracterización de fluctuaciones de demanda, factores climáticos y sensibilidad del surge.
-*Fase 4: Optimización Operativa*. Formulación y contraste de modelos prescriptivos de asignación de flota y reducción de deadhead.
+La investigación se articula en *cuatro fases secuenciales* alineadas estrictamente a los cuatro objetivos:
+*Fase 1: Pipeline ELT y Star Schema*. Ingesta Parquet, carga en Azure PostgreSQL, transformaciones y pruebas de integridad con dbt Core y DuckDB.
+*Fase 2: Modelación Econométrica MCO*. Regresión lineal simple y descomposición ANOVA para medir la sensibilidad de la tasa de cancelación ante el multiplicador tarifario.
+*Fase 3: Búsqueda Numérica de Raíces*. Algoritmos de Bisección y Newton-Raphson para resolver la condición de vaciado de mercado y hallar el multiplicador de equilibrio $m^* = 1.35times$.
+*Fase 4: Optimización en Redes Viales*. Algoritmo de Dijkstra para determinar la ruta mínima y cuantificar el impacto de anegamientos pluviales en Managua.
 
-👉 _Transición:_ "Entremos al detalle de la arquitectura del pipeline de datos con API y dbt."
+👉 _Transición:_ "Entremos al detalle de la arquitectura del pipeline de datos con API, Azure, dbt y DuckDB."
 ]
 
 #v(-6pt)
@@ -24,13 +24,13 @@ La investigación se articula en *cuatro fases secuenciales* alineadas a los obj
   columns: (1fr, auto, 1fr, auto, 1fr, auto, 1fr),
   align: horizon,
   gutter: 4pt,
-  pipeline-step([FASE 1], [Ingesta de Datos], [API REST /movigo], accent: brand-red),
+  pipeline-step([FASE 1], [Pipeline ELT], [Azure, dbt & DuckDB], accent: brand-red),
   [#text(size: 14pt, fill: text-muted)[→]],
-  pipeline-step([FASE 2], [Modelado & Calidad], [dbt Core & PostgreSQL], accent: brand-dark),
+  pipeline-step([FASE 2], [Econometría MCO], [Regresión & ANOVA], accent: brand-dark),
   [#text(size: 14pt, fill: text-muted)[→]],
-  pipeline-step([FASE 3], [Análisis Contextual], [Espaciotemporal & Clima], accent: brand-blue),
+  pipeline-step([FASE 3], [Raíces Numéricas], [Equilibrio de Mercado], accent: brand-blue),
   [#text(size: 14pt, fill: text-muted)[→]],
-  pipeline-step([FASE 4], [Optimización], [Asignación & Deadhead], accent: brand-red),
+  pipeline-step([FASE 4], [Optimización Grafos], [Dijkstra ante Lluvia], accent: brand-red),
 )
 
 #v(4pt)
@@ -40,22 +40,22 @@ La investigación se articula en *cuatro fases secuenciales* alineadas a los obj
   gutter: 7pt,
   card(title: [Enfoque Mixto], label: [A • Paradigma], accent: brand-red)[
     #text(size: 8.5pt)[
-      Preponderancia cuantitativa (>65k registros de viajes, GPS, tiempos y tarifas) complementada con validación cualitativa de reglas de negocio operativas.
+      Preponderancia cuantitativa (77k registros, MCO, raíces no lineales y grafos) complementada con análisis cualitativo y socio-espacial de Managua.
     ]
   ],
-  card(title: [Descriptivo & Propositivo], label: [B • Tipo y Alcance], accent: brand-dark)[
+  card(title: [Alcance Mixto], label: [B • Tipo y Alcance], accent: brand-dark)[
     #text(size: 8.5pt)[
-      Describe la distribución del servicio en Managua, evalúa correlaciones con clima y formula lineamientos prescriptivos de optimización de flota.
+      Trasciende lo descriptivo: evalúa correlaciones causales con MCO y formula soluciones prescriptivas de equilibrio tarifario y ruteo vial resiliente.
     ]
   ],
   card(title: [No Experimental], label: [C • Diseño], accent: brand-blue)[
     #text(size: 8.5pt)[
-      Diseño longitudinal: se observan y analizan los registros sin manipulación arbitraria, modelando el comportamiento histórico real de Movi Go.
+      Diseño longitudinal: observación continua del ciclo anual 2024 ($n = 366$ días) sin manipulación artificial de las variables del sistema.
     ]
   ],
   card(title: [El Viaje Individual], label: [D • Unidad de Análisis], accent: brand-red)[
     #text(size: 8.5pt)[
-      Ciclo de solicitud, recogida, trayecto y tarifa cobrada en cada cuadrante de Managua, georreferenciado espacial y temporalmente.
+      Solicitudes ($N = 77,036$) georreferenciadas en 12 zonas con métricas tarifarias dinámicas, condiciones de lluvia y estado de cancelación.
     ]
   ]
 )

@@ -8,6 +8,8 @@
 
 #let subtitle-presentation = "Modelación Cuantitativa y Mitigación Operativa en Managua (2024)"
 
+#let repo-url = "https://github.com/vect-maker/movigo-analytics"
+
 #let authors = (
   (
     name: "Br. Miranda Pérez, José Daniel",
