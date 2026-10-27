@@ -124,10 +124,13 @@ echo "   ▶ Running 03_optimization.py (Dijkstra Shortest Path on Road Graph)..
 echo "   ▶ Running 04_spatial_density.py (Spatial GPS Density on Basemap)..."
 "${PYTHON_BIN}" "${SCRIPT_DIR}/analysis/04_spatial_density.py" > /dev/null
 
+echo "   ▶ Running 05_exploratory_spatial_maps.py (Atlas of 5 Exploratory Spatial Maps)..."
+"${PYTHON_BIN}" "${SCRIPT_DIR}/analysis/05_exploratory_spatial_maps.py" > /dev/null
+
 echo "   ✅ All Python modeling scripts executed successfully."
 
 # -----------------------------------------------------------------------------
-# 5. Integrity Validation Loop (10 JSONs + 6 PNGs)
+# 5. Integrity Validation Loop (11 JSONs + 11 PNGs)
 # -----------------------------------------------------------------------------
 echo ""
 echo "🔍 Step 4: Validating artifact integrity and data schemas..."
@@ -143,6 +146,7 @@ JSON_FILES=(
     "numerical_methods.json"
     "routing_optimization.json"
     "spatial_density_summary.json"
+    "exploratory_spatial_kpis.json"
 )
 
 PNG_FILES=(
@@ -152,6 +156,11 @@ PNG_FILES=(
     "urban_network_topology.png"
     "urban_network_dijkstra.png"
     "trip_origins_density.png"
+    "map_exploratory_quadrants_by_zone.png"
+    "map_exploratory_od_flows.png"
+    "map_exploratory_cancellation_causes.png"
+    "map_exploratory_flood_risk_quadrants.png"
+    "map_exploratory_wait_times.png"
 )
 
 # Validate JSON files

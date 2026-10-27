@@ -113,8 +113,12 @@ cache-basemap *args="":
 run-spatial:
     @.venv/bin/python pipeline/analysis/04_spatial_density.py
 
-# Ejecutar la suite completa de modelado computacional (Econometría, Métodos Numéricos y Optimización)
-run-analysis: run-econometrics run-numerical run-optimization run-spatial
+# Generar atlas de 5 mapas geoespaciales exploratorios (cuadrantes, flujos OD, causas de cancelación, riesgo pluvial y esperas)
+run-exploratory-maps:
+    @.venv/bin/python pipeline/analysis/05_exploratory_spatial_maps.py
+
+# Ejecutar la suite completa de modelado computacional (Econometría, Métodos Numéricos, Optimización y Cartografía)
+run-analysis: run-econometrics run-numerical run-optimization run-spatial run-exploratory-maps
     @echo "🎉 Suite completa de análisis computacional ejecutada exitosamente."
 
 # Hidratar datasets agregados en typst/data a partir de DuckDB y análisis

@@ -82,3 +82,10 @@
   title: none,
   full: true
 )
+
+#pagebreak()
+
+// ==========================================
+// APÉNDICE A: ATLAS CARTOGRÁFICO Y EXPLORATORIO
+// ==========================================
+#include "document/chapters/08_apendice_atlas.typ"

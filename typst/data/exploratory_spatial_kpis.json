@@ -1,0 +1,27 @@
+{
+  "quadrants_by_zone": {
+    "total_cuadrantes": 298,
+    "total_zonas": 24
+  },
+  "od_mobility_flows": {
+    "top_od_pair_1": "Bello Horizonte -> Villa Fontana (1238 viajes)",
+    "top_od_pair_2": "Villa Fontana -> Bello Horizonte (1169 viajes)"
+  },
+  "cancellation_causes": {
+    "Fricción Operativa del Conductor": 19191,
+    "Espera / Latencia de Llegada": 3758,
+    "Tarifa Dinámica Excesiva": 4786,
+    "Vulnerabilidad Pluvial / Cauces": 703
+  },
+  "flood_risk_quadrants": {
+    "bajo": 28,
+    "medio": 44,
+    "alto": 197,
+    "critico": 29
+  },
+  "wait_times": {
+    "min_wait_minutes": 5.57,
+    "max_wait_minutes": 12.77,
+    "disparity_ratio": 2.29
+  }
+}
