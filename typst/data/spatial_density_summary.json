@@ -1,116 +1,224 @@
 {
-  "total_viajes_analizados": 64610,
-  "total_completados": 51275,
-  "total_cancelados": 13335,
-  "tasa_cancelacion_global_pct": 20.64,
+  "total_viajes_analizados": 68756,
+  "total_completados": 45890,
+  "total_cancelados": 22866,
+  "tasa_cancelacion_global_pct": 33.26,
   "distribucion_zonas": [
     {
       "id_zona": 1,
       "nombre_zona": "Villa Fontana",
       "estrato": "alto",
-      "total_solicitudes": 7217,
-      "completados": 6226,
-      "cancelados": 991,
-      "tasa_cancelacion_pct": 13.73
+      "total_solicitudes": 5552,
+      "completados": 4187,
+      "cancelados": 1365,
+      "tasa_cancelacion_pct": 24.59
     },
     {
       "id_zona": 9,
       "nombre_zona": "Metrocentro / Eje Corporativo UCA",
       "estrato": "comercial",
-      "total_solicitudes": 6637,
-      "completados": 5446,
-      "cancelados": 1191,
-      "tasa_cancelacion_pct": 17.94
+      "total_solicitudes": 4558,
+      "completados": 3665,
+      "cancelados": 893,
+      "tasa_cancelacion_pct": 19.59
     },
     {
       "id_zona": 10,
       "nombre_zona": "Ciudad Jardín",
       "estrato": "popular",
-      "total_solicitudes": 6095,
-      "completados": 4750,
-      "cancelados": 1345,
-      "tasa_cancelacion_pct": 22.07
-    },
-    {
-      "id_zona": 11,
-      "nombre_zona": "Mercado Oriental",
-      "estrato": "popular",
-      "total_solicitudes": 5950,
-      "completados": 4602,
-      "cancelados": 1348,
-      "tasa_cancelacion_pct": 22.66
-    },
-    {
-      "id_zona": 4,
-      "nombre_zona": "Los Robles",
-      "estrato": "medio",
-      "total_solicitudes": 5561,
-      "completados": 4796,
-      "cancelados": 765,
-      "tasa_cancelacion_pct": 13.76
+      "total_solicitudes": 4202,
+      "completados": 3156,
+      "cancelados": 1046,
+      "tasa_cancelacion_pct": 24.89
     },
     {
       "id_zona": 7,
       "nombre_zona": "Bello Horizonte",
       "estrato": "medio",
-      "total_solicitudes": 5455,
-      "completados": 4067,
-      "cancelados": 1388,
-      "tasa_cancelacion_pct": 25.44
+      "total_solicitudes": 4026,
+      "completados": 2816,
+      "cancelados": 1210,
+      "tasa_cancelacion_pct": 30.05
     },
     {
-      "id_zona": 12,
-      "nombre_zona": "Mercado Roberto Huembes",
+      "id_zona": 11,
+      "nombre_zona": "Mercado Oriental",
       "estrato": "popular",
-      "total_solicitudes": 5374,
-      "completados": 3954,
-      "cancelados": 1420,
-      "tasa_cancelacion_pct": 26.42
+      "total_solicitudes": 3905,
+      "completados": 2863,
+      "cancelados": 1042,
+      "tasa_cancelacion_pct": 26.68
     },
     {
-      "id_zona": 5,
-      "nombre_zona": "Altamira",
+      "id_zona": 19,
+      "nombre_zona": "Multicentro Las Américas / Villa Miguel Gutiérrez",
+      "estrato": "comercial",
+      "total_solicitudes": 3723,
+      "completados": 2167,
+      "cancelados": 1556,
+      "tasa_cancelacion_pct": 41.79
+    },
+    {
+      "id_zona": 4,
+      "nombre_zona": "Los Robles",
       "estrato": "medio",
-      "total_solicitudes": 5193,
-      "completados": 4456,
-      "cancelados": 737,
-      "tasa_cancelacion_pct": 14.19
-    },
-    {
-      "id_zona": 2,
-      "nombre_zona": "Las Colinas",
-      "estrato": "alto",
-      "total_solicitudes": 4509,
-      "completados": 3796,
-      "cancelados": 713,
-      "tasa_cancelacion_pct": 15.81
+      "total_solicitudes": 3593,
+      "completados": 2863,
+      "cancelados": 730,
+      "tasa_cancelacion_pct": 20.32
     },
     {
       "id_zona": 8,
       "nombre_zona": "Linda Vista",
       "estrato": "medio",
-      "total_solicitudes": 4452,
-      "completados": 2946,
-      "cancelados": 1506,
-      "tasa_cancelacion_pct": 33.83
+      "total_solicitudes": 3544,
+      "completados": 1692,
+      "cancelados": 1852,
+      "tasa_cancelacion_pct": 52.26
+    },
+    {
+      "id_zona": 20,
+      "nombre_zona": "Mercado El Mayoreo",
+      "estrato": "popular",
+      "total_solicitudes": 3360,
+      "completados": 1458,
+      "cancelados": 1902,
+      "tasa_cancelacion_pct": 56.61
+    },
+    {
+      "id_zona": 14,
+      "nombre_zona": "Puerto Salvador Allende / Malecón",
+      "estrato": "comercial",
+      "total_solicitudes": 3237,
+      "completados": 2376,
+      "cancelados": 861,
+      "tasa_cancelacion_pct": 26.6
+    },
+    {
+      "id_zona": 12,
+      "nombre_zona": "Mercado Roberto Huembes",
+      "estrato": "popular",
+      "total_solicitudes": 3207,
+      "completados": 2128,
+      "cancelados": 1079,
+      "tasa_cancelacion_pct": 33.65
+    },
+    {
+      "id_zona": 5,
+      "nombre_zona": "Altamira",
+      "estrato": "medio",
+      "total_solicitudes": 3176,
+      "completados": 2623,
+      "cancelados": 553,
+      "tasa_cancelacion_pct": 17.41
+    },
+    {
+      "id_zona": 2,
+      "nombre_zona": "Las Colinas",
+      "estrato": "alto",
+      "total_solicitudes": 3165,
+      "completados": 2371,
+      "cancelados": 794,
+      "tasa_cancelacion_pct": 25.09
+    },
+    {
+      "id_zona": 15,
+      "nombre_zona": "Altagracia",
+      "estrato": "popular",
+      "total_solicitudes": 2911,
+      "completados": 2008,
+      "cancelados": 903,
+      "tasa_cancelacion_pct": 31.02
+    },
+    {
+      "id_zona": 21,
+      "nombre_zona": "Aeropuerto Augusto C. Sandino / Zona Franca",
+      "estrato": "comercial",
+      "total_solicitudes": 2851,
+      "completados": 1186,
+      "cancelados": 1665,
+      "tasa_cancelacion_pct": 58.4
     },
     {
       "id_zona": 6,
       "nombre_zona": "Bolonia",
       "estrato": "medio",
-      "total_solicitudes": 4245,
-      "completados": 3432,
-      "cancelados": 813,
-      "tasa_cancelacion_pct": 19.15
+      "total_solicitudes": 2837,
+      "completados": 2235,
+      "cancelados": 602,
+      "tasa_cancelacion_pct": 21.22
+    },
+    {
+      "id_zona": 22,
+      "nombre_zona": "Colonia Primero de Mayo / Villa Venezuela",
+      "estrato": "popular",
+      "total_solicitudes": 2834,
+      "completados": 1362,
+      "cancelados": 1472,
+      "tasa_cancelacion_pct": 51.94
     },
     {
       "id_zona": 3,
       "nombre_zona": "Santo Domingo",
       "estrato": "alto",
-      "total_solicitudes": 3922,
-      "completados": 2804,
-      "cancelados": 1118,
-      "tasa_cancelacion_pct": 28.51
+      "total_solicitudes": 2799,
+      "completados": 1623,
+      "cancelados": 1176,
+      "tasa_cancelacion_pct": 42.02
+    },
+    {
+      "id_zona": 16,
+      "nombre_zona": "San Judas / Sierra Maestra",
+      "estrato": "popular",
+      "total_solicitudes": 2683,
+      "completados": 1548,
+      "cancelados": 1135,
+      "tasa_cancelacion_pct": 42.3
+    },
+    {
+      "id_zona": 13,
+      "nombre_zona": "Monseñor Lezcano / Batahola",
+      "estrato": "popular",
+      "total_solicitudes": 2613,
+      "completados": 1571,
+      "cancelados": 1042,
+      "tasa_cancelacion_pct": 39.88
+    },
+    {
+      "id_zona": 23,
+      "nombre_zona": "Villa Libertad / Laureles",
+      "estrato": "popular",
+      "total_solicitudes": 2555,
+      "completados": 1065,
+      "cancelados": 1490,
+      "tasa_cancelacion_pct": 58.32
+    },
+    {
+      "id_zona": 24,
+      "nombre_zona": "Sabana Grande / Ciudad Belén",
+      "estrato": "popular",
+      "total_solicitudes": 2213,
+      "completados": 621,
+      "cancelados": 1592,
+      "tasa_cancelacion_pct": 71.94
+    },
+    {
+      "id_zona": 17,
+      "nombre_zona": "Carretera Sur / Nejapa",
+      "estrato": "medio",
+      "total_solicitudes": 2035,
+      "completados": 766,
+      "cancelados": 1269,
+      "tasa_cancelacion_pct": 62.36
+    },
+    {
+      "id_zona": 18,
+      "nombre_zona": "Esquipulas / Carretera a Masaya km 11-14",
+      "estrato": "alto",
+      "total_solicitudes": 1908,
+      "completados": 699,
+      "cancelados": 1209,
+      "tasa_cancelacion_pct": 63.36
     }
   ]
 }

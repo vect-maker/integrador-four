@@ -13,15 +13,20 @@ import sys
 import time
 from datetime import timedelta
 from pathlib import Path
+from typing import LiteralString, cast
 from urllib.parse import quote_plus
 
 import pandas as pd
 import psycopg
+from psycopg.sql import SQL, Identifier
 import pyarrow.parquet as pq
 from dotenv import load_dotenv
 from sqlalchemy import Engine, create_engine, text
 
-sys.stdout.reconfigure(line_buffering=True)
+if hasattr(sys.stdout, "reconfigure"):
+    getattr(sys.stdout, "reconfigure")(line_buffering=True)
+if hasattr(sys.stderr, "reconfigure"):
+    getattr(sys.stderr, "reconfigure")(line_buffering=True)
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -95,8 +100,8 @@ def reset_schema(
         conn.autocommit = True
         with conn.cursor() as cur:
             print(f"Resetting schema '{target_schema}' (DROP CASCADE + CREATE)...")
-            cur.execute(f'DROP SCHEMA IF EXISTS "{target_schema}" CASCADE;')
-            cur.execute(f'CREATE SCHEMA "{target_schema}";')
+            cur.execute(SQL('DROP SCHEMA IF EXISTS {} CASCADE;').format(Identifier(target_schema)))
+            cur.execute(SQL('CREATE SCHEMA {};').format(Identifier(target_schema)))
     print(f"Schema '{target_schema}' recreated successfully.\n")
 
 
@@ -113,12 +118,12 @@ def load_schema(
     sql_content = target_file.read_text(encoding="utf-8")
     with get_psycopg_connection(target_db) as conn:
         with conn.cursor() as cur:
-            cur.execute(f'CREATE SCHEMA IF NOT EXISTS "{target_schema}";')
-            cur.execute(f'SET search_path TO "{target_schema}", public;')
+            cur.execute(SQL('CREATE SCHEMA IF NOT EXISTS {};').format(Identifier(target_schema)))
+            cur.execute(SQL('SET search_path TO {}, public;').format(Identifier(target_schema)))
             print(
                 f"Applying schema DDL from '{target_file.name}' into schema '{target_schema}'..."
             )
-            cur.execute(sql_content)
+            cur.execute(SQL(cast(LiteralString, sql_content)))
         conn.commit()
     print(
         f"Raw database schema from '{target_file.name}' applied successfully (tables ready).\n"
@@ -207,8 +212,11 @@ def load_table_batches(
         return 0
 
     all_cols = [c for c in pf.schema_arrow.names if not c.startswith("__index")]
-    cols_str = ", ".join([f'"{c}"' for c in all_cols])
-    copy_sql = f'COPY "{schema}"."{table_name}" ({cols_str}) FROM STDIN'
+    copy_sql = SQL('COPY {}.{} ({}) FROM STDIN').format(
+        Identifier(schema),
+        Identifier(table_name),
+        SQL(', ').join([Identifier(c) for c in all_cols])
+    )
 
     # Special handling for tables requiring in-memory deduplication
     if table_name == "driver_telemetry":
@@ -339,7 +347,9 @@ def load_parquet_data(
                 try:
                     with conn.cursor() as cur:
                         cur.execute(
-                            f'SELECT count(*) FROM "{schema}"."{table_name}";'
+                            SQL('SELECT count(*) FROM {}.{};').format(
+                                Identifier(schema), Identifier(table_name)
+                            )
                         )
                         res = cur.fetchone()
                         current_count = res[0] if res else 0
@@ -426,7 +436,11 @@ def main() -> None:
     with get_psycopg_connection(TARGET_DB) as conn:
         with conn.cursor() as cur:
             for _, table_name in TABLES_TO_LOAD:
-                cur.execute(f'SELECT count(*) FROM "{TARGET_SCHEMA}"."{table_name}";')
+                cur.execute(
+                    SQL('SELECT count(*) FROM {}.{};').format(
+                        Identifier(TARGET_SCHEMA), Identifier(table_name)
+                    )
+                )
                 res = cur.fetchone()
                 cnt = res[0] if res else 0
                 print(f"  • {table_name:<25}: {cnt:>10,} filas")

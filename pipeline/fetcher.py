@@ -13,9 +13,9 @@ from requests.adapters import HTTPAdapter
 
 # Ensure unbuffered standard output for real-time console streaming
 if hasattr(sys.stdout, "reconfigure"):
-    sys.stdout.reconfigure(line_buffering=True)
+    getattr(sys.stdout, "reconfigure")(line_buffering=True)
 if hasattr(sys.stderr, "reconfigure"):
-    sys.stderr.reconfigure(line_buffering=True)
+    getattr(sys.stderr, "reconfigure")(line_buffering=True)
 
 load_dotenv()
 
@@ -362,7 +362,8 @@ def main():
     session = create_session(DEFAULT_CONCURRENCY)
 
     try:
-        openapi_url = f"{BASE_URL.rsplit('/', 1)[0]}/openapi.json"
+        base_api = BASE_URL or "http://20.228.134.116:8000/movigo"
+        openapi_url = f"{base_api.rsplit('/', 1)[0]}/openapi.json"
         res = session.get(openapi_url, timeout=15)
         if res.status_code == 200:
             (RAW_FOLDER / "openapi.json").write_text(res.text, encoding="utf-8")
@@ -411,7 +412,7 @@ def main():
             and "trip_id" in df.columns
         ):
             orig_len = len(df)
-            df = df[df["trip_id"].isin(valid_trip_ids)]
+            df = df[df["trip_id"].isin(list(valid_trip_ids))]
             discarded = orig_len - len(df)
             if discarded > 0:
                 print(

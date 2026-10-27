@@ -1,74 +1,147 @@
 version: 2
 
 models:
-  - name: stg_zonas
-    description: "Capa de staging para cuadrantes urbanos y estratos socioeconómicos de Managua"
+  - name: stg_urban_zones
+    description: "Capa de staging pura 1:1 para las 24 zonas urbanas de Managua"
     columns:
-      - name: id_zona
-        description: "Identificador único de la zona"
+      - name: zone_id
+        description: "Unique identifier of the urban zone"
         tests:
           - unique
           - not_null
-      - name: estrato_socioeconomico
-        description: "Estrato socioeconómico territorial"
+      - name: district
+        description: "Administrative district of Managua"
+      - name: socioeconomic_stratum
+        description: "Territorial socioeconomic stratum"
         tests:
           - accepted_values:
               values: ['alto', 'medio', 'popular', 'comercial']
 
-  - name: stg_cuadrantes
-    description: "Capa de staging para los 92 cuadrantes sub-zona de Managua"
+  - name: stg_quadrants
+    description: "Capa de staging pura 1:1 para los 298 cuadrantes urbanos sub-zona de Managua"
     columns:
-      - name: id_cuadrante
-        description: "Identificador único del cuadrante"
+      - name: quadrant_id
+        description: "Unique identifier of the quadrant"
+        tests:
+          - unique
+          - not_null
+      - name: district
+        description: "Administrative district of the quadrant"
+
+  - name: stg_users
+    description: "Capa de staging pura 1:1 para usuarios pasajeros"
+    columns:
+      - name: user_id
+        description: "Unique identifier of the user"
         tests:
           - unique
           - not_null
 
-  - name: stg_usuarios
-    description: "Capa de staging para usuarios pasajeros y sus preferencias de pago"
+  - name: stg_drivers
+    description: "Capa de staging pura 1:1 para socios conductores"
     columns:
-      - name: id_usuario
-        description: "Identificador único del usuario"
+      - name: driver_id
+        description: "Unique identifier of the driver"
         tests:
           - unique
           - not_null
 
-  - name: stg_conductores
-    description: "Capa de staging para la flota de socios conductores y estado operativo"
+  - name: stg_vehicles
+    description: "Capa de staging pura 1:1 para unidades vehiculares"
     columns:
-      - name: id_conductor
-        description: "Identificador único del conductor"
+      - name: vehicle_id
+        description: "Unique identifier of the vehicle"
         tests:
           - unique
           - not_null
 
-  - name: stg_campanias
-    description: "Capa de staging para campañas de bonos e incentivos económicos"
+  - name: stg_incentive_campaigns
+    description: "Capa de staging pura 1:1 para campañas de bonos e incentivos económicos"
     columns:
-      - name: id_campania
-        description: "Identificador único de la campaña"
+      - name: campaign_id
+        description: "Unique identifier of the campaign"
         tests:
           - unique
           - not_null
 
-  - name: stg_clima
-    description: "Capa de staging para registros meteorológicos e índice de congestión vial"
+  - name: stg_weather
+    description: "Capa de staging pura para series temporales de clima y escorrentía"
     columns:
-      - name: fecha
-        description: "Fecha del registro climático"
+      - name: date
+        description: "Calendar date of the daily weather aggregation"
         tests:
           - unique
           - not_null
 
-  - name: stg_viajes
-    description: "Capa de staging para transacciones de viajes y cálculo de tarifa dinámica"
+  - name: stg_trips
+    description: "Capa de staging pura 1:1 para transacciones atómicas de viajes"
     columns:
-      - name: id_viaje
-        description: "Identificador único del viaje"
+      - name: trip_id
+        description: "Unique identifier of the trip"
         tests:
           - unique
           - not_null
-      - name: es_cancelado
-        description: "Indicador booleano de cancelación"
+      - name: is_cancelled
+        description: "Boolean indicator of trip cancellation"
         tests:
+          - not_null
+
+  - name: stg_trip_payments
+    description: "Capa de staging pura 1:1 para liquidaciones financieras de viajes"
+    columns:
+      - name: payment_id
+        description: "Unique identifier of the payment"
+        tests:
+          - unique
+          - not_null
+      - name: trip_id
+        description: "Foreign key to trips"
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_trip_cancellations
+    description: "Capa de staging pura 1:1 para desistimientos y cancelaciones de viajes"
+    columns:
+      - name: cancellation_id
+        description: "Unique identifier of the cancellation"
+        tests:
+          - unique
+          - not_null
+      - name: trip_id
+        description: "Foreign key to trips"
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_trip_ratings
+    description: "Capa de staging pura 1:1 para calificaciones bidireccionales de viajes"
+    columns:
+      - name: rating_id
+        description: "Unique identifier of the rating"
+        tests:
+          - unique
+          - not_null
+      - name: trip_id
+        description: "Foreign key to trips"
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_driver_telemetry
+    description: "Capa de staging pura 1:1 para telemetría vehicular GPS"
+    columns:
+      - name: telemetry_id
+        description: "Unique identifier of the GPS ping"
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_vehicle_maintenance
+    description: "Capa de staging pura 1:1 para órdenes de mantenimiento"
+    columns:
+      - name: maintenance_id
+        description: "Unique identifier of the maintenance service"
+        tests:
+          - unique
           - not_null

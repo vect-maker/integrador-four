@@ -1,17 +1,25 @@
-with source as (
-    select * from {{ ref('stg_conductores') }}
+with drivers as (
+    select * from {{ ref('stg_drivers') }}
+),
+vehicles as (
+    select * from {{ ref('stg_vehicles') }}
 )
 
 select
-    md5(cast(id_conductor as text)) as sk_conductor,
-    id_conductor,
-    nombre,
-    tipo_servicio,
-    modelo_vehiculo,
-    anio_vehiculo,
-    placa,
-    calificacion_promedio,
-    tasa_aceptacion_pct,
-    estado,
-    es_activo
-from source
+    md5(cast(d.driver_id as text)) as sk_conductor,
+    d.driver_id as id_conductor,
+    d.name as nombre,
+    v.vehicle_id as id_vehiculo,
+    coalesce(v.service_type, 'movigo_estandar') as tipo_servicio,
+    coalesce(v.vehicle_model, 'No especificado') as modelo_vehiculo,
+    coalesce(v.vehicle_year, 2020) as anio_vehiculo,
+    coalesce(v.license_plate, 'N/A') as placa,
+    v.fuel_type as tipo_combustible,
+    v.fuel_efficiency_km_l as rendimiento_combustible_kml,
+    v.initial_odometer_km as odometro_inicial_km,
+    d.average_rating as calificacion_promedio,
+    d.acceptance_rate_pct as tasa_aceptacion_pct,
+    d.status as estado,
+    d.is_active as es_activo
+from drivers d
+left join vehicles v on d.driver_id = v.driver_id

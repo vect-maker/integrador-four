@@ -7,22 +7,26 @@ sources:
     schema: "{{ env_var('RAW_SCHEMA', 'raw') }}"
     tables:
       - name: urban_zones
-        description: "12 zonas operativas de Managua con coordenadas y tarifas base de bajada de bandera"
+        description: "24 zonas operativas de Managua divididas en distritos urbanos con coordenadas y tarifas base de bajada de bandera"
         columns:
           - name: zone_id
             description: "Identificador único de la zona urbana"
             tests:
               - unique
               - not_null
+          - name: district
+            description: "Distrito administrativo del municipio de Managua"
 
       - name: quadrants
-        description: "92 cuadrantes urbanos sub-zona con polígonos, cota msnm y riesgo de inundación"
+        description: "298 cuadrantes urbanos sub-zona con distritos, polígonos, cota msnm y riesgo de inundación"
         columns:
           - name: quadrant_id
             description: "Identificador único del cuadrante"
             tests:
               - unique
               - not_null
+          - name: district
+            description: "Distrito administrativo al que pertenece el cuadrante"
 
       - name: users
         description: "Directorio de usuarios pasajeros registrados en MoviGo"
@@ -43,13 +47,15 @@ sources:
               - not_null
 
       - name: vehicles
-        description: "Parque vehicular asignado a socios conductores"
+        description: "Parque vehicular asignado a socios conductores con odómetro y combustible"
         columns:
           - name: vehicle_id
             description: "Identificador único del vehículo"
             tests:
               - unique
               - not_null
+          - name: initial_odometer_km
+            description: "Lectura inicial del odómetro en kilómetros"
 
       - name: incentive_campaigns
         description: "Programas de bonos e incentivos de conexión vehicular"
@@ -61,13 +67,15 @@ sources:
               - not_null
 
       - name: quadrant_weather
-        description: "Series temporales horarias de clima, precipitación y congestión por cuadrante"
+        description: "Series temporales horarias de microclima, escorrentía en cauces y congestión por cuadrante"
         columns:
           - name: weather_id
             description: "Identificador único del reporte meteorológico"
             tests:
               - unique
               - not_null
+          - name: channel_runoff_mm
+            description: "Escorrentía estimada de cauces pluviales en milímetros"
 
       - name: trips
         description: "Registro atómico de solicitudes de viajes y coordenadas de origen/destino"

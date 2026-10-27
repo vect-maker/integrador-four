@@ -1,4 +1,4 @@
 [
-	{"tiene_lluvia":false,"categoria_precipitacion":"sin lluvia","total_viajes":18844,"total_cancelados":3849,"tasa_cancelacion_pct":20.43,"surge_promedio":1.31,"tarifa_promedio_nio":245.27,"congestion_promedio":1.11,"temperatura_promedio_c":29.01},
-	{"tiene_lluvia":true,"categoria_precipitacion":"ligera","total_viajes":45766,"total_cancelados":9486,"tasa_cancelacion_pct":20.73,"surge_promedio":1.3,"tarifa_promedio_nio":247.89,"congestion_promedio":1.13,"temperatura_promedio_c":27.56}
+	{"tiene_lluvia":false,"categoria_precipitacion":"sin lluvia","total_viajes":19752,"total_cancelados":7114,"tasa_cancelacion_pct":36.02,"surge_promedio":1.33,"tarifa_promedio_nio":335.57,"congestion_promedio":1.2,"temperatura_promedio_c":27.9},
+	{"tiene_lluvia":true,"categoria_precipitacion":"ligera","total_viajes":57735,"total_cancelados":21324,"tasa_cancelacion_pct":36.93,"surge_promedio":1.32,"tarifa_promedio_nio":357.36,"congestion_promedio":1.26,"temperatura_promedio_c":26.34}
 ]

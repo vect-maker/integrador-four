@@ -1,3 +1,3 @@
 [
-	{"total_viajes":64610,"total_cancelados":13335,"total_completados":51275,"tasa_cancelacion_pct":20.64,"surge_promedio":1.3,"tarifa_base_promedio_nio":193.32,"tarifa_final_promedio_nio":247.12,"sobrecosto_promedio_nio":53.81,"distancia_promedio_km":6.2,"tiempo_espera_promedio_min":8.09,"total_zonas":12,"total_dias_clima":366,"total_usuarios":800,"total_conductores":150,"total_campanias":12}
+	{"total_viajes":77487,"total_cancelados":28438,"total_completados":49049,"tasa_cancelacion_pct":36.7,"surge_promedio":1.32,"tarifa_base_promedio_nio":268.84,"tarifa_final_promedio_nio":351.81,"sobrecosto_promedio_nio":82.96,"distancia_promedio_km":8.99,"tiempo_espera_promedio_min":9.68,"total_zonas":24,"total_dias_clima":366,"total_usuarios":800,"total_conductores":150,"total_campanias":12}
 ]

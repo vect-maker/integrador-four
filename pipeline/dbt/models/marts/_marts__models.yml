@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: dim_zonas
-    description: "Dimensión conformada de cuadrantes urbanos y estratos socioeconómicos de Managua"
+    description: "Dimensión conformada de 24 zonas urbanas, distritos y estratos socioeconómicos de Managua"
     columns:
       - name: sk_zona
         description: "Llave primaria subrogada (MD5)"
@@ -14,9 +14,27 @@ models:
         tests:
           - unique
           - not_null
+      - name: distrito
+        description: "Distrito administrativo del municipio de Managua"
+
+  - name: dim_cuadrantes
+    description: "Dimensión conformada de 298 cuadrantes urbanos sub-zona de Managua"
+    columns:
+      - name: sk_cuadrante
+        description: "Llave primaria subrogada (MD5)"
+        tests:
+          - unique
+          - not_null
+      - name: id_cuadrante
+        description: "Clave operativa natural"
+        tests:
+          - unique
+          - not_null
+      - name: distrito
+        description: "Distrito administrativo del cuadrante"
 
   - name: dim_clima
-    description: "Dimensión conformada de series temporales de clima y congestión vial"
+    description: "Dimensión conformada de series temporales de clima, escorrentía en cauces y congestión vial"
     columns:
       - name: sk_clima
         description: "Llave primaria subrogada (MD5)"
@@ -39,7 +57,7 @@ models:
           - not_null
 
   - name: dim_conductores
-    description: "Dimensión conformada de la flota de socios conductores"
+    description: "Dimensión conformada de la flota de socios conductores y vehículos"
     columns:
       - name: sk_conductor
         description: "Llave primaria subrogada (MD5)"

@@ -1,6 +1,6 @@
 [
-	{"estrato_socioeconomico":"popular","nivel_estrato":1,"total_viajes":17419,"total_cancelados":4113,"tasa_cancelacion_pct":23.61,"surge_promedio":1.39,"tarifa_promedio_nio":225.32,"tiempo_espera_promedio_min":6.97},
-	{"estrato_socioeconomico":"medio","nivel_estrato":2,"total_viajes":24906,"total_cancelados":5209,"tasa_cancelacion_pct":20.91,"surge_promedio":1.28,"tarifa_promedio_nio":240.63,"tiempo_espera_promedio_min":8.56},
-	{"estrato_socioeconomico":"comercial","nivel_estrato":3,"total_viajes":6637,"total_cancelados":1191,"tasa_cancelacion_pct":17.94,"surge_promedio":1.29,"tarifa_promedio_nio":258.78,"tiempo_espera_promedio_min":6.28},
-	{"estrato_socioeconomico":"alto","nivel_estrato":4,"total_viajes":15648,"total_cancelados":2822,"tasa_cancelacion_pct":18.03,"surge_promedio":1.26,"tarifa_promedio_nio":276.78,"tiempo_espera_promedio_min":9.33}
+	{"estrato_socioeconomico":"popular","nivel_estrato":1,"total_viajes":30483,"total_cancelados":12703,"tasa_cancelacion_pct":41.67,"surge_promedio":1.38,"tarifa_promedio_nio":338.51,"tiempo_espera_promedio_min":9.71},
+	{"estrato_socioeconomico":"medio","nivel_estrato":2,"total_viajes":19211,"total_cancelados":6216,"tasa_cancelacion_pct":32.36,"surge_promedio":1.28,"tarifa_promedio_nio":329.86,"tiempo_espera_promedio_min":9.67},
+	{"estrato_socioeconomico":"comercial","nivel_estrato":3,"total_viajes":14369,"total_cancelados":4975,"tasa_cancelacion_pct":34.62,"surge_promedio":1.29,"tarifa_promedio_nio":370.6,"tiempo_espera_promedio_min":8.52},
+	{"estrato_socioeconomico":"alto","nivel_estrato":4,"total_viajes":13424,"total_cancelados":4544,"tasa_cancelacion_pct":33.85,"surge_promedio":1.28,"tarifa_promedio_nio":393.28,"tiempo_espera_promedio_min":10.83}
 ]

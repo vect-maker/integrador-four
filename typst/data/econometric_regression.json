@@ -2,49 +2,49 @@
   "sample_size": 366,
   "dependent_variable": "tasa_cancelacion_pct",
   "independent_variable": "multiplicador_promedio",
-  "pearson_r": 0.0999,
-  "r_squared": 0.01,
-  "adj_r_squared": 0.0073,
-  "residual_std_error": 3.221,
-  "f_statistic": 3.67,
-  "f_p_value": 0.056247017345743104,
+  "pearson_r": 0.0899,
+  "r_squared": 0.0081,
+  "adj_r_squared": 0.0054,
+  "residual_std_error": 3.7791,
+  "f_statistic": 2.96,
+  "f_p_value": 0.08601733290893573,
   "coefficients": {
     "intercept": {
-      "estimate": 11.0299,
-      "std_error": 5.0075,
-      "t_stat": 2.2,
-      "p_value": 0.028243336867032492,
+      "estimate": 26.6037,
+      "std_error": 5.6564,
+      "t_stat": 4.7,
+      "p_value": 3.640711793340174e-06,
       "ci_95": [
-        1.1827,
-        20.877
+        15.4803,
+        37.727
       ]
     },
     "multiplicador": {
-      "estimate": 7.3481,
-      "std_error": 3.8367,
-      "t_stat": 1.92,
-      "p_value": 0.056247017345740474,
+      "estimate": 7.3687,
+      "std_error": 4.2805,
+      "t_stat": 1.72,
+      "p_value": 0.08601733290893178,
       "ci_95": [
-        -0.1967,
-        14.8929
+        -1.0489,
+        15.7863
       ]
     }
   },
   "anova": {
     "regression": {
-      "ss": 38.06,
+      "ss": 42.32,
       "df": 1,
-      "ms": 38.06,
-      "f": 3.67,
-      "p_value": 0.056247017345743104
+      "ms": 42.32,
+      "f": 2.96,
+      "p_value": 0.08601733290893573
     },
     "residuals": {
-      "ss": 3776.36,
+      "ss": 5198.56,
       "df": 364,
-      "ms": 10.3746
+      "ms": 14.2818
     },
     "total": {
-      "ss": 3814.41,
+      "ss": 5240.89,
       "df": 365
     }
   }
