@@ -10,6 +10,7 @@ SET search_path TO raw, public;
 CREATE TABLE IF NOT EXISTS urban_zones (
     zone_id INT PRIMARY KEY,
     zone_name VARCHAR(100) NOT NULL,
+    district VARCHAR(50),
     socioeconomic_stratum VARCHAR(20) NOT NULL CHECK (socioeconomic_stratum IN ('alto', 'medio', 'popular', 'comercial')),
     latitude DECIMAL(9,6) NOT NULL,
     longitude DECIMAL(9,6) NOT NULL,
@@ -20,6 +21,7 @@ CREATE TABLE IF NOT EXISTS urban_zones (
 CREATE TABLE IF NOT EXISTS quadrants (
     quadrant_id INT PRIMARY KEY,
     zone_id INT NOT NULL REFERENCES urban_zones(zone_id),
+    district VARCHAR(50),
     quadrant_code VARCHAR(30) NOT NULL UNIQUE,
     quadrant_name VARCHAR(120) NOT NULL,
     grid_row INT NOT NULL,
