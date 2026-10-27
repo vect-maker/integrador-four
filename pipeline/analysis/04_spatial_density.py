@@ -43,46 +43,46 @@ def generate_density_plot(
     try:
         # 1. Fetch completed and cancelled trip origins within valid Managua metropolitan bounds
         completed_coords = con.execute("""
-            SELECT cast(longitud_origen as double), cast(latitud_origen as double)
+            SELECT cast(origin_longitude as double), cast(origin_latitude as double)
             FROM fct_viajes
-            WHERE es_completado = true
-              AND latitud_origen BETWEEN 12.080 AND 12.180
-              AND longitud_origen BETWEEN -86.330 AND -86.190;
+            WHERE is_completed = true
+              AND origin_latitude BETWEEN 12.080 AND 12.180
+              AND origin_longitude BETWEEN -86.330 AND -86.190;
         """).fetchall()
 
         cancelled_coords = con.execute("""
-            SELECT cast(longitud_origen as double), cast(latitud_origen as double)
+            SELECT cast(origin_longitude as double), cast(origin_latitude as double)
             FROM fct_viajes
-            WHERE es_cancelado = true
-              AND latitud_origen BETWEEN 12.080 AND 12.180
-              AND longitud_origen BETWEEN -86.330 AND -86.190;
+            WHERE is_cancelled = true
+              AND origin_latitude BETWEEN 12.080 AND 12.180
+              AND origin_longitude BETWEEN -86.330 AND -86.190;
         """).fetchall()
 
         # 2. Fetch urban zones catalog
         zones_rows = con.execute("""
             SELECT 
-                cast(id_zona as int) as id_zona,
-                cast(nombre_zona as varchar) as nombre_zona,
-                cast(estrato_socioeconomico as varchar) as estrato,
-                cast(latitud as double) as latitud,
-                cast(longitud as double) as longitud
-            FROM dim_zonas
-            ORDER BY id_zona;
+                cast(zone_id as int) as id_zona,
+                cast(zone_name as varchar) as nombre_zona,
+                cast(socioeconomic_stratum as varchar) as estrato,
+                cast(latitude as double) as latitud,
+                cast(longitude as double) as longitud
+            FROM dim_zones
+            ORDER BY zone_id;
         """).fetchall()
 
         # 3. Zone demand metrics aggregation
         zone_metrics_rows = con.execute("""
             SELECT 
-                z.id_zona,
-                z.nombre_zona,
-                z.estrato_socioeconomico,
-                count(v.id_viaje) as total_solicitudes,
-                sum(case when v.es_completado then 1 else 0 end) as completados,
-                sum(case when v.es_cancelado then 1 else 0 end) as cancelados,
-                round(cast(sum(case when v.es_cancelado then 1 else 0 end) as double) * 100.0 / nullif(count(v.id_viaje), 0), 2) as tasa_cancelacion_pct
-            FROM dim_zonas z
-            LEFT JOIN fct_viajes v ON z.sk_zona = v.sk_zona_origen
-            GROUP BY z.id_zona, z.nombre_zona, z.estrato_socioeconomico
+                z.zone_id as id_zona,
+                z.zone_name as nombre_zona,
+                z.socioeconomic_stratum as estrato_socioeconomico,
+                count(v.trip_id) as total_solicitudes,
+                sum(case when v.is_completed then 1 else 0 end) as completados,
+                sum(case when v.is_cancelled then 1 else 0 end) as cancelados,
+                round(cast(sum(case when v.is_cancelled then 1 else 0 end) as double) * 100.0 / nullif(count(v.trip_id), 0), 2) as tasa_cancelacion_pct
+            FROM dim_zones z
+            LEFT JOIN fct_viajes v ON z.sk_zone = v.sk_zone_origin
+            GROUP BY z.zone_id, z.zone_name, z.socioeconomic_stratum
             ORDER BY total_solicitudes DESC;
         """).fetchall()
     finally:

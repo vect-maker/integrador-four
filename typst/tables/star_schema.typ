@@ -28,47 +28,53 @@
     ),
     [`fct_viajes`],
     [Tabla de Hechos (Atómica)],
-    [`sk_viaje` \ #text(size: raw-size, fill: rgb("#64748b"))[(Hash MD5)]],
+    [`sk_trip` \ #text(size: raw-size, fill: rgb("#64748b"))[(Hash MD5)]],
     [
       #stack(
         spacing: 1.5pt,
-        [`sk_zona_origen`],
-        [`sk_zona_destino`],
-        [`sk_clima`, `sk_usuario`],
-        [`sk_conductor`]
+        [`sk_zone_origin`],
+        [`sk_zone_destination`],
+        [`sk_weather`, `sk_user`],
+        [`sk_driver`]
       )
     ],
-    [1 fila por solicitud ($N = #total-trips-fmt$). Multiplicador dinámico, tarifa base, tarifa final, recargo surge, tiempo espera, bandera booleana de cancelación (`es_cancelado`).],
+    [1 fila por solicitud ($N = #total-trips-fmt$). Multiplicador dinámico, tarifa base, tarifa final, recargo surge, tiempo espera, bandera booleana de cancelación (`is_cancelled`).],
 
-    [`dim_zonas`],
+    [`dim_zones`],
     [Dimensión Conformada],
-    [`sk_zona` \ #text(size: raw-size, fill: rgb("#64748b"))[(Hash MD5)]],
+    [`sk_zone` \ #text(size: raw-size, fill: rgb("#64748b"))[(Hash MD5)]],
     [Origen y Destino \ #text(size: raw-size, fill: rgb("#64748b"))[(`fct_viajes`)]],
-    [#total-zones cuadrantes urbanos. Estrato socioeconómico, nivel ordinal (1--4), latitud, longitud, radio cobertura, bajada de bandera zonal.],
+    [#total-zones zonas urbanas de Managua. Estrato socioeconómico, nivel ordinal (1--4), distrito, coordenadas centroides, radio de cobertura, bajada de bandera zonal.],
 
-    [`dim_clima`],
+    [`dim_quadrants`],
+    [Dimensión Territorial],
+    [`sk_quadrant` \ #text(size: raw-size, fill: rgb("#64748b"))[(Hash MD5)]],
+    [`sk_zone` \ #text(size: raw-size, fill: rgb("#64748b"))[(`dim_zones`)]],
+    [298 cuadrantes geográficos. Cuadrícula espacial, límites lat/lon, cota altimétrica, clasificación de riesgo pluvial y cauces principales.],
+
+    [`dim_weather`],
     [Dimensión Conformada],
-    [`sk_clima` \ #text(size: raw-size, fill: rgb("#64748b"))[(Hash MD5)]],
-    [`sk_clima` \ #text(size: raw-size, fill: rgb("#64748b"))[(`fct_viajes`)]],
-    [#total-weather-days días del ciclo 2024. Precipitación (mm), temperatura (°C), índice y nivel de congestión vial, condición de cielo, indicador de lluvia.],
+    [`sk_weather` \ #text(size: raw-size, fill: rgb("#64748b"))[(Hash MD5)]],
+    [`sk_weather` \ #text(size: raw-size, fill: rgb("#64748b"))[(`fct_viajes`)]],
+    [#total-weather-days días del ciclo 2024. Precipitación (mm), temperatura (°C), índice y nivel de congestión vial, condición de cielo, indicador de lluvia, estacionalidad y riesgo de escorrentía.],
 
-    [`dim_usuarios`],
+    [`dim_users`],
     [Dimensión Conformada],
-    [`sk_usuario` \ #text(size: raw-size, fill: rgb("#64748b"))[(Hash MD5)]],
-    [`sk_usuario` \ #text(size: raw-size, fill: rgb("#64748b"))[(`fct_viajes`)]],
-    [Pasajeros registrados. Preferencia de pago (efectivo vs tarjeta/digital), calificación histórica promedio, fecha de registro.],
+    [`sk_user` \ #text(size: raw-size, fill: rgb("#64748b"))[(Hash MD5)]],
+    [`sk_user` \ #text(size: raw-size, fill: rgb("#64748b"))[(`fct_viajes`)]],
+    [Pasajeros registrados. Preferencia de pago (efectivo vs digital), calificación histórica promedio, segmento de reputación y antigüedad.],
 
-    [`dim_conductores`],
+    [`dim_drivers`],
     [Dimensión Conformada],
-    [`sk_conductor` \ #text(size: raw-size, fill: rgb("#64748b"))[(Hash MD5)]],
-    [`sk_conductor` \ #text(size: raw-size, fill: rgb("#64748b"))[(`fct_viajes`)]],
-    [Socios de la flota. Modalidad vehicular (`movigo_estandar`, `movigo_comfort`, `movigo_moto`), modelo, año, calificación, tasa de aceptación, estado activo.],
+    [`sk_driver` \ #text(size: raw-size, fill: rgb("#64748b"))[(Hash MD5)]],
+    [`sk_driver` \ #text(size: raw-size, fill: rgb("#64748b"))[(`fct_viajes`)]],
+    [Socios de la flota. Modalidad vehicular, modelo, año, tasa de aceptación, servicios acumulados de mantenimiento, costo de taller y horas de inactividad.],
 
-    [`dim_campanias`],
+    [`dim_campaigns`],
     [Dimensión Prescriptiva],
-    [`sk_campania` \ #text(size: raw-size, fill: rgb("#64748b"))[(Hash MD5)]],
+    [`sk_campaign` \ #text(size: raw-size, fill: rgb("#64748b"))[(Hash MD5)]],
     [Optimización \ #text(size: raw-size, fill: rgb("#64748b"))[Mochila 0/1]],
-    [#total-campaigns programas de bonos. Costo presupuestario en córdobas (NIO), incremento en horas de conexión y ratio de costo unitario por hora.]
+    [#total-campaigns programas de bonos. Costo presupuestario en córdobas (NIO), incremento en horas de conexión proyectadas y zona urbana objetivo.]
   )
 }
 

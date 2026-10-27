@@ -26,7 +26,7 @@ Following a thorough strategic re-alignment, the paper places its primary spotli
 ```mermaid
 flowchart TD
     subgraph S1["1. Local Analytical Data Warehouse"]
-        DuckDB[("pipeline/data/analytics.duckdb<br/>(fct_viajes: 77,036 rows<br/>dim_clima: 366 days<br/>dim_zonas: 12 quadrants)")]
+        DuckDB[("pipeline/data/analytics.duckdb<br/>(fct_viajes: 77,487 rows<br/>dim_weather: 366 days<br/>dim_zones: 24 zones)")]
     end
 
     subgraph S2["2. Computational Modeling Suite (Python 3.14 via uv)"]
@@ -201,7 +201,7 @@ Since $f'(m) < 0$ strictly for all $m \ge 1$, $f(m)$ is monotonically strictly d
 ### 3.3 Operations Optimization: Dijkstra Shortest Path on Graph Network
 
 #### Urban Network Graph
-Graph $G = (V, E)$ where $|V| = 12$ nodes correspond to the 12 zones of Managua (`dim_zonas`):
+Graph $G = (V, E)$ where $|V| = 24$ nodes correspond to the 24 zones of Managua (`dim_zones`):
 1. Villa Fontana (12.115, -86.255)
 2. Las Colinas (12.105, -86.242)
 3. Santo Domingo (12.100, -86.230)
@@ -217,7 +217,7 @@ Graph $G = (V, E)$ where $|V| = 12$ nodes correspond to the 12 zones of Managua 
 
 #### Edge Weights & Travel Impedance
 $$\tau_{ij} = \frac{d_{ij}}{v_{ij}(\text{clima})} \times 60 \text{ [minutos]}$$
-- Distance $d_{ij}$: Haversine distance derived from actual WGS84 coordinates in `dim_zonas`, adjusted by route tortuosity factor $\kappa = 1.30$.
+- Distance $d_{ij}$: Haversine distance derived from actual WGS84 coordinates in `dim_zones`, adjusted by route tortuosity factor $\kappa = 1.30$.
 - Baseline velocity (Dry weather): $v_{\text{base}} = 32 \text{ km/h}$; commercial market zones $v = 20 \text{ km/h}$.
 - Storm velocity (Torrential rain): Corridors prone to flooding (Pista Juan Pablo II, Metrocentro, Cauces) suffer heavy penalties:
   $$v_{\text{rain}} = v_{\text{base}} \times \left(1 - \delta_{\text{flood}}\right), \quad \delta_{\text{flood}} \in [0.40, 0.70]$$

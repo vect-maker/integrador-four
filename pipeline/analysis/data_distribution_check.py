@@ -63,41 +63,41 @@ def main():
 
     con = duckdb.connect(str(db_path), read_only=True)
 
-    # 1. Operational Micro-Level Metrics (fct_viajes: 77,036 trips)
+    # 1. Operational Micro-Level Metrics (fct_viajes: 77,487 trips)
     df_trips = con.execute("""
         SELECT
-            distancia_km,
-            duracion_minutos,
-            tarifa_final,
-            multiplicador_dinamico,
-            sobrecosto_surge_nio,
-            tiempo_espera_minutos
+            distance_km AS distancia_km,
+            duration_minutes AS duracion_minutos,
+            final_fare AS tarifa_final,
+            surge_multiplier AS multiplicador_dinamico,
+            surge_cost_nio AS sobrecosto_surge_nio,
+            wait_time_minutes AS tiempo_espera_minutos
         FROM fct_viajes;
     """).df()
 
-    # 2. Weather Metrics (dim_clima: 366 days)
+    # 2. Weather Metrics (dim_weather: 366 days)
     df_weather = con.execute("""
         SELECT
-            cast(precipitacion_mm as double) AS precipitacion_mm,
-            cast(temperatura_c as double) AS temperatura_c,
-            cast(indice_congestion as double) AS indice_congestion
-        FROM dim_clima;
+            cast(precipitation_mm as double) AS precipitacion_mm,
+            cast(temperature_c as double) AS temperatura_c,
+            cast(congestion_index as double) AS indice_congestion
+        FROM dim_weather;
     """).df()
 
-    # 3. Daily Aggregate Data (fct_viajes + dim_clima)
+    # 3. Daily Aggregate Data (fct_viajes + dim_weather)
     df_daily = con.execute("""
         SELECT
-            v.fecha_solicitud AS fecha,
+            v.request_date AS fecha,
             count(*) AS total_viajes,
-            sum(CASE WHEN v.es_cancelado THEN 1 ELSE 0 END) AS total_cancelados,
-            round(100.0 * sum(CASE WHEN v.es_cancelado THEN 1 ELSE 0 END) / count(*), 4) AS tasa_cancelacion_pct,
-            round(avg(v.multiplicador_dinamico), 4) AS multiplicador_promedio,
-            cast(c.precipitacion_mm as double) AS precipitacion_mm,
-            cast(c.indice_congestion as double) AS indice_congestion
+            sum(CASE WHEN v.is_cancelled THEN 1 ELSE 0 END) AS total_cancelados,
+            round(100.0 * sum(CASE WHEN v.is_cancelled THEN 1 ELSE 0 END) / count(*), 4) AS tasa_cancelacion_pct,
+            round(avg(v.surge_multiplier), 4) AS multiplicador_promedio,
+            cast(c.precipitation_mm as double) AS precipitacion_mm,
+            cast(c.congestion_index as double) AS indice_congestion
         FROM fct_viajes v
-        JOIN dim_clima c ON v.fecha_solicitud = c.fecha
-        GROUP BY v.fecha_solicitud, c.precipitacion_mm, c.indice_congestion
-        ORDER BY v.fecha_solicitud;
+        JOIN dim_weather c ON v.request_date = c.date
+        GROUP BY v.request_date, c.precipitation_mm, c.congestion_index
+        ORDER BY v.request_date;
     """).df()
 
     con.close()

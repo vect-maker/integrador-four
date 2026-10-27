@@ -1,11 +1,11 @@
 -- 05_campaigns_optimization.sql: Incentive program budget parameters for 0/1 knapsack optimization
 SELECT 
-    id_campania,
-    nombre_bono,
-    tipo_incentivo,
-    costo_presupuesto_nio,
-    incremento_horas_conexion,
-    ROUND(costo_por_hora_conexion, 2) AS costo_por_hora_nio,
-    estado
-FROM dim_campanias
-ORDER BY id_campania
+    campaign_id AS id_campania,
+    bonus_name AS nombre_bono,
+    incentive_type AS tipo_incentivo,
+    budget_cost_nio AS costo_presupuesto_nio,
+    online_hours_increase AS incremento_horas_conexion,
+    ROUND(cost_per_online_hour_nio, 2) AS costo_por_hora_nio,
+    status AS estado
+FROM dim_campaigns
+ORDER BY campaign_id

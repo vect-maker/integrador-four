@@ -13,7 +13,7 @@
     align: (col, row) => if row == 0 { center + horizon } else if col == 0 or col == 4 { center + horizon } else if col == 5 { right + horizon } else { left + horizon },
     fill: (col, row) => if row == 0 { rgb("#f1f5f9") } else if calc.even(row) { rgb("#f8fafc") } else { none },
     table.header(
-      [*ID*], [*Cuadrante Operativo*], [*Estrato*], [*Coordenadas*], [*Radio*], [*Bajada Bandera*]
+      [*ID*], [*Zona Urbana*], [*Estrato*], [*Coordenadas*], [*Radio*], [*Bajada Bandera*]
     ),
     ..zones.map(z => (
       [#z.id_zona],
@@ -29,5 +29,5 @@
 // Formal enumerated figure with caption for the paper
 #let fig-zones-catalog = figure(
   table-zones-catalog(),
-  caption: [Catálogo territorial de los 12 cuadrantes operativos de Managua y tarifas base de bajada de bandera],
+  caption: [Catálogo territorial de las 24 zonas urbanas de Managua y tarifas base de bajada de bandera],
 )

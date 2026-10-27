@@ -40,14 +40,14 @@ def extract_daily_dataset(db_path: Path) -> pd.DataFrame:
 
     query = """
     SELECT
-        v.fecha_solicitud AS fecha,
+        v.request_date AS fecha,
         count(*) AS total_viajes,
-        sum(CASE WHEN v.es_cancelado THEN 1 ELSE 0 END) AS total_cancelados,
-        round(100.0 * sum(CASE WHEN v.es_cancelado THEN 1 ELSE 0 END) / count(*), 4) AS tasa_cancelacion_pct,
-        round(avg(v.multiplicador_dinamico), 4) AS multiplicador_promedio
+        sum(CASE WHEN v.is_cancelled THEN 1 ELSE 0 END) AS total_cancelados,
+        round(100.0 * sum(CASE WHEN v.is_cancelled THEN 1 ELSE 0 END) / count(*), 4) AS tasa_cancelacion_pct,
+        round(avg(v.surge_multiplier), 4) AS multiplicador_promedio
     FROM fct_viajes v
-    GROUP BY v.fecha_solicitud
-    ORDER BY v.fecha_solicitud;
+    GROUP BY v.request_date
+    ORDER BY v.request_date;
     """
     con = duckdb.connect(str(db_path), read_only=True)
     try:

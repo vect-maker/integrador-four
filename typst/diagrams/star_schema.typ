@@ -49,67 +49,70 @@
     node-fill: none,
     spacing: (26pt, 16pt),
 
-    // --- FILA SUPERIOR: dim_zonas (0, 0) y dim_clima (2, 0) ---
-    node((0, 0), db-table("dim_zonas", "DIMENSION", rgb("#0369a1"), rgb("#0284c7"), (
-      (pk-tag, text(weight: "bold")[sk_zona], text(fill: rgb("#64748b"))[text]),
-      ([], [id_zona], text(fill: rgb("#64748b"))[int]),
-      ([], [nombre_zona], text(fill: rgb("#64748b"))[text]),
-      ([], [estrato_socioec], text(fill: rgb("#64748b"))[text]),
-      ([], [nivel_estrato], text(fill: rgb("#64748b"))[int(1..4)]),
-      ([], [bajada_bandera], text(fill: rgb("#64748b"))[decimal]),
+    // --- FILA SUPERIOR: dim_zones (0, 0) y dim_weather (2, 0) ---
+    node((0, 0), db-table("dim_zones", "DIMENSION", rgb("#0369a1"), rgb("#0284c7"), (
+      (pk-tag, text(weight: "bold")[sk_zone], text(fill: rgb("#64748b"))[text]),
+      ([], [zone_id], text(fill: rgb("#64748b"))[int]),
+      ([], [zone_name], text(fill: rgb("#64748b"))[text]),
+      ([], [district], text(fill: rgb("#64748b"))[text]),
+      ([], [socioeconomic_stratum], text(fill: rgb("#64748b"))[text]),
+      ([], [base_flag_drop_fare], text(fill: rgb("#64748b"))[decimal]),
     ))),
 
-    node((2, 0), db-table("dim_clima", "DIMENSION", rgb("#0369a1"), rgb("#0284c7"), (
-      (pk-tag, text(weight: "bold")[sk_clima], text(fill: rgb("#64748b"))[text]),
-      ([], [fecha], text(fill: rgb("#64748b"))[date]),
-      ([], [precipitacion_mm], text(fill: rgb("#64748b"))[decimal]),
-      ([], [temperatura_c], text(fill: rgb("#64748b"))[decimal]),
-      ([], [indice_congestion], text(fill: rgb("#64748b"))[decimal]),
-      ([], [tiene_lluvia], text(fill: rgb("#64748b"))[boolean]),
+    node((2, 0), db-table("dim_weather", "DIMENSION", rgb("#0369a1"), rgb("#0284c7"), (
+      (pk-tag, text(weight: "bold")[sk_weather], text(fill: rgb("#64748b"))[text]),
+      ([], [date], text(fill: rgb("#64748b"))[date]),
+      ([], [precipitation_mm], text(fill: rgb("#64748b"))[decimal]),
+      ([], [temperature_c], text(fill: rgb("#64748b"))[decimal]),
+      ([], [congestion_index], text(fill: rgb("#64748b"))[decimal]),
+      ([], [has_rain], text(fill: rgb("#64748b"))[boolean]),
+      ([], [season], text(fill: rgb("#64748b"))[text]),
     ))),
 
     // --- FILA CENTRAL: fct_viajes (HECHO ATÓMICO) en (1, 1) ---
     node((1, 1), db-table("fct_viajes", "FACT TABLE", rgb("#1e1b4b"), rgb("#4338ca"), width: 152pt, (
-      (pk-tag, text(weight: "bold")[sk_viaje], text(fill: rgb("#64748b"))[text]),
-      (fk-tag, [sk_zona_origen], text(fill: rgb("#64748b"))[text]),
-      (fk-tag, [sk_zona_destino], text(fill: rgb("#64748b"))[text]),
-      (fk-tag, [sk_clima], text(fill: rgb("#64748b"))[text]),
-      (fk-tag, [sk_usuario], text(fill: rgb("#64748b"))[text]),
-      (fk-tag, [sk_conductor], text(fill: rgb("#64748b"))[text]),
-      ([], [fecha_solicitud], text(fill: rgb("#64748b"))[date]),
-      ([], [hora_solicitud], text(fill: rgb("#64748b"))[int]),
-      ([], [multiplicador_dinamico], text(fill: rgb("#64748b"))[decimal]),
-      ([], [tarifa_final], text(fill: rgb("#64748b"))[decimal]),
-      ([], [sobrecosto_surge_nio], text(fill: rgb("#64748b"))[decimal]),
-      ([], [tiempo_espera_minutos], text(fill: rgb("#64748b"))[decimal]),
-      ([], text(fill: rgb("#b91c1c"), weight: "bold")[es_cancelado], text(fill: rgb("#b91c1c"), weight: "bold")[boolean]),
+      (pk-tag, text(weight: "bold")[sk_trip], text(fill: rgb("#64748b"))[text]),
+      (fk-tag, [sk_zone_origin], text(fill: rgb("#64748b"))[text]),
+      (fk-tag, [sk_zone_destination], text(fill: rgb("#64748b"))[text]),
+      (fk-tag, [sk_weather], text(fill: rgb("#64748b"))[text]),
+      (fk-tag, [sk_user], text(fill: rgb("#64748b"))[text]),
+      (fk-tag, [sk_driver], text(fill: rgb("#64748b"))[text]),
+      ([], [request_date], text(fill: rgb("#64748b"))[date]),
+      ([], [request_hour], text(fill: rgb("#64748b"))[int]),
+      ([], [surge_multiplier], text(fill: rgb("#64748b"))[decimal]),
+      ([], [final_fare], text(fill: rgb("#64748b"))[decimal]),
+      ([], [surge_cost_nio], text(fill: rgb("#64748b"))[decimal]),
+      ([], [wait_time_minutes], text(fill: rgb("#64748b"))[decimal]),
+      ([], text(fill: rgb("#b91c1c"), weight: "bold")[is_cancelled], text(fill: rgb("#b91c1c"), weight: "bold")[boolean]),
     ))),
 
-    // --- FILA INFERIOR: dim_usuarios (0, 2), dim_campanias (1, 2) y dim_conductores (2, 2) ---
-    node((0, 2), db-table("dim_usuarios", "DIMENSION", rgb("#0369a1"), rgb("#0284c7"), (
-      (pk-tag, text(weight: "bold")[sk_usuario], text(fill: rgb("#64748b"))[text]),
-      ([], [id_usuario], text(fill: rgb("#64748b"))[int]),
-      ([], [metodo_pago_pref], text(fill: rgb("#64748b"))[text]),
-      ([], [prefiere_efectivo], text(fill: rgb("#64748b"))[boolean]),
-      ([], [calificacion_prom], text(fill: rgb("#64748b"))[decimal]),
-      ([], [fecha_registro], text(fill: rgb("#64748b"))[date]),
+    // --- FILA INFERIOR: dim_users (0, 2), dim_campaigns (1, 2) y dim_drivers (2, 2) ---
+    node((0, 2), db-table("dim_users", "DIMENSION", rgb("#0369a1"), rgb("#0284c7"), (
+      (pk-tag, text(weight: "bold")[sk_user], text(fill: rgb("#64748b"))[text]),
+      ([], [user_id], text(fill: rgb("#64748b"))[int]),
+      ([], [preferred_payment_method], text(fill: rgb("#64748b"))[text]),
+      ([], [prefers_cash], text(fill: rgb("#64748b"))[boolean]),
+      ([], [average_rating], text(fill: rgb("#64748b"))[decimal]),
+      ([], [rating_segment], text(fill: rgb("#64748b"))[text]),
     ))),
 
-    node((1, 2), db-table("dim_campanias", "OPTIMIZACIÓN", rgb("#14532d"), rgb("#16a34a"), width: 132pt, (
-      (pk-tag, text(weight: "bold")[sk_campania], text(fill: rgb("#64748b"))[text]),
-      ([], [id_campania], text(fill: rgb("#64748b"))[int]),
-      ([], [costo_presupuesto], text(fill: rgb("#64748b"))[decimal]),
-      ([], [incremento_horas], text(fill: rgb("#64748b"))[int]),
-      ([], [costo_hora_conexion], text(fill: rgb("#64748b"))[decimal]),
+    node((1, 2), db-table("dim_campaigns", "OPTIMIZACIÓN", rgb("#14532d"), rgb("#16a34a"), width: 132pt, (
+      (pk-tag, text(weight: "bold")[sk_campaign], text(fill: rgb("#64748b"))[text]),
+      ([], [campaign_id], text(fill: rgb("#64748b"))[int]),
+      ([], [budget_cost_nio], text(fill: rgb("#64748b"))[decimal]),
+      ([], [target_driver_hours], text(fill: rgb("#64748b"))[int]),
+      ([], [cost_per_hour_nio], text(fill: rgb("#64748b"))[decimal]),
+      ([], [target_zone_name], text(fill: rgb("#64748b"))[text]),
     ))),
 
-    node((2, 2), db-table("dim_conductores", "DIMENSION", rgb("#0369a1"), rgb("#0284c7"), (
-      (pk-tag, text(weight: "bold")[sk_conductor], text(fill: rgb("#64748b"))[text]),
-      ([], [id_conductor], text(fill: rgb("#64748b"))[int]),
-      ([], [tipo_servicio], text(fill: rgb("#64748b"))[text]),
-      ([], [modelo_vehiculo], text(fill: rgb("#64748b"))[text]),
-      ([], [tasa_aceptacion], text(fill: rgb("#64748b"))[decimal]),
-      ([], [es_activo], text(fill: rgb("#64748b"))[boolean]),
+    node((2, 2), db-table("dim_drivers", "DIMENSION", rgb("#0369a1"), rgb("#0284c7"), (
+      (pk-tag, text(weight: "bold")[sk_driver], text(fill: rgb("#64748b"))[text]),
+      ([], [driver_id], text(fill: rgb("#64748b"))[int]),
+      ([], [service_type], text(fill: rgb("#64748b"))[text]),
+      ([], [vehicle_model], text(fill: rgb("#64748b"))[text]),
+      ([], [acceptance_rate_pct], text(fill: rgb("#64748b"))[decimal]),
+      ([], [total_maintenance_services], text(fill: rgb("#64748b"))[int]),
+      ([], [is_active], text(fill: rgb("#64748b"))[boolean]),
     ))),
 
     // --- ENLACES CARDINALES (1 : N) AL HECHO CENTRAL ---
@@ -118,7 +121,7 @@
     edge((0, 2), (1, 1), "-|>", stroke: 0.7pt + rgb("#0284c7"), label: text(size: 5.5pt, weight: "bold", fill: rgb("#0369a1"))[1 : N], label-side: left),
     edge((2, 2), (1, 1), "-|>", stroke: 0.7pt + rgb("#0284c7"), label: text(size: 5.5pt, weight: "bold", fill: rgb("#0369a1"))[1 : N], label-side: right),
 
-    // --- ENLACE PRESCRIPTIVO dim_campanias -> dim_conductores ---
+    // --- ENLACE PRESCRIPTIVO dim_campaigns -> dim_drivers ---
     edge((1, 2), (2, 2), "-->", stroke: (dash: "dashed", paint: rgb("#16a34a"), thickness: 0.7pt), label: text(size: 5pt, weight: "bold", fill: rgb("#15803d"))[Incentivos], label-side: left),
   )
 ]

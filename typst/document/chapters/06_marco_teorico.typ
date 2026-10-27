@@ -39,11 +39,11 @@ Donde el multiplicador dinámico oscila habitualmente entre $1.00times$ y $2.80t
 
 La teoría de la justicia espacial y el acceso al transporte urbano postula que las tarifas y la disponibilidad de los servicios de movilidad no deben discriminar ni excluir a las poblaciones de menores recursos.
 
-En el municipio de Managua, la estructura urbana se caracteriza por una marcada heterogeneidad y fragmentación espacial. MoviGo divide la capital en 12 cuadrantes operativos agrupados en cuatro estratos socioeconómicos (@tbl-zones-catalog):
+En el municipio de Managua, la estructura urbana se caracteriza por una marcada heterogeneidad y fragmentación espacial. MoviGo estructura la capital en 24 zonas urbanas agrupadas en cuatro estratos socioeconómicos y subdivididas en 298 cuadrantes espaciales (@tbl-zones-catalog):
 - *Alto:* Villa Fontana, Las Colinas, Santo Domingo (bajada de bandera base de C\$ 70.0 a C\$ 80.0 NIO).
 - *Medio:* Los Robles, Altamira, Bolonia, Bello Horizonte, Linda Vista (bajada de bandera base de C\$ 48.0 a C\$ 55.0 NIO).
-- *Comercial:* Metrocentro / Eje Corporativo UCA (bajada de bandera base de C\$ 60.0 NIO).
-- *Popular:* Ciudad Jardín, Mercado Oriental, Mercado Roberto Huembes (bajada de bandera base de C\$ 35.0 a C\$ 40.0 NIO).
+- *Comercial:* Metrocentro / Eje Corporativo UCA, Centro Cívico, Carretera Norte (bajada de bandera base de C\$ 55.0 a C\$ 60.0 NIO).
+- *Popular:* Ciudad Jardín, Mercado Oriental, Mercado Roberto Huembes, Villa Libertad, Sabana Grande (bajada de bandera base de C\$ 35.0 a C\$ 45.0 NIO).
 
 #fig-zones-catalog <tbl-zones-catalog>
 
@@ -67,13 +67,14 @@ Dado que MoviGo expone sus datos a través de una API REST pública (proporciona
 
 El diseño analítico sigue rigurosamente los principios de modelado dimensional propuestos por Ralph Kimball @kimball2013, definiendo la atención y resolución del viaje como el proceso de negocio nodal a través de un *Esquema en Estrella* (_Star Schema_):
 
-+ *Tabla de Hechos Atómica (`fct_viajes`):* Posee el grano más fino posible: un registro por cada intento o solicitud de traslado registrado ($N = #total-trips-fmt$). Centraliza tanto métricas monetarias (tarifa base, multiplicador dinámico aplicado, recargo absoluto por surge y tarifa final) como métricas operativas (distancia recorrida, duración efectiva, tiempo de espera en minutos) e indicadores dicotómicos del resultado del servicio (`es_cancelado`, `es_cancelado_usuario`, `es_cancelado_conductor`, `es_completado`).
++ *Tabla de Hechos Atómica (`fct_viajes`):* Posee el grano más fino posible: un registro por cada intento o solicitud de traslado registrado ($N = #total-trips-fmt$). Centraliza tanto métricas monetarias (tarifa base, multiplicador dinámico aplicado, recargo absoluto por surge y tarifa final) como métricas operativas (distancia recorrida, duración efectiva, tiempo de espera en minutos) e indicadores dicotómicos del resultado del servicio (`is_cancelled`, `is_cancelled_by_user`, `is_cancelled_by_driver`, `is_completed`).
 + *Dimensiones Conformadas:* Proveen el contexto descriptivo y los filtros analíticos para el desglose multidimensional:
-  - `dim_zonas`: Caracteriza los #total-zones cuadrantes urbanos de Managua, su estrato socioeconómico, clasificación ordinal de ingreso, coordenadas geográficas y costo base de bajada de bandera. Opera como dimensión de doble rol (_role-playing dimension_), relacionándose simultáneamente con la zona de origen (`sk_zona_origen`) y la zona de destino (`sk_zona_destino`).
-  - `dim_clima`: Registra a nivel diario la serie temporal meteorológica, cuantificando la precipitación en milímetros, temperatura ambiente, condición de cielo, presencia de lluvia e índice de congestión vehicular.
-  - `dim_usuarios`: Consolida atributos de los pasajeros, su comportamiento histórico de calificación y su preferencia de pago (efectivo versus medios digitales).
-  - `dim_conductores`: Agrupa la información del parque vehicular (tipo de servicio: estándar, comfort o moto), modelo, año, estado activo y tasa de aceptación.
-  - `dim_campanias`: Almacena el portafolio de programas de incentivos y bonos para conductores, especificando el costo presupuestario y las horas de conexión proyectadas.
+  - `dim_zones`: Caracteriza las #total-zones zonas urbanas de Managua, su estrato socioeconómico, clasificación ordinal de ingreso, coordenadas geográficas y costo base de bajada de bandera. Opera como dimensión de doble rol (_role-playing dimension_), relacionándose simultáneamente con la zona de origen (`sk_zone_origin`) y la zona de destino (`sk_zone_destination`).
+  - `dim_quadrants`: Contiene los 298 cuadrantes espaciales discretizados, permitiendo análisis micro-territoriales, altimetría y clasificación de riesgo pluvial por cauces.
+  - `dim_weather`: Registra a nivel diario la serie temporal meteorológica, cuantificando la precipitación en milímetros, temperatura ambiente, condición de cielo, presencia de lluvia, estacionalidad climática de Managua e índice de congestión vehicular.
+  - `dim_users`: Consolida atributos de los pasajeros, su comportamiento histórico de calificación, segmento de reputación y preferencia de pago (efectivo versus medios digitales).
+  - `dim_drivers`: Agrupa la información del parque vehicular (tipo de servicio: estándar, comfort o moto), modelo, año, estado activo, tasa de aceptación e historial acumulado de mantenimiento mecánico.
+  - `dim_campaigns`: Almacena el portafolio de programas de incentivos y bonos para conductores, especificando el costo presupuestario, horas de conexión proyectadas y zona urbana objetivo.
 + *Llaves Subrogadas Sintéticas Determinísticas (MD5):* En concordancia con las mejores prácticas de la ingeniería analítica moderna, el enlace entre la tabla de hechos y las dimensiones no depende de las claves primarias autoincrementales del sistema origen, sino de llaves subrogadas hash (`sk_*`) generadas mediante la función criptográfica `md5(cast(id as text))`. Este mecanismo desacopla el almacén de posibles colisiones o mutaciones en los identificadores operativos, garantizando idempotencia, inmutabilidad y máxima eficiencia en las operaciones de cruce (_joins_).
 
 == Fundamentos Teóricos para el Análisis Cuantitativo

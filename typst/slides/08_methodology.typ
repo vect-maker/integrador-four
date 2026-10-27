@@ -55,7 +55,7 @@ La investigación se articula en *cuatro fases secuenciales* alineadas estrictam
   ],
   card(title: [El Viaje Individual], label: [D • Unidad de Análisis], accent: brand-red)[
     #text(size: 8.5pt)[
-      Solicitudes ($N = 77,036$) georreferenciadas en 12 zonas con métricas tarifarias dinámicas, condiciones de lluvia y estado de cancelación.
+      Solicitudes ($N = 77,487$) georreferenciadas en 24 zonas urbanas con métricas tarifarias dinámicas, condiciones de lluvia y estado de cancelación.
     ]
   ]
 )

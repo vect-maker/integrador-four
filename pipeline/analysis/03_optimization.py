@@ -46,16 +46,16 @@ def haversine_distance_km(lat1: float, lon1: float, lat2: float, lon2: float) ->
 
 
 def get_zones_catalog(db_path: Path) -> dict[int, dict]:
-    """Extracts the 12 zones with coordinates from DuckDB."""
+    """Extracts the 24 urban zones with coordinates from DuckDB."""
     con = duckdb.connect(str(db_path), read_only=True)
     try:
         rows = con.execute("""
-            SELECT id_zona, nombre_zona, estrato_socioeconomico,
-                   cast(latitud as double) AS latitud,
-                   cast(longitud as double) AS longitud,
-                   cast(radio_cobertura_km as double) AS radio_cobertura_km
-            FROM dim_zonas
-            ORDER BY id_zona;
+            SELECT zone_id, zone_name, socioeconomic_stratum,
+                   cast(latitude as double) AS latitud,
+                   cast(longitude as double) AS longitud,
+                   cast(coverage_radius_km as double) AS radio_cobertura_km
+            FROM dim_zones
+            ORDER BY zone_id;
         """).fetchall()
     finally:
         con.close()

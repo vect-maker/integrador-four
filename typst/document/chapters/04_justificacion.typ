@@ -20,7 +20,7 @@ Desde el punto de vista científico y metodológico, la investigación trasciend
 + *Aproximación Numérica del Punto de Equilibrio:* Aborda la calibración tarifaria mediante métodos de búsqueda de raíces no lineales (*Bisección y Newton-Raphson*), resolviendo numéricamente la función de exceso de demanda:
   $ f(m) = "Demanda"(m) - "Oferta"(m) = 0 $
   para identificar el umbral de multiplicador óptimo ($m^* = 1.35times$) y comparando la eficiencia algorítmica y orden de convergencia entre ambos métodos.
-+ *Optimización Espacial de Redes y Teoría de Grafos:* Modela la red vial urbana de los 12 cuadrantes de Managua como un grafo ponderado $G = (V, E)$, aplicando el *Algoritmo de Dijkstra* para evaluar el impacto de perturbaciones climáticas e inundaciones sobre los tiempos de viaje y desvíos obligados, identificando el estrangulamiento físico que detona cancelaciones de servicio.
++ *Optimización Espacial de Redes y Teoría de Grafos:* Modela la red vial urbana de las 24 zonas de Managua como un grafo ponderado $G = (V, E)$, aplicando el *Algoritmo de Dijkstra* para evaluar el impacto de perturbaciones climáticas e inundaciones sobre los tiempos de viaje y desvíos obligados, identificando el estrangulamiento físico que detona cancelaciones de servicio.
 
 == Relevancia Tecnológica y Arquitectura de Ingeniería de Datos (ELT con dbt)
 

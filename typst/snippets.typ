@@ -21,18 +21,18 @@ df.to_parquet(RAW_FOLDER / filename, index=False)
 CREATE SCHEMA IF NOT EXISTS raw;
 SET search_path TO raw, public;
 
-CREATE TABLE viajes (
-    id_viaje INT PRIMARY KEY,
-    id_usuario INT NOT NULL REFERENCES usuarios(id_usuario),
-    id_conductor INT REFERENCES conductores(id_conductor),
-    id_zona_origen INT NOT NULL REFERENCES zonas_urbanas(id_zona),
-    id_zona_destino INT NOT NULL REFERENCES zonas_urbanas(id_zona),
-    multiplicador_dinamico DECIMAL(4,2) NOT NULL CHECK (multiplicador_dinamico >= 1.00),
-    tarifa_final DECIMAL(8,2) NOT NULL CHECK (tarifa_final >= 0),
-    estado_viaje VARCHAR(25) NOT NULL 
-        CHECK (estado_viaje IN ('completado', 'cancelado_usuario', 'cancelado_conductor', 'no_asignado'))
+CREATE TABLE trips (
+    trip_id INT PRIMARY KEY,
+    user_id INT NOT NULL REFERENCES users(user_id),
+    driver_id INT REFERENCES drivers(driver_id),
+    origin_quadrant_id INT NOT NULL REFERENCES quadrants(quadrant_id),
+    destination_quadrant_id INT NOT NULL REFERENCES quadrants(quadrant_id),
+    requested_at TIMESTAMP NOT NULL,
+    status VARCHAR(25) NOT NULL 
+        CHECK (status IN ('completed', 'cancelled_by_user', 'cancelled_by_driver', 'unassigned')),
+    distance_km DECIMAL(6,2) NOT NULL CHECK (distance_km >= 0)
 );
-CREATE INDEX idx_viajes_solicitud ON viajes(fecha_hora_solicitud);
+CREATE INDEX idx_trips_requested_at ON trips(requested_at);
 ```
 
 // 3. Cargador Cloud: Conexión cifrada e inserción por lotes en Azure PostgreSQL
@@ -63,34 +63,37 @@ sources:
     database: "{{ env_var('RAW_DB_NAME', 'postgres') }}"
     schema: "{{ env_var('RAW_SCHEMA', 'raw') }}"
     tables:
-      - name: viajes
+      - name: trips
         columns:
-          - name: id_viaje
+          - name: trip_id
             tests: [unique, not_null]
-          - name: multiplicador_dinamico
+          - name: status
             tests: [not_null]
 ```
 
 // 5. Esquema en Estrella: Modelo atómico de hechos fct_viajes con llaves MD5
 #let snippet-fct-viajes = ```sql
 -- pipeline/dbt/models/marts/fct_viajes.sql: Modelo de hechos y llaves subrogadas MD5
-with viajes as (
-    select * from {{ ref('stg_viajes') }}
-)
+with trips as (select * from {{ ref('stg_trips') }}),
+quadrants as (select * from {{ ref('stg_quadrants') }}),
+payments as (select * from {{ ref('stg_trip_payments') }})
 select
     -- Llave primaria subrogada (MD5)
-    md5(cast(id_viaje as text)) as sk_viaje,
-    id_viaje,
+    md5(cast(t.trip_id as text)) as sk_trip,
+    t.trip_id,
     -- Llaves foráneas conformadas subrogadas (MD5)
-    md5(cast(id_zona_origen as text)) as sk_zona_origen,
-    md5(cast(id_zona_destino as text)) as sk_zona_destino,
-    case when id_conductor is not null then md5(cast(id_conductor as text)) else null end as sk_conductor,
-    md5(cast(id_usuario as text)) as sk_usuario,
-    md5(cast(fecha_solicitud as text)) as sk_clima,
+    md5(cast(qo.zone_id as text)) as sk_zone_origin,
+    md5(cast(qd.zone_id as text)) as sk_zone_destination,
+    case when t.driver_id is not null then md5(cast(t.driver_id as text)) else null end as sk_driver,
+    md5(cast(t.user_id as text)) as sk_user,
+    md5(cast(t.request_date as text)) as sk_weather,
     -- Métricas de tarificación dinámica y estado de cancelación
-    tarifa_base, multiplicador_dinamico, tiene_surge, tarifa_final, sobrecosto_surge_nio,
-    estado_viaje, es_cancelado, es_cancelado_usuario, tiempo_espera_minutos
-from viajes
+    p.base_fare, p.surge_multiplier, p.has_surge, p.final_fare, p.surge_cost_nio,
+    t.trip_status, t.is_cancelled, t.wait_time_minutes
+from trips t
+left join quadrants qo on t.origin_quadrant_id = qo.quadrant_id
+left join quadrants qd on t.destination_quadrant_id = qd.quadrant_id
+left join payments p on t.trip_id = p.trip_id
 ```
 
 // 6. Calidad Dimensional: Pruebas de integridad referencial y dominios en dbt
@@ -100,21 +103,21 @@ version: 2
 models:
   - name: fct_viajes
     columns:
-      - name: sk_viaje
+      - name: sk_trip
         tests: [unique, not_null]
-      - name: sk_zona_origen
+      - name: sk_zone_origin
         tests:
           - not_null
           - relationships:
-              to: ref('dim_zonas')
-              field: sk_zona
-      - name: sk_clima
+              to: ref('dim_zones')
+              field: sk_zone
+      - name: sk_weather
         tests:
           - not_null
           - relationships:
-              to: ref('dim_clima')
-              field: sk_clima
-      - name: es_cancelado
+              to: ref('dim_weather')
+              field: sk_weather
+      - name: is_cancelled
         tests:
           - not_null
 ```
