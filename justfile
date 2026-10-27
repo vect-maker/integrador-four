@@ -77,7 +77,7 @@ pipeline-load:
 
 # Ejecutar comandos de dbt mediante el contenedor oficial de dbt Labs con Podman
 dbt *args="debug":
-    podman run --rm -it \
+    podman run --rm -i \
         --env-file .env \
         -e DBT_PROFILES_DIR=. \
         -v ./pipeline/dbt:/usr/app/dbt:z \
@@ -105,8 +105,12 @@ run-numerical:
 run-optimization:
     @.venv/bin/python pipeline/analysis/03_optimization.py
 
+# Generar mapa geoespacial de densidad de orígenes de viajes (WGS84 y Basemap OSM)
+run-spatial:
+    @.venv/bin/python pipeline/analysis/04_spatial_density.py
+
 # Ejecutar la suite completa de modelado computacional (Econometría, Métodos Numéricos y Optimización)
-run-analysis: run-econometrics run-numerical run-optimization
+run-analysis: run-econometrics run-numerical run-optimization run-spatial
     @echo "🎉 Suite completa de análisis computacional ejecutada exitosamente."
 
 # Hidratar datasets agregados en typst/data a partir de DuckDB y análisis

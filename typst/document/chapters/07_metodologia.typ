@@ -8,6 +8,7 @@
 )
 #import "../../diagrams/star_schema.typ": fig-star-schema
 #import "../../tables/star_schema.typ": fig-star-schema-table
+#import "../../graphs/index.typ": fig-trip-origins-density
 #import "../../data_bindings.typ": total-trips-fmt, total-zones, total-campaigns
 #import "../../metadata.typ": repo-url
 
@@ -44,9 +45,13 @@ Para consolidar el repositorio analítico de operaciones 2024 a partir de las fu
 
 + *Marco de Calidad y Pruebas Automatizadas de Integridad:* Implementación de pruebas declarativas automatizadas en `sources.yml`, `_staging__models.yml` y `_marts__models.yml` ejecutadas mediante `dbt test`. El marco valida formalmente la unicidad (`unique`) y completitud (`not_null`) de todas las claves primarias y foráneas subrogadas, la integridad referencial cruzada (`relationships`) entre `fct_viajes` y las dimensiones correspondientes, y la no nulidad en la variable dependiente booleana de cancelación (`es_cancelado: not_null`), tal como se detalla en el @lst-dbt-marts.
 
++ *Análisis de Densidad Espacial y Distribución Geográfica:* La captura granular de coordenadas GPS en origen y destino permite proyectar el universo transaccional sobre la malla urbana de Managua mediante un mapa base arterial georreferenciado de OpenStreetMap (@fig-trip-origins-density). Esta visualización revela la concentración espacial de solicitudes en polos comerciales y corporativos (Metrocentro, Villa Fontana, Los Robles) frente a la dispersión de puntos de cancelación en zonas populares y periféricas.
+
 #fig-star-schema <fig-star-schema>
 
 #fig-star-schema-table <tbl-star-schema>
+
+#fig-trip-origins-density <fig-trip-origins-density>
 
 #fig-raw-ddl <lst-ddl>
 

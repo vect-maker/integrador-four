@@ -24,3 +24,8 @@
   image("urban_network_dijkstra.png", width: 95%),
   caption: [Ruteo Óptimo mediante Algoritmo de Dijkstra: Comparativa de Trayectorias bajo Flujo Seco vs. Tormenta],
 )
+
+#let fig-trip-origins-density = figure(
+  image("trip_origins_density.png", width: 90%),
+  caption: [Distribución Espacial de Puntos de Origen de Solicitudes (WGS84) y Concentración de Cancelaciones sobre la Trama Vial de Managua],
+)

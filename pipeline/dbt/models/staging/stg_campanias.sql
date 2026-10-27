@@ -3,7 +3,7 @@ with source as (
 )
 
 select
-    campaign_id as id_campana,
+    campaign_id as id_campania,
     target_zone_id as id_zona_objetivo,
     bonus_name as nombre_bono,
     budget_cost_nio as costo_presupuesto_nio,

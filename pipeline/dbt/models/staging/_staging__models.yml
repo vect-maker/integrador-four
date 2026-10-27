@@ -15,6 +15,15 @@ models:
           - accepted_values:
               values: ['alto', 'medio', 'popular', 'comercial']
 
+  - name: stg_cuadrantes
+    description: "Capa de staging para los 92 cuadrantes sub-zona de Managua"
+    columns:
+      - name: id_cuadrante
+        description: "Identificador único del cuadrante"
+        tests:
+          - unique
+          - not_null
+
   - name: stg_usuarios
     description: "Capa de staging para usuarios pasajeros y sus preferencias de pago"
     columns:
@@ -52,7 +61,7 @@ models:
           - not_null
 
   - name: stg_viajes
-    description: "Capa de staging enriquecida para transacciones de viajes, cancelaciones y tarifas"
+    description: "Capa de staging para transacciones de viajes y cálculo de tarifa dinámica"
     columns:
       - name: id_viaje
         description: "Identificador único del viaje"
@@ -60,15 +69,6 @@ models:
           - unique
           - not_null
       - name: es_cancelado
-        description: "Bandera booleana que indica si el viaje fue cancelado (true) o no (false)"
+        description: "Indicador booleano de cancelación"
         tests:
-          - not_null
-
-  - name: stg_telemetria
-    description: "Capa de staging para pings de posicionamiento GPS y velocidad vehicular"
-    columns:
-      - name: id_telemetria
-        description: "Identificador único del ping telemétrico"
-        tests:
-          - unique
           - not_null

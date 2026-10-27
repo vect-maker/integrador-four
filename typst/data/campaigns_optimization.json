@@ -1,14 +1,14 @@
 [
-	{"id_campania":1,"nombre_bono":"Bono Verano Sandino","tipo_incentivo":"meta_viajes","costo_presupuesto_nio":15000.0,"incremento_horas_conexion":350.0,"costo_por_hora_nio":42.86,"estado":"finalizada"},
-	{"id_campania":2,"nombre_bono":"Incentivo Lluvia Masaya","tipo_incentivo":"hora_pico_lluvia","costo_presupuesto_nio":25000.0,"incremento_horas_conexion":600.0,"costo_por_hora_nio":41.67,"estado":"finalizada"},
-	{"id_campania":3,"nombre_bono":"Fiebre de Quincena","tipo_incentivo":"zona_alta_demanda","costo_presupuesto_nio":30000.0,"incremento_horas_conexion":800.0,"costo_por_hora_nio":37.5,"estado":"finalizada"},
-	{"id_campania":4,"nombre_bono":"Super Meta Pascua","tipo_incentivo":"meta_viajes","costo_presupuesto_nio":40000.0,"incremento_horas_conexion":1000.0,"costo_por_hora_nio":40.0,"estado":"finalizada"},
-	{"id_campania":5,"nombre_bono":"Bono Mayo Ya","tipo_incentivo":"zona_alta_demanda","costo_presupuesto_nio":22000.0,"incremento_horas_conexion":500.0,"costo_por_hora_nio":44.0,"estado":"finalizada"},
-	{"id_campania":6,"nombre_bono":"Invierno Seguro MoviGo","tipo_incentivo":"hora_pico_lluvia","costo_presupuesto_nio":35000.0,"incremento_horas_conexion":900.0,"costo_por_hora_nio":38.89,"estado":"finalizada"},
-	{"id_campania":7,"nombre_bono":"Revolución 19 de Julio","tipo_incentivo":"meta_viajes","costo_presupuesto_nio":45000.0,"incremento_horas_conexion":1150.0,"costo_por_hora_nio":39.13,"estado":"finalizada"},
-	{"id_campania":8,"nombre_bono":"Agosto de Fiestas Patronales","tipo_incentivo":"zona_alta_demanda","costo_presupuesto_nio":50000.0,"incremento_horas_conexion":1200.0,"costo_por_hora_nio":41.67,"estado":"finalizada"},
-	{"id_campania":9,"nombre_bono":"Patria para Todos","tipo_incentivo":"meta_viajes","costo_presupuesto_nio":28000.0,"incremento_horas_conexion":700.0,"costo_por_hora_nio":40.0,"estado":"activa"},
-	{"id_campania":10,"nombre_bono":"Octubre Lluvioso","tipo_incentivo":"hora_pico_lluvia","costo_presupuesto_nio":32000.0,"incremento_horas_conexion":850.0,"costo_por_hora_nio":37.65,"estado":"activa"},
-	{"id_campania":11,"nombre_bono":"Día de Difuntos y Brisa","tipo_incentivo":"zona_alta_demanda","costo_presupuesto_nio":20000.0,"incremento_horas_conexion":450.0,"costo_por_hora_nio":44.44,"estado":"activa"},
-	{"id_campania":12,"nombre_bono":"Aguinaldo MoviGo 2024","tipo_incentivo":"meta_viajes","costo_presupuesto_nio":50000.0,"incremento_horas_conexion":1200.0,"costo_por_hora_nio":41.67,"estado":"activa"}
+	{"id_campania":1,"nombre_bono":"Bono Regreso a Clases y Verano Metrocentro","tipo_incentivo":"meta_viajes","costo_presupuesto_nio":15000.0,"incremento_horas_conexion":350.0,"costo_por_hora_nio":42.86,"estado":"finalizada"},
+	{"id_campania":2,"nombre_bono":"Nocturno San Valentín Los Robles","tipo_incentivo":"zona_alta_demanda","costo_presupuesto_nio":25000.0,"incremento_horas_conexion":600.0,"costo_por_hora_nio":41.67,"estado":"finalizada"},
+	{"id_campania":3,"nombre_bono":"Operativo Semana Santa Linda Vista","tipo_incentivo":"meta_viajes","costo_presupuesto_nio":30000.0,"incremento_horas_conexion":800.0,"costo_por_hora_nio":37.5,"estado":"finalizada"},
+	{"id_campania":4,"nombre_bono":"Fiebre Quincena Comercial Oriental","tipo_incentivo":"zona_alta_demanda","costo_presupuesto_nio":40000.0,"incremento_horas_conexion":1000.0,"costo_por_hora_nio":40.0,"estado":"finalizada"},
+	{"id_campania":5,"nombre_bono":"Primeras Lluvias Mayo Ya Bello Horizonte","tipo_incentivo":"hora_pico_lluvia","costo_presupuesto_nio":22000.0,"incremento_horas_conexion":500.0,"costo_por_hora_nio":44.0,"estado":"finalizada"},
+	{"id_campania":6,"nombre_bono":"Invierno Seguro Cauce Roberto Huembes","tipo_incentivo":"hora_pico_lluvia","costo_presupuesto_nio":35000.0,"incremento_horas_conexion":900.0,"costo_por_hora_nio":38.89,"estado":"finalizada"},
+	{"id_campania":7,"nombre_bono":"Meta Jornada 19 de Julio Bolonia","tipo_incentivo":"meta_viajes","costo_presupuesto_nio":45000.0,"incremento_horas_conexion":1150.0,"costo_por_hora_nio":39.13,"estado":"finalizada"},
+	{"id_campania":8,"nombre_bono":"Agosto de Fiestas Patronales Santo Domingo","tipo_incentivo":"zona_alta_demanda","costo_presupuesto_nio":50000.0,"incremento_horas_conexion":1200.0,"costo_por_hora_nio":41.67,"estado":"finalizada"},
+	{"id_campania":9,"nombre_bono":"Aguaceros Fiestas Patrias Las Colinas","tipo_incentivo":"hora_pico_lluvia","costo_presupuesto_nio":28000.0,"incremento_horas_conexion":700.0,"costo_por_hora_nio":40.0,"estado":"finalizada"},
+	{"id_campania":10,"nombre_bono":"Cordonazo de San Francisco Altamira","tipo_incentivo":"hora_pico_lluvia","costo_presupuesto_nio":32000.0,"incremento_horas_conexion":850.0,"costo_por_hora_nio":37.65,"estado":"finalizada"},
+	{"id_campania":11,"nombre_bono":"Cierre Corporativo y Brisa Villa Fontana","tipo_incentivo":"zona_alta_demanda","costo_presupuesto_nio":20000.0,"incremento_horas_conexion":450.0,"costo_por_hora_nio":44.44,"estado":"finalizada"},
+	{"id_campania":12,"nombre_bono":"La Gritería y Aguinaldo Navideño 2024","tipo_incentivo":"meta_viajes","costo_presupuesto_nio":50000.0,"incremento_horas_conexion":1200.0,"costo_por_hora_nio":41.67,"estado":"activa"}
 ]

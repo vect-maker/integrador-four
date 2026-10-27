@@ -119,6 +119,8 @@ def prepare_dataframe(table_name: str, df: pd.DataFrame) -> pd.DataFrame:
             df["driver_id"] = df["driver_id"].astype("Int64")
     elif table_name == "driver_telemetry":
         _to_datetime_column(df, "recorded_at")
+        if "telemetry_id" in df.columns:
+            df = df.drop_duplicates(subset=["telemetry_id"], keep="first")
         if "trip_id" in df.columns:
             df["trip_id"] = df["trip_id"].astype("Int64")
     elif table_name == "vehicle_maintenance":
@@ -131,6 +133,7 @@ def load_parquet_data(
     target_db: str = TARGET_DB,
     data_dir: Path | None = None,
     schema: str = TARGET_SCHEMA,
+    skip_if_populated: bool = True,
 ) -> None:
     """Load Parquet files into the target database in batches respecting FK constraints."""
     data_path = data_dir if data_dir is not None else RAW_DATA_DIR
@@ -162,6 +165,20 @@ def load_parquet_data(
             print(f"Warning: File '{file_path}' does not exist, skipping.")
             continue
 
+        if skip_if_populated:
+            try:
+                with engine.connect() as conn:
+                    current_count = conn.execute(
+                        text(f'SELECT count(*) FROM "{schema}"."{table_name}";')
+                    ).scalar()
+                    if current_count and current_count > 0:
+                        print(
+                            f"Table '{schema}.{table_name}' already populated with {current_count:,} rows. Skipping."
+                        )
+                        continue
+            except Exception:
+                pass
+
         print(f"Loading '{file_name}' into table '{schema}.{table_name}'...")
         raw_df = pd.read_parquet(file_path)
         df = prepare_dataframe(table_name, raw_df)
@@ -186,17 +203,24 @@ def load_parquet_data(
 
 
 def main() -> None:
+    import sys
+
     print(
         f"Iniciando pipeline de carga en BD '{TARGET_DB}' (esquema '{TARGET_SCHEMA}')..."
     )
-    # Reinicia completamente el esquema de destino
-    reset_schema(TARGET_DB, TARGET_SCHEMA)
-    # Ejecuta el DDL de definición del esquema en TARGET_SCHEMA
-    load_schema(TARGET_DB, TARGET_SCHEMA)
+    force_reset = "--reset" in sys.argv
+    if force_reset:
+        print("Opción --reset detectada: Reiniciando esquema por completo...")
+        reset_schema(TARGET_DB, TARGET_SCHEMA)
+        load_schema(TARGET_DB, TARGET_SCHEMA)
+    else:
+        # Asegurar que las tablas existan sin destruirlas si ya existen
+        load_schema(TARGET_DB, TARGET_SCHEMA)
+
     # Inserta los datos desde los archivos Parquet en orden de dependencias FK
-    load_parquet_data(TARGET_DB, schema=TARGET_SCHEMA)
+    load_parquet_data(TARGET_DB, schema=TARGET_SCHEMA, skip_if_populated=not force_reset)
     print(
-        f"🎉 Esquema '{TARGET_SCHEMA}' en BD '{TARGET_DB}' reiniciado, migrado y cargado con éxito."
+        f"🎉 Esquema '{TARGET_SCHEMA}' en BD '{TARGET_DB}' verificado y cargado con éxito."
     )
 
 

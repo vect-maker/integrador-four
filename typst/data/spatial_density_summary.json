@@ -1,0 +1,116 @@
+{
+  "total_viajes_analizados": 64610,
+  "total_completados": 51275,
+  "total_cancelados": 13335,
+  "tasa_cancelacion_global_pct": 20.64,
+  "distribucion_zonas": [
+    {
+      "id_zona": 1,
+      "nombre_zona": "Villa Fontana",
+      "estrato": "alto",
+      "total_solicitudes": 7217,
+      "completados": 6226,
+      "cancelados": 991,
+      "tasa_cancelacion_pct": 13.73
+    },
+    {
+      "id_zona": 9,
+      "nombre_zona": "Metrocentro / Eje Corporativo UCA",
+      "estrato": "comercial",
+      "total_solicitudes": 6637,
+      "completados": 5446,
+      "cancelados": 1191,
+      "tasa_cancelacion_pct": 17.94
+    },
+    {
+      "id_zona": 10,
+      "nombre_zona": "Ciudad Jardín",
+      "estrato": "popular",
+      "total_solicitudes": 6095,
+      "completados": 4750,
+      "cancelados": 1345,
+      "tasa_cancelacion_pct": 22.07
+    },
+    {
+      "id_zona": 11,
+      "nombre_zona": "Mercado Oriental",
+      "estrato": "popular",
+      "total_solicitudes": 5950,
+      "completados": 4602,
+      "cancelados": 1348,
+      "tasa_cancelacion_pct": 22.66
+    },
+    {
+      "id_zona": 4,
+      "nombre_zona": "Los Robles",
+      "estrato": "medio",
+      "total_solicitudes": 5561,
+      "completados": 4796,
+      "cancelados": 765,
+      "tasa_cancelacion_pct": 13.76
+    },
+    {
+      "id_zona": 7,
+      "nombre_zona": "Bello Horizonte",
+      "estrato": "medio",
+      "total_solicitudes": 5455,
+      "completados": 4067,
+      "cancelados": 1388,
+      "tasa_cancelacion_pct": 25.44
+    },
+    {
+      "id_zona": 12,
+      "nombre_zona": "Mercado Roberto Huembes",
+      "estrato": "popular",
+      "total_solicitudes": 5374,
+      "completados": 3954,
+      "cancelados": 1420,
+      "tasa_cancelacion_pct": 26.42
+    },
+    {
+      "id_zona": 5,
+      "nombre_zona": "Altamira",
+      "estrato": "medio",
+      "total_solicitudes": 5193,
+      "completados": 4456,
+      "cancelados": 737,
+      "tasa_cancelacion_pct": 14.19
+    },
+    {
+      "id_zona": 2,
+      "nombre_zona": "Las Colinas",
+      "estrato": "alto",
+      "total_solicitudes": 4509,
+      "completados": 3796,
+      "cancelados": 713,
+      "tasa_cancelacion_pct": 15.81
+    },
+    {
+      "id_zona": 8,
+      "nombre_zona": "Linda Vista",
+      "estrato": "medio",
+      "total_solicitudes": 4452,
+      "completados": 2946,
+      "cancelados": 1506,
+      "tasa_cancelacion_pct": 33.83
+    },
+    {
+      "id_zona": 6,
+      "nombre_zona": "Bolonia",
+      "estrato": "medio",
+      "total_solicitudes": 4245,
+      "completados": 3432,
+      "cancelados": 813,
+      "tasa_cancelacion_pct": 19.15
+    },
+    {
+      "id_zona": 3,
+      "nombre_zona": "Santo Domingo",
+      "estrato": "alto",
+      "total_solicitudes": 3922,
+      "completados": 2804,
+      "cancelados": 1118,
+      "tasa_cancelacion_pct": 28.51
+    }
+  ]
+}
