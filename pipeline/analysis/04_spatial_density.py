@@ -46,16 +46,16 @@ def generate_density_plot(
             SELECT cast(origin_longitude as double), cast(origin_latitude as double)
             FROM fct_viajes
             WHERE is_completed = true
-              AND origin_latitude BETWEEN 12.080 AND 12.180
-              AND origin_longitude BETWEEN -86.330 AND -86.190;
+              AND origin_latitude BETWEEN 12.000 AND 12.200
+              AND origin_longitude BETWEEN -86.360 AND -86.130;
         """).fetchall()
 
         cancelled_coords = con.execute("""
             SELECT cast(origin_longitude as double), cast(origin_latitude as double)
             FROM fct_viajes
             WHERE is_cancelled = true
-              AND origin_latitude BETWEEN 12.080 AND 12.180
-              AND origin_longitude BETWEEN -86.330 AND -86.190;
+              AND origin_latitude BETWEEN 12.000 AND 12.200
+              AND origin_longitude BETWEEN -86.360 AND -86.130;
         """).fetchall()
 
         # 2. Fetch urban zones catalog
@@ -268,9 +268,17 @@ def main() -> None:
         print(f"Error: DuckDB snapshot '{DUCKDB_PATH}' no existe. Ejecute 'just duckdb-snapshot'.")
         return
 
-    # Load Basemap and bounds if present
+    # Load Basemap and bounds (auto-generating if missing)
     basemap_img = None
     bounds = None
+    if not (BASEMAP_PATH.exists() and BOUNDS_PATH.exists()):
+        try:
+            from pipeline.analysis.cache_basemap import cache_basemap
+            print("Basemap no encontrado. Descargando y costurando teselas de OpenStreetMap...")
+            cache_basemap()
+        except Exception as exc:
+            print(f"Aviso: No se pudo auto-generar el basemap ({exc}).")
+
     if BASEMAP_PATH.exists() and BOUNDS_PATH.exists():
         basemap_img = Image.open(BASEMAP_PATH)
         with open(BOUNDS_PATH, "r", encoding="utf-8") as f:

@@ -107,6 +107,11 @@ if [ ! -f "${PYTHON_BIN}" ]; then
     exit 1
 fi
 
+if [ ! -f "${ROOT_DIR}/pipeline/data/managua_basemap.png" ] || [ ! -f "${ROOT_DIR}/pipeline/data/managua_basemap_bounds.json" ]; then
+    echo "   ▶ Precaching OpenStreetMap basemap tiles..."
+    "${PYTHON_BIN}" "${SCRIPT_DIR}/analysis/cache_basemap.py" > /dev/null
+fi
+
 echo "   ▶ Running 01_econometrics.py (OLS Multiple Regression & ANOVA)..."
 "${PYTHON_BIN}" "${SCRIPT_DIR}/analysis/01_econometrics.py" > /dev/null
 

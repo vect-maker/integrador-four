@@ -17,7 +17,7 @@
 
 #let fig-urban-network-topology = figure(
   image("urban_network_topology.png", width: 85%),
-  caption: [Topología de la Red Vial Urbana de Managua: 12 Cuadrantes y Corredores Viales Principales],
+  caption: [Topología de la Red Vial Urbana de Managua: 24 Zonas Urbanas y Corredores Viales Principales],
 )
 
 #let fig-urban-network-dijkstra = figure(

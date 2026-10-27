@@ -1,8 +1,8 @@
 {
-  "total_viajes_analizados": 68756,
-  "total_completados": 45890,
-  "total_cancelados": 22866,
-  "tasa_cancelacion_global_pct": 33.26,
+  "total_viajes_analizados": 77487,
+  "total_completados": 49049,
+  "total_cancelados": 28438,
+  "tasa_cancelacion_global_pct": 36.7,
   "distribucion_zonas": [
     {
       "id_zona": 1,

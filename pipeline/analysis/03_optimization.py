@@ -3,7 +3,7 @@
 MoviGo Operations Optimization: Graph Theory & Dijkstra Shortest Path
 ---------------------------------------------------------------------
 Models the urban road network of Managua as a weighted graph G = (V, E)
-connecting the 12 platform quadrants across primary arterial avenues.
+connecting the 24 urban zones across primary arterial avenues.
 
 Evaluates minimum travel time paths under:
   1. Baseline Scenario: Dry, free-flow arterial conditions.
@@ -76,9 +76,10 @@ def get_zones_catalog(db_path: Path) -> dict[int, dict]:
 # -----------------------------------------------------------------------------
 # Graph Construction & Impedance Modeling
 # -----------------------------------------------------------------------------
-# Primary arterial connections of Managua (22 bidirectional road corridors)
+# Primary arterial connections of Managua (44 bidirectional road corridors connecting all 24 zones)
 # Format: (u, v, corridor_name, is_flood_prone)
 ROAD_EDGES = [
+    # Corredores Principales Centrales y Radiales (Z1 - Z12)
     (8, 6, "Pista Juan Pablo II (Oeste)", True),
     (6, 9, "Pista Juan Pablo II (Tiscapa-Metrocentro)", True),
     (9, 5, "Pista Juan Pablo II (Central)", True),
@@ -101,6 +102,31 @@ ROAD_EDGES = [
     (5, 10, "Pista Buenos Aires", False),
     (10, 12, "Pista El Dorado", False),
     (2, 12, "Pista Radial Sur-Huembes", False),
+    # Conexiones Arteriales Distrito II y III (Occidente y Suroccidente)
+    (8, 13, "Paseo Las Brisas / Monseñor Lezcano", True),
+    (13, 6, "Calle 27 de Mayo / Estatua Montoya", False),
+    (13, 14, "Pista Dupla Norte (Acceso Malecón)", False),
+    (14, 6, "Avenida Bolívar / Antiguo Centro", False),
+    (14, 11, "Dupla Norte / Enlace Oriental", True),
+    (6, 15, "Pista Benjamín Zeledón / Altagracia", False),
+    (15, 16, "Pista Suburbana / Eje San Judas", False),
+    (16, 17, "Carretera Sur / Cruce Nejapa", False),
+    (17, 8, "Pista Enlace Sur-Occidente (Nejapa-Linda Vista)", False),
+    (16, 1, "Pista Suburbana (Tramo San Judas-Villa Fontana)", False),
+    # Conexiones Arteriales Distrito V (Extremo Sur)
+    (3, 18, "Carretera a Masaya (Km 9 - 14 / Esquipulas)", False),
+    (2, 18, "Camino San Isidro - Esquipulas", False),
+    # Conexiones Arteriales Distrito VI y VII (Oriente y Suroriente)
+    (7, 19, "Pista Larreynaga / Multicentro", False),
+    (19, 20, "Pista de la Solidaridad Este (Multicentro-Mayoreo)", True),
+    (20, 21, "Carretera Panamericana Norte (Km 9 - 11 Aeropuerto)", False),
+    (7, 21, "Carretera Norte (Tramo Portezuelo-Aeropuerto)", False),
+    (19, 22, "Pista Radial Mayoreo / Primero de Mayo", False),
+    (12, 22, "Pista de la Solidaridad / Paso a Desnivel Rubenia", False),
+    (22, 23, "Pista Buenos Aires Este (Primero de Mayo-Villa Libertad)", False),
+    (20, 23, "Avenida Los Laureles (Mayoreo-Villa Libertad)", False),
+    (23, 24, "Pista Sabana Grande / Eje Ciudad Belén", False),
+    (21, 24, "Enlace Periférico Aeropuerto - Sabana Grande", False),
 ]
 
 
@@ -148,7 +174,7 @@ def compute_scenario_weights(G: nx.Graph):
 
         # Base speeds (dry)
         # Commercial market zones are naturally slower (22 km/h) vs standard arterial (32 km/h)
-        is_market = (u in [11, 12]) or (v in [11, 12])
+        is_market = (u in [11, 12, 20]) or (v in [11, 12, 20])
         v_base = 22.0 if is_market else 32.0
 
         time_dry = round((dist / v_base) * 60.0, 2)
@@ -288,7 +314,7 @@ def generate_topology_plot(
     bounds: dict[str, float] | None = None,
 ):
     """
-    Renders standalone PNG: Spatial network topology of the 12 Managua quadrants
+    Renders standalone PNG: Spatial network topology of the 24 Managua urban zones
     with arterial road connections, node strata colors, and flood-prone corridors flagged.
     Overlays onto the pre-cached urban street basemap when available.
     """
@@ -298,7 +324,7 @@ def generate_topology_plot(
         if "seaborn-v0_8-whitegrid" in plt.style.available
         else "default"
     )
-    fig, ax = plt.subplots(figsize=(8.4, 6.2), dpi=300)
+    fig, ax = plt.subplots(figsize=(10.5, 8.2), dpi=300)
 
     # Render urban street basemap if cached
     if basemap_img is not None and bounds is not None:
@@ -310,8 +336,11 @@ def generate_topology_plot(
             zorder=0,
             aspect="equal",
         )
-        ax.set_xlim(-86.315, -86.210)
-        ax.set_ylim(12.090, 12.165)
+        ax.set_xlim(bounds["west"], bounds["east"])
+        ax.set_ylim(bounds["south"], bounds["north"])
+    else:
+        ax.set_xlim(-86.345, -86.140)
+        ax.set_ylim(12.045, 12.180)
 
     pos = nx.get_node_attributes(G, "pos")
 
@@ -397,8 +426,8 @@ def generate_topology_plot(
         )
 
     ax.set_title(
-        "Topología Espacial de la Red Vial Urbana de Managua (12 Cuadrantes)",
-        fontsize=11,
+        "Topología Espacial de la Red Vial Urbana de Managua (24 Zonas Urbanas)",
+        fontsize=12,
         fontweight="bold",
         pad=10,
     )
@@ -437,7 +466,7 @@ def generate_dijkstra_plot(
         if "seaborn-v0_8-whitegrid" in plt.style.available
         else "default"
     )
-    fig, ax = plt.subplots(figsize=(8.4, 6.2), dpi=300)
+    fig, ax = plt.subplots(figsize=(10.5, 8.2), dpi=300)
 
     # Render urban street basemap if cached
     if basemap_img is not None and bounds is not None:
@@ -449,8 +478,11 @@ def generate_dijkstra_plot(
             zorder=0,
             aspect="equal",
         )
-        ax.set_xlim(-86.315, -86.210)
-        ax.set_ylim(12.090, 12.165)
+        ax.set_xlim(bounds["west"], bounds["east"])
+        ax.set_ylim(bounds["south"], bounds["north"])
+    else:
+        ax.set_xlim(-86.345, -86.140)
+        ax.set_ylim(12.045, 12.180)
 
     pos = nx.get_node_attributes(G, "pos")
 

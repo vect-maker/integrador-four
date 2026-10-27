@@ -49,4 +49,5 @@ pipeline/dbt/.user.yml
 *.duckdb.tmp
 pipeline/data/*.duckdb
 data/*.duckdb
+pipeline/data/.osm_tile_cache/
 

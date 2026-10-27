@@ -105,6 +105,10 @@ run-numerical:
 run-optimization:
     @.venv/bin/python pipeline/analysis/03_optimization.py
 
+# Pre-cachear y coser teselas de mapa base de Managua desde OpenStreetMap (gratuito)
+cache-basemap *args="":
+    @.venv/bin/python pipeline/analysis/cache_basemap.py {{ args }}
+
 # Generar mapa geoespacial de densidad de orígenes de viajes (WGS84 y Basemap OSM)
 run-spatial:
     @.venv/bin/python pipeline/analysis/04_spatial_density.py
