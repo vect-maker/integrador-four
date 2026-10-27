@@ -1,121 +1,148 @@
 version: 2
 
 models:
-  - name: dim_zonas
-    description: "Dimensión conformada de 24 zonas urbanas, distritos y estratos socioeconómicos de Managua"
+  - name: dim_zones
+    description: "Conformed dimension of 24 urban zones, districts and socioeconomic strata of Managua"
     columns:
-      - name: sk_zona
-        description: "Llave primaria subrogada (MD5)"
+      - name: sk_zone
+        description: "Surrogate primary key (MD5)"
         tests:
           - unique
           - not_null
-      - name: id_zona
-        description: "Clave operativa natural"
+      - name: zone_id
+        description: "Natural operational zone identifier"
         tests:
           - unique
           - not_null
-      - name: distrito
-        description: "Distrito administrativo del municipio de Managua"
+      - name: district
+        description: "Administrative district of Managua"
 
-  - name: dim_cuadrantes
-    description: "Dimensión conformada de 298 cuadrantes urbanos sub-zona de Managua"
+  - name: dim_quadrants
+    description: "Conformed dimension of 298 sub-zone urban quadrants denormalized with zone data"
     columns:
-      - name: sk_cuadrante
-        description: "Llave primaria subrogada (MD5)"
+      - name: sk_quadrant
+        description: "Surrogate primary key (MD5)"
         tests:
           - unique
           - not_null
-      - name: id_cuadrante
-        description: "Clave operativa natural"
+      - name: quadrant_id
+        description: "Natural operational quadrant identifier"
         tests:
           - unique
           - not_null
-      - name: distrito
-        description: "Distrito administrativo del cuadrante"
+      - name: sk_zone
+        description: "Foreign key to dim_zones"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_zones')
+              field: sk_zone
 
-  - name: dim_clima
-    description: "Dimensión conformada de series temporales de clima, escorrentía en cauces y congestión vial"
+  - name: dim_weather
+    description: "Conformed daily time series dimension of microclimate, channel runoff, and congestion"
     columns:
-      - name: sk_clima
-        description: "Llave primaria subrogada (MD5)"
+      - name: sk_weather
+        description: "Surrogate primary key (MD5)"
         tests:
           - unique
           - not_null
-      - name: fecha
-        description: "Fecha calendario natural"
+      - name: date
+        description: "Calendar date"
+        tests:
+          - unique
+          - not_null
+      - name: season
+        description: "Climatic season in Managua: rainy vs dry"
+        tests:
+          - accepted_values:
+              values: ['rainy', 'dry']
+
+  - name: dim_users
+    description: "Conformed dimension of passengers, tenure, and payment preferences"
+    columns:
+      - name: sk_user
+        description: "Surrogate primary key (MD5)"
+        tests:
+          - unique
+          - not_null
+      - name: user_id
+        description: "Natural operational user identifier"
         tests:
           - unique
           - not_null
 
-  - name: dim_usuarios
-    description: "Dimensión conformada de pasajeros y métodos de pago preferidos"
+  - name: dim_drivers
+    description: "Conformed dimension of active driver fleet, vehicles, and maintenance history"
     columns:
-      - name: sk_usuario
-        description: "Llave primaria subrogada (MD5)"
+      - name: sk_driver
+        description: "Surrogate primary key (MD5)"
+        tests:
+          - unique
+          - not_null
+      - name: driver_id
+        description: "Natural operational driver identifier"
         tests:
           - unique
           - not_null
 
-  - name: dim_conductores
-    description: "Dimensión conformada de la flota de socios conductores y vehículos"
+  - name: dim_campaigns
+    description: "Dimension of incentive programs enriched with target zone and district"
     columns:
-      - name: sk_conductor
-        description: "Llave primaria subrogada (MD5)"
+      - name: sk_campaign
+        description: "Surrogate primary key (MD5)"
         tests:
           - unique
           - not_null
-
-  - name: dim_campanias
-    description: "Dimensión de campañas de incentivos presupuestarios para optimización de oferta"
-    columns:
-      - name: sk_campania
-        description: "Llave primaria subrogada (MD5)"
+      - name: campaign_id
+        description: "Natural operational campaign identifier"
         tests:
           - unique
           - not_null
-      - name: id_campania
-        description: "Clave operativa natural"
+      - name: sk_target_zone
+        description: "Foreign key to dim_zones"
         tests:
-          - unique
           - not_null
+          - relationships:
+              to: ref('dim_zones')
+              field: sk_zone
 
   - name: fct_viajes
-    description: "Tabla de hechos atómica del viaje para análisis de tarifa dinámica y cancelaciones"
+    description: "Atomic trip fact table for dynamic pricing and cancellation analysis"
     columns:
       - name: sk_viaje
-        description: "Llave primaria subrogada del viaje (MD5)"
+        description: "Surrogate primary key (MD5)"
         tests:
           - unique
           - not_null
-      - name: sk_zona_origen
-        description: "Llave foránea a dim_zonas (origen)"
+      - name: sk_zone_origin
+        description: "Foreign key to dim_zones (origin)"
         tests:
           - not_null
           - relationships:
-              to: ref('dim_zonas')
-              field: sk_zona
-      - name: sk_zona_destino
-        description: "Llave foránea a dim_zonas (destino)"
+              to: ref('dim_zones')
+              field: sk_zone
+      - name: sk_zone_destination
+        description: "Foreign key to dim_zones (destination)"
         tests:
           - not_null
           - relationships:
-              to: ref('dim_zonas')
-              field: sk_zona
-      - name: sk_usuario
-        description: "Llave foránea a dim_usuarios"
+              to: ref('dim_zones')
+              field: sk_zone
+      - name: sk_user
+        description: "Foreign key to dim_users"
         tests:
           - not_null
           - relationships:
-              to: ref('dim_usuarios')
-              field: sk_usuario
-      - name: sk_clima
-        description: "Llave foránea a dim_clima"
+              to: ref('dim_users')
+              field: sk_user
+      - name: sk_weather
+        description: "Foreign key to dim_weather"
         tests:
           - not_null
           - relationships:
-              to: ref('dim_clima')
-              field: sk_clima
-      - name: es_cancelado
-        description: "Indicador booleano de viaje cancelado (true o false)"
+              to: ref('dim_weather')
+              field: sk_weather
+      - name: is_cancelled
+        description: "Boolean indicator of cancelled trip"
         tests:
           - not_null
