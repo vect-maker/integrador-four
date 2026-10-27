@@ -38,6 +38,7 @@ ATTACH 'dbname=${PGDATABASE} host=${PGHOST} port=${PGPORT} user=${PGUSER} passwo
 
 CREATE OR REPLACE TABLE fct_viajes AS SELECT * FROM azure_pg.analytics.fct_viajes;
 CREATE OR REPLACE TABLE dim_zonas AS SELECT * FROM azure_pg.analytics.dim_zonas;
+CREATE OR REPLACE TABLE dim_cuadrantes AS SELECT * FROM azure_pg.analytics.dim_cuadrantes;
 CREATE OR REPLACE TABLE dim_clima AS SELECT * FROM azure_pg.analytics.dim_clima;
 CREATE OR REPLACE TABLE dim_usuarios AS SELECT * FROM azure_pg.analytics.dim_usuarios;
 CREATE OR REPLACE TABLE dim_conductores AS SELECT * FROM azure_pg.analytics.dim_conductores;

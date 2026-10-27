@@ -1,16 +1,19 @@
 with source as (
-    select * from {{ source('raw', 'campanas_incentivos') }}
+    select * from {{ source('raw', 'incentive_campaigns') }}
 )
 
 select
-    id_campana as id_campania,
-    nombre_bono,
-    costo_presupuesto_nio,
-    incremento_horas_conexion,
-    round(costo_presupuesto_nio / nullif(incremento_horas_conexion, 0), 2) as costo_por_hora_conexion,
-    tipo_incentivo,
-    fecha_inicio,
-    fecha_fin,
-    estado
+    campaign_id as id_campana,
+    target_zone_id as id_zona_objetivo,
+    bonus_name as nombre_bono,
+    budget_cost_nio as costo_presupuesto_nio,
+    online_hours_increase as incremento_horas_conexion,
+    round(budget_cost_nio / nullif(online_hours_increase, 0), 2) as costo_por_hora_conexion,
+    incentive_type as tipo_incentivo,
+    start_date as fecha_inicio,
+    end_date as fecha_fin,
+    (end_date - start_date) as duracion_dias,
+    status as estado,
+    case when status = 'activa' then true else false end as es_activa
 from source
-order by id_campania
+order by campaign_id

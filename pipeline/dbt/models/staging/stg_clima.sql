@@ -1,24 +1,41 @@
-with source as (
-    select * from {{ source('raw', 'clima_cuadrantes') }}
+with weather_daily as (
+    select
+        date as fecha,
+        round(avg(precipitation_mm), 2) as precipitacion_mm,
+        round(avg(temperature_c), 1) as temperatura_c,
+        round(avg(congestion_index), 2) as indice_congestion,
+        mode() within group (order by sky_condition) as condicion_cielo,
+        bool_or(flooded_roads) as hubo_inundacion
+    from {{ source('raw', 'quadrant_weather') }}
+    group by date
 )
 
 select
     fecha,
     precipitacion_mm,
+    case
+        when precipitacion_mm = 0 then 'sin lluvia'
+        when precipitacion_mm < 10 then 'ligera'
+        when precipitacion_mm < 30 then 'moderada'
+        else 'fuerte'
+    end as intensidad_lluvia,
+    case
+        when precipitacion_mm = 0 then 'sin lluvia'
+        when precipitacion_mm < 10 then 'ligera'
+        when precipitacion_mm < 30 then 'moderada'
+        else 'fuerte'
+    end as categoria_precipitacion,
     temperatura_c,
     indice_congestion,
+    case
+        when indice_congestion < 1.30 then 'baja'
+        when indice_congestion < 1.70 then 'moderada'
+        when indice_congestion < 2.20 then 'alta'
+        else 'critica'
+    end as nivel_congestion,
     condicion_cielo,
-    case when precipitacion_mm > 0 then true else false end as tiene_lluvia,
-    case
-        when precipitacion_mm = 0 then 'sin_lluvia'
-        when precipitacion_mm < 5.0 then 'lluvia_ligera'
-        when precipitacion_mm < 20.0 then 'lluvia_moderada'
-        else 'lluvia_torrencial'
-    end as categoria_precipitacion,
-    case
-        when indice_congestion >= 2.50 then 'alta'
-        when indice_congestion >= 1.70 then 'moderada'
-        else 'baja'
-    end as nivel_congestion
-from source
+    hubo_inundacion,
+    case when precipitacion_mm > 0 then true else false end as hubo_lluvia,
+    case when precipitacion_mm > 0 then true else false end as tiene_lluvia
+from weather_daily
 order by fecha

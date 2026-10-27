@@ -2,69 +2,123 @@ version: 2
 
 sources:
   - name: raw
-    description: "Tablas transaccionales OLTP / raw staging de MoviGo (Managua) en Azure PostgreSQL"
+    description: "Tablas transaccionales OLTP / raw staging de MoviGo (Managua) en Azure PostgreSQL (Esquema 3NF Normalizado)"
     database: "{{ env_var('RAW_DB_NAME', 'postgres') }}"
     schema: "{{ env_var('RAW_SCHEMA', 'raw') }}"
     tables:
-      - name: zonas_urbanas
-        description: "Cuadrantes y sectores urbanos de Managua con coordenadas y tarifas base de bajada de bandera"
+      - name: urban_zones
+        description: "12 zonas operativas de Managua con coordenadas y tarifas base de bajada de bandera"
         columns:
-          - name: id_zona
+          - name: zone_id
             description: "Identificador único de la zona urbana"
             tests:
               - unique
               - not_null
 
-      - name: usuarios
-        description: "Directorio de usuarios pasajeros registrados en la plataforma MoviGo"
+      - name: quadrants
+        description: "92 cuadrantes urbanos sub-zona con polígonos, cota msnm y riesgo de inundación"
         columns:
-          - name: id_usuario
-            description: "Identificador único del pasajero"
+          - name: quadrant_id
+            description: "Identificador único del cuadrante"
             tests:
               - unique
               - not_null
 
-      - name: conductores
-        description: "Flota de socios conductores registrados, tipo de vehículo y métricas de desempeño"
+      - name: users
+        description: "Directorio de usuarios pasajeros registrados en MoviGo"
         columns:
-          - name: id_conductor
-            description: "Identificador único del socio conductor"
+          - name: user_id
+            description: "Identificador único del usuario"
             tests:
               - unique
               - not_null
 
-      - name: campanas_incentivos
-        description: "Campañas de bonos e incentivos económicos para oferta de conductores"
+      - name: drivers
+        description: "Socios conductores activos y registrados"
         columns:
-          - name: id_campana
-            description: "Identificador único de la campaña de incentivo"
+          - name: driver_id
+            description: "Identificador único del conductor"
             tests:
               - unique
               - not_null
 
-      - name: clima_cuadrantes
-        description: "Series temporales de meteorología (precipitación, temp) e índice de congestión vial"
+      - name: vehicles
+        description: "Parque vehicular asignado a socios conductores"
         columns:
-          - name: fecha
-            description: "Fecha calendario del registro climático"
+          - name: vehicle_id
+            description: "Identificador único del vehículo"
             tests:
               - unique
               - not_null
 
-      - name: viajes
-        description: "Transacciones de viajes solicitados y ejecutados con cálculo de tarifa dinámica"
+      - name: incentive_campaigns
+        description: "Programas de bonos e incentivos de conexión vehicular"
         columns:
-          - name: id_viaje
+          - name: campaign_id
+            description: "Identificador único de la campaña"
+            tests:
+              - unique
+              - not_null
+
+      - name: quadrant_weather
+        description: "Series temporales horarias de clima, precipitación y congestión por cuadrante"
+        columns:
+          - name: weather_id
+            description: "Identificador único del reporte meteorológico"
+            tests:
+              - unique
+              - not_null
+
+      - name: trips
+        description: "Registro atómico de solicitudes de viajes y coordenadas de origen/destino"
+        columns:
+          - name: trip_id
             description: "Identificador único del viaje"
             tests:
               - unique
               - not_null
 
-      - name: telemetria_conductores
-        description: "Pings de posicionamiento GPS vehicular y velocidad instantánea en ruta"
+      - name: trip_payments
+        description: "Desglose financiero de tarifas base, surge y métodos de pago"
         columns:
-          - name: id_telemetria
-            description: "Identificador único del ping telemétrico"
+          - name: payment_id
+            description: "Identificador único de la transacción de pago"
+            tests:
+              - unique
+              - not_null
+
+      - name: trip_ratings
+        description: "Evaluaciones bidireccionales entre usuarios y conductores"
+        columns:
+          - name: rating_id
+            description: "Identificador único de la calificación"
+            tests:
+              - unique
+              - not_null
+
+      - name: trip_cancellations
+        description: "Desistimientos y cancelaciones con estado de oferta/demanda en origen"
+        columns:
+          - name: cancellation_id
+            description: "Identificador único de la cancelación"
+            tests:
+              - unique
+              - not_null
+
+      - name: driver_telemetry
+        description: "Pings GPS de vehículos en tránsito o disponibles"
+        columns:
+          - name: telemetry_id
+            description: "Identificador único del ping GPS"
+            tests:
+              - unique
+              - not_null
+
+      - name: vehicle_maintenance
+        description: "Historial de mantenimiento mecánico y costos de taller"
+        columns:
+          - name: maintenance_id
+            description: "Identificador único de la orden de servicio"
             tests:
               - unique
               - not_null

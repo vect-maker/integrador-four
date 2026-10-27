@@ -17,6 +17,14 @@ select
     md5(cast(id_usuario as text)) as sk_usuario,
     md5(cast(fecha_solicitud as text)) as sk_clima,
 
+    -- Cuadrantes espaciales y coordenadas GPS
+    id_cuadrante_origen,
+    id_cuadrante_destino,
+    latitud_origen,
+    longitud_origen,
+    latitud_destino,
+    longitud_destino,
+
     -- Fechas y componentes temporales
     fecha_solicitud,
     hora_solicitud,
@@ -35,6 +43,7 @@ select
     sobrecosto_surge_nio,
     propina,
     metodo_pago,
+    estado_pago,
 
     -- Métricas de resultado del servicio y cancelaciones (Eje central del paper)
     estado_viaje,
@@ -43,6 +52,9 @@ select
     es_cancelado_conductor,
     es_completado,
     motivo_cancelacion,
+    cancelado_por,
+    solicitudes_activas_origen,
+    conductores_disponibles_origen,
 
     -- Métricas operativas
     distancia_km,

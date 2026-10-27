@@ -44,7 +44,9 @@ def reset_schema(
     target_db: str = TARGET_DB, target_schema: str = TARGET_SCHEMA
 ) -> None:
     """Drop target schema if it exists and create a clean one."""
-    print(f"Connecting to database '{target_db}' on {PGHOST} to reset schema '{target_schema}'...")
+    print(
+        f"Connecting to database '{target_db}' on {PGHOST} to reset schema '{target_schema}'..."
+    )
     engine = get_engine(target_db)
     with engine.connect().execution_options(isolation_level="AUTOCOMMIT") as conn:
         print(f"Resetting schema '{target_schema}' (DROP CASCADE + CREATE)...")
@@ -61,9 +63,7 @@ def load_schema(
 ) -> None:
     """Connect to target database and execute the raw database schema DDL directly."""
     target_file = (
-        schema_file
-        if schema_file is not None
-        else BASE_DIR / "raw_schema.sql"
+        schema_file if schema_file is not None else BASE_DIR / "raw_schema.sql"
     )
     print(f"Connecting to database '{target_db}' on {PGHOST}...")
     sql_content = target_file.read_text(encoding="utf-8")
@@ -71,10 +71,14 @@ def load_schema(
     with engine.begin() as conn:
         conn.execute(text(f'CREATE SCHEMA IF NOT EXISTS "{target_schema}";'))
         conn.execute(text(f'SET search_path TO "{target_schema}", public;'))
-        print(f"Applying schema DDL from '{target_file.name}' into schema '{target_schema}'...")
+        print(
+            f"Applying schema DDL from '{target_file.name}' into schema '{target_schema}'..."
+        )
         conn.execute(text(sql_content))
     engine.dispose()
-    print(f"Raw database schema from '{target_file.name}' applied successfully (tables reset).\n")
+    print(
+        f"Raw database schema from '{target_file.name}' applied successfully (tables reset).\n"
+    )
 
 
 def _to_date_column(df: pd.DataFrame, column: str) -> None:
@@ -99,21 +103,26 @@ def prepare_dataframe(table_name: str, df: pd.DataFrame) -> pd.DataFrame:
     if index_cols:
         df = df.drop(columns=index_cols)
 
-    if table_name == "usuarios":
-        _to_date_column(df, "fecha_registro")
-    elif table_name == "campanas_incentivos":
-        _to_date_column(df, "fecha_inicio")
-        _to_date_column(df, "fecha_fin")
-    elif table_name == "clima_cuadrantes":
-        _to_date_column(df, "fecha")
-    elif table_name == "viajes":
-        _to_datetime_column(df, "fecha_hora_solicitud")
-        _to_datetime_column(df, "fecha_hora_inicio")
-        _to_datetime_column(df, "fecha_hora_fin")
-        if "id_conductor" in df.columns:
-            df["id_conductor"] = df["id_conductor"].astype("Int64")
-    elif table_name == "telemetria_conductores":
-        _to_datetime_column(df, "fecha_hora")
+    if table_name == "users":
+        _to_date_column(df, "registration_date")
+    elif table_name == "incentive_campaigns":
+        _to_date_column(df, "start_date")
+        _to_date_column(df, "end_date")
+    elif table_name == "quadrant_weather":
+        _to_datetime_column(df, "recorded_at")
+        _to_date_column(df, "date")
+    elif table_name == "trips":
+        _to_datetime_column(df, "requested_at")
+        _to_datetime_column(df, "started_at")
+        _to_datetime_column(df, "completed_at")
+        if "driver_id" in df.columns:
+            df["driver_id"] = df["driver_id"].astype("Int64")
+    elif table_name == "driver_telemetry":
+        _to_datetime_column(df, "recorded_at")
+        if "trip_id" in df.columns:
+            df["trip_id"] = df["trip_id"].astype("Int64")
+    elif table_name == "vehicle_maintenance":
+        _to_date_column(df, "service_date")
 
     return df
 
@@ -129,16 +138,24 @@ def load_parquet_data(
 
     # Tables to load in foreign-key dependency order
     tables_to_load = [
-        ("zonas.parquet", "zonas_urbanas"),
-        ("usuarios.parquet", "usuarios"),
-        ("conductores.parquet", "conductores"),
-        ("campanas.parquet", "campanas_incentivos"),
-        ("clima.parquet", "clima_cuadrantes"),
-        ("viajes.parquet", "viajes"),
-        ("telemetria.parquet", "telemetria_conductores"),
+        ("urban_zones.parquet", "urban_zones"),
+        ("quadrants.parquet", "quadrants"),
+        ("users.parquet", "users"),
+        ("drivers.parquet", "drivers"),
+        ("vehicles.parquet", "vehicles"),
+        ("incentive_campaigns.parquet", "incentive_campaigns"),
+        ("quadrant_weather.parquet", "quadrant_weather"),
+        ("trips.parquet", "trips"),
+        ("trip_payments.parquet", "trip_payments"),
+        ("trip_ratings.parquet", "trip_ratings"),
+        ("trip_cancellations.parquet", "trip_cancellations"),
+        ("driver_telemetry.parquet", "driver_telemetry"),
+        ("vehicle_maintenance.parquet", "vehicle_maintenance"),
     ]
 
-    print(f"Loading Parquet files from '{data_path}' into schema '{schema}' of database '{target_db}'...")
+    print(
+        f"Loading Parquet files from '{data_path}' into schema '{schema}' of database '{target_db}'..."
+    )
     for file_name, table_name in tables_to_load:
         file_path = data_path / file_name
         if not file_path.exists():
@@ -160,21 +177,27 @@ def load_parquet_data(
             method="multi",
         )
         elapsed = time.time() - start_time
-        print(f"  -> Inserted {len(df):,} rows into '{schema}.{table_name}' in {elapsed:.2f}s")
+        print(
+            f"  -> Inserted {len(df):,} rows into '{schema}.{table_name}' in {elapsed:.2f}s"
+        )
 
     engine.dispose()
     print("All Parquet data loaded successfully.\n")
 
 
 def main() -> None:
-    print(f"Iniciando pipeline de carga en BD '{TARGET_DB}' (esquema '{TARGET_SCHEMA}')...")
+    print(
+        f"Iniciando pipeline de carga en BD '{TARGET_DB}' (esquema '{TARGET_SCHEMA}')..."
+    )
     # Reinicia completamente el esquema de destino
     reset_schema(TARGET_DB, TARGET_SCHEMA)
     # Ejecuta el DDL de definición del esquema en TARGET_SCHEMA
     load_schema(TARGET_DB, TARGET_SCHEMA)
     # Inserta los datos desde los archivos Parquet en orden de dependencias FK
     load_parquet_data(TARGET_DB, schema=TARGET_SCHEMA)
-    print(f"🎉 Esquema '{TARGET_SCHEMA}' en BD '{TARGET_DB}' reiniciado, migrado y cargado con éxito.")
+    print(
+        f"🎉 Esquema '{TARGET_SCHEMA}' en BD '{TARGET_DB}' reiniciado, migrado y cargado con éxito."
+    )
 
 
 if __name__ == "__main__":
