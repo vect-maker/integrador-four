@@ -2,6 +2,12 @@
 #bibliography("../../references.bib")
 #import "../../data_bindings.typ": total-trips-fmt, total-zones
 #import "../../tables/index.typ": fig-zones-catalog
+#import "../../graphs/index.typ": (
+  fig-market-equilibrium,
+  fig-numerical-convergence,
+  fig-urban-network-topology,
+  fig-urban-network-dijkstra,
+)
 
 = Marco Teórico
 
@@ -109,6 +115,10 @@ En los sistemas de transporte bajo demanda, la condición de balance entre la de
 
 $ f(m) = D(m) - S(m) = 0 $ <eq-balance-mercado>
 
+La intersección de ambas funciones microeconómicas determina el punto de equilibrio operativo $m^*$, donde el exceso de demanda se anula y la flota de conductores activos absorbe el volumen horario de viajes (@fig-market-equilibrium).
+
+#fig-market-equilibrium <fig-market-equilibrium>
+
 Al carecer de solución analítica directa en forma cerrada, la determinación del multiplicador de equilibrio $m^*$ requiere algoritmos iterativos de búsqueda de raíces:
 
 + *Método de la Bisección (Método Cerrado):* Fundamentado en el *Teorema del Valor Intermedio (Bolzano)*. Si $f(m)$ es continua en el intervalo $[a_0, b_0]$ y $f(a_0) dot f(b_0) < 0$, existe al menos una raíz en el intervalo. En cada paso se evalúa el punto medio $m_k = frac(a_k + b_k, 2)$, reduciendo el intervalo a la mitad con convergencia lineal de orden $r = 1$, garantizando estabilidad incondicional.
@@ -116,20 +126,28 @@ Al carecer de solución analítica directa en forma cerrada, la determinación d
   $ m_(k+1) = m_k - frac(f(m_k), f'(m_k)) $
   Presenta convergencia cuadrática de orden $r = 2$ en las proximidades de la raíz, requiriendo significativamente menos iteraciones para alcanzar una tolerancia de parada dada ($|f(m_k)| < epsilon$ con $epsilon = 10^(-6)$).
 
+La trayectoria de reducción del error absoluto estimado en escala semilogarítmica confirma la superioridad algorítmica de Newton-Raphson (5 iteraciones frente a 20 de la Bisección para una tolerancia de $10^(-6)$), tal como se expone en la @fig-numerical-convergence.
+
+#fig-numerical-convergence <fig-numerical-convergence>
+
 === Optimización Espacial en Redes y Algoritmo de Ruta Más Corta (Dijkstra)
 
 La infraestructura vial urbana de Managua se modela formalmente como una red espacial mediante un *grafo dirigido y ponderado* $G = (V, E)$, donde:
-- $V = {v_1, v_2, dots, v_(12)}$ representa el conjunto de vértices correspondientes a los 12 centroides zonales de la capital.
-- $E subset.eq V times V$ representa el conjunto de corredores y arterias viales transitables.
+- $V = {v_1, v_2, dots, v_(24)}$ representa el conjunto de vértices correspondientes a los 24 centroides zonales de la capital.
+- $E subset.eq V times V$ representa el conjunto de 44 corredores y arterias viales principales (@fig-urban-network-topology).
 - Cada arista $(i, j) in E$ posee una función de costo o impedancia temporal $tau_(i j)$ que cuantifica el tiempo de viaje estimado en minutos:
   $ tau_(i j) (c) = frac(d_(i j), v_(i j) (c)) dot 60 $
   donde $d_(i j)$ es la distancia vial entre zonas y $v_(i j)(c)$ es la velocidad de circulación condicionada por el régimen meteorológico $c in {"seco", "tormenta"}$.
+
+#fig-urban-network-topology <fig-urban-network-topology>
 
 Para determinar la trayectoria de mínima impedancia entre un punto de partida y un destino, se implementa el *Algoritmo de Dijkstra*, el cual mantiene una estimación de distancia tentativa desde el origen y actualiza progresivamente las etiquetas de los nodos adyacentes mediante la operación de *relajación de aristas*:
 
 $ "dist"[j] = min("dist"[j], "dist"[i] + tau_(i j)) $
 
-Este enfoque permite cuantificar el incremento en el tiempo de viaje y los desvíos obligados cuando arterias neurálgicas sufren anegamientos severos.
+Este enfoque permite cuantificar el incremento en el tiempo de viaje y los desvíos obligados cuando arterias neurálgicas sufren anegamientos severos. La @fig-urban-network-dijkstra ilustra este comportamiento para la diagonal metropolitana Linda Vista -- Santo Domingo (OD_1): bajo flujo seco el algoritmo traza la ruta directa vía Los Robles (25.48 min, 13.59 km), mientras que durante una tormenta tropical con cauces desbordados, Dijkstra re-rutea la unidad por Metrocentro, generando una demora adicional del 38.0% (35.17 min, 14.07 km).
+
+#fig-urban-network-dijkstra <fig-urban-network-dijkstra>
 
 === Arquitectura DataOps y Reproducibilidad Computacional
 

@@ -117,13 +117,13 @@ def generate_density_plot(
         ax.set_xlim(-86.325, -86.195)
         ax.set_ylim(12.080, 12.170)
 
-    # 2. Plot Completed Trip Origins (High density, semi-transparent teal/blue)
+    # 2. Plot Completed Trip Origins (High density, semi-transparent teal/blue, sharp arterial definition)
     ax.scatter(
         comp_lons,
         comp_lats,
-        s=4,
+        s=2.5,
         c="#0077b6",
-        alpha=0.18,
+        alpha=0.15,
         label=f"Viajes Completados ({len(comp_lons):,})",
         zorder=2,
         rasterized=True,
@@ -133,9 +133,9 @@ def generate_density_plot(
     ax.scatter(
         canc_lons,
         canc_lats,
-        s=6,
+        s=3.5,
         c="#d62828",
-        alpha=0.35,
+        alpha=0.30,
         label=f"Viajes Cancelados ({len(canc_lons):,})",
         zorder=3,
         rasterized=True,

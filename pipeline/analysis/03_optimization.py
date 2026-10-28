@@ -405,22 +405,42 @@ def generate_topology_plot(
         ax=ax,
     )
 
-    # Offset zone name text
+    # Custom label offsets to eliminate crowding in dense urban zones (e.g. Metrocentro, Los Robles, Altamira)
+    custom_offsets: dict[int, tuple[float, float, str, str]] = {
+        # zone_id: (dx, dy, ha, va)
+        4: (-0.0020, 0.0026, "right", "bottom"),   # Los Robles
+        9: (0.0025, -0.0028, "left", "top"),       # Metrocentro
+        5: (0.0000, -0.0028, "center", "top"),     # Altamira
+        10: (0.0000, 0.0028, "center", "bottom"),  # Ciudad Jardín
+        6: (-0.0020, 0.0026, "right", "bottom"),   # Bolonia
+        15: (-0.0020, -0.0026, "right", "top"),    # Altagracia
+        19: (0.0000, 0.0028, "center", "bottom"),  # Multicentro
+        20: (0.0025, 0.0010, "left", "center"),    # Mayoreo
+        22: (0.0000, -0.0028, "center", "top"),    # Primero de Mayo
+        12: (0.0000, -0.0028, "center", "top"),    # Roberto Huembes
+        2: (0.0000, -0.0028, "center", "top"),     # Las Colinas
+        3: (0.0020, 0.0026, "left", "bottom"),     # Santo Domingo
+        18: (0.0000, -0.0028, "center", "top"),    # Esquipulas
+    }
+
+    # Offset zone name text with collision avoidance
     for n, (x, y) in pos.items():
         name = zones[n]["nombre"].split(" / ")[0]  # shorter name
+        dx, dy, ha, va = custom_offsets.get(n, (0.0, 0.0028, "center", "bottom"))
         ax.text(
-            x,
-            y + 0.0028,
-            name,
-            fontsize=7.5,
+            x + dx,
+            y + dy,
+            f"Z{n}: {name}",
+            fontsize=6.8,
             fontweight="semibold",
-            ha="center",
-            va="bottom",
+            ha=ha,
+            va=va,
             bbox=dict(
-                boxstyle="round,pad=0.25",
+                boxstyle="round,pad=0.20",
                 facecolor="white",
-                edgecolor="#b0bec5",
-                alpha=0.90,
+                edgecolor="#90a4ae",
+                alpha=0.92,
+                linewidth=0.8,
             ),
             zorder=5,
         )

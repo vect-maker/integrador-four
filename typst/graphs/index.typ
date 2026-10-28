@@ -7,7 +7,7 @@
 
 #let fig-market-equilibrium = figure(
   image("market_equilibrium_curves.png", width: 90%),
-  caption: [Curvas Microeconómicas de Demanda y Oferta Vehicular: Punto de Equilibrio Teórico ($m^* = 1.35times$)],
+  caption: [Curvas Microeconómicas de Demanda y Oferta Vehicular: Punto de Equilibrio Teórico ($m^* = 1.3533 times$)],
 )
 
 #let fig-numerical-convergence = figure(

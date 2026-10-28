@@ -415,19 +415,21 @@ def plot_cancellation_causes(
         grouped.setdefault(cause, []).append((lon, lat))
 
     # Scatter by cause
+    total_canc = len(causes_data)
     for cause, pts in grouped.items():
         if cause not in cause_colors:
             continue
         xs = [p[0] for p in pts]
         ys = [p[1] for p in pts]
         color = cause_colors[cause]
+        pct = (len(xs) / total_canc * 100.0) if total_canc > 0 else 0.0
         ax.scatter(
             xs, ys,
             s=8,
             c=color,
             alpha=0.45,
             edgecolors="none",
-            label=f"{cause} ({len(xs):,})",
+            label=f"{cause} ({len(xs):,} — {pct:.1f}%)",
             zorder=3,
             rasterized=True,
         )
@@ -650,12 +652,23 @@ def plot_wait_times(
     ax.grid(True, linestyle="--", alpha=0.32)
 
     # Disparity info box
+    fastest_z = str(zone_waits[-1][1]).split(" / ")[0]
+    fastest_w = float(zone_waits[-1][6])
+    second_fastest_z = str(zone_waits[-2][1]).split(" / ")[0]
+    second_fastest_w = float(zone_waits[-2][6])
+
+    slowest_z = str(zone_waits[0][1]).split(" / ")[0]
+    slowest_w = float(zone_waits[0][6])
+    second_slowest_z = str(zone_waits[1][1]).split(" / ")[0]
+    second_slowest_w = float(zone_waits[1][6])
+    total_trips = sum(int(r[5]) for r in zone_waits)
+
     disparity_text = (
         f"Brecha de Accesibilidad Temporal:\n"
-        f"• Más Rápido: Metrocentro ({min_w:.1f} min) | Los Robles (6.4 min)\n"
-        f"• Mayor Demora: Bello Horizonte ({max_w:.1f} min) | Linda Vista (11.6 min)\n"
-        f"• Disparidad Territorial: {max_w / min_w:.1f}x mayor tiempo en periferias\n"
-        f"• Base: 77,487 viajes transaccionales"
+        f"• Más Rápido: {fastest_z} ({fastest_w:.1f} min) | {second_fastest_z} ({second_fastest_w:.1f} min)\n"
+        f"• Mayor Demora: {slowest_z} ({slowest_w:.1f} min) | {second_slowest_z} ({second_slowest_w:.1f} min)\n"
+        f"• Disparidad Territorial: {slowest_w / fastest_w:.1f}x mayor tiempo en periferias\n"
+        f"• Base: {total_trips:,} viajes transaccionales"
     )
     ax.text(
         0.02, 0.03, disparity_text,
