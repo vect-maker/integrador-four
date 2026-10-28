@@ -51,32 +51,44 @@
 #let total-campaigns = general-kpis.total_campanias
 
 // -----------------------------------------------------------------------------
-// Estadistica II: Regresion Lineal Simple (MCO) & ANOVA
+// Estadistica II & Metodos Numericos: Regresion Logistica Binaria (Logit & Newton-Raphson)
 // -----------------------------------------------------------------------------
-#let ols-n = econometrics.sample_size
-#let ols-r = econometrics.pearson_r
-#let ols-r2 = econometrics.r_squared
-#let ols-r2-adj = econometrics.adj_r_squared
-#let ols-f-stat = econometrics.f_statistic
+#let logit-n = econometrics.sample_size
+#let logit-n-fmt = fmt-int(logit-n)
+#let logit-pseudo-r2 = econometrics.pseudo_r_squared
+#let logit-lr-stat = econometrics.lr_statistic
+#let logit-lr-p = econometrics.lr_p_value
+#let logit-dev-null = econometrics.null_deviance
+#let logit-dev-model = econometrics.deviance
+#let logit-aic = econometrics.aic
+#let logit-bic = econometrics.bic
+#let logit-solver-iters = econometrics.solver_iterations
 
-#let ols-b0 = econometrics.coefficients.intercept.estimate
-#let ols-b0-se = econometrics.coefficients.intercept.std_error
-#let ols-b0-t = econometrics.coefficients.intercept.t_stat
+#let logit-b0 = econometrics.coefficients.intercept.estimate
+#let logit-b0-se = econometrics.coefficients.intercept.std_error
+#let logit-b0-z = econometrics.coefficients.intercept.z_stat
+#let logit-b0-or = econometrics.coefficients.intercept.odds_ratio
 
-#let ols-b1 = econometrics.coefficients.multiplicador.estimate
-#let ols-b1-se = econometrics.coefficients.multiplicador.std_error
-#let ols-b1-t = econometrics.coefficients.multiplicador.t_stat
+#let logit-b-surge = econometrics.coefficients.multiplicador.estimate
+#let logit-b-surge-se = econometrics.coefficients.multiplicador.std_error
+#let logit-b-surge-z = econometrics.coefficients.multiplicador.z_stat
+#let logit-b-surge-or = econometrics.coefficients.multiplicador.odds_ratio
+#let logit-b-surge-or-ci = econometrics.coefficients.multiplicador.odds_ratio_ci_95
 
-#let anova-reg-ss = econometrics.anova.regression.ss
-#let anova-reg-df = econometrics.anova.regression.df
-#let anova-reg-ms = econometrics.anova.regression.ms
+#let logit-b-dist = econometrics.coefficients.distancia_km.estimate
+#let logit-b-dist-se = econometrics.coefficients.distancia_km.std_error
+#let logit-b-dist-z = econometrics.coefficients.distancia_km.z_stat
+#let logit-b-dist-or = econometrics.coefficients.distancia_km.odds_ratio
 
-#let anova-res-ss = econometrics.anova.residuals.ss
-#let anova-res-df = econometrics.anova.residuals.df
-#let anova-res-ms = econometrics.anova.residuals.ms
+#let logit-b-cong = econometrics.coefficients.indice_congestion.estimate
+#let logit-b-cong-se = econometrics.coefficients.indice_congestion.std_error
+#let logit-b-cong-z = econometrics.coefficients.indice_congestion.z_stat
+#let logit-b-cong-or = econometrics.coefficients.indice_congestion.odds_ratio
 
-#let anova-tot-ss = econometrics.anova.total.ss
-#let anova-tot-df = econometrics.anova.total.df
+#let logit-b-pico = econometrics.coefficients.es_hora_pico.estimate
+#let logit-b-pico-se = econometrics.coefficients.es_hora_pico.std_error
+#let logit-b-pico-z = econometrics.coefficients.es_hora_pico.z_stat
+#let logit-b-pico-or = econometrics.coefficients.es_hora_pico.odds_ratio
 
 // -----------------------------------------------------------------------------
 // Metodos Numericos: Raiz de Equilibrio Tarifario
@@ -99,6 +111,10 @@
 // -----------------------------------------------------------------------------
 #let routing-nodes = routing.network_summary.total_nodes
 #let routing-edges = routing.network_summary.total_edges
+#let routing-avg-dry = routing.global_resilience.avg_travel_time_dry_min
+#let routing-avg-storm = routing.global_resilience.avg_travel_time_storm_min
+#let routing-net-delay = routing.global_resilience.network_delay_percentage
+#let routing-top-bottleneck = routing.top_bottlenecks.at(0).name
 #let od1 = routing.routes.at(0)
 #let od1-origin = od1.origin.name
 #let od1-dest = od1.destination.name

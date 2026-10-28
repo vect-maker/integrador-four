@@ -21,10 +21,12 @@ from __future__ import annotations
 import json
 from math import atan2, cos, radians, sin, sqrt
 from pathlib import Path
+from typing import Any
 
 import duckdb
 import matplotlib.pyplot as plt
 import networkx as nx
+import numpy as np
 from PIL import Image
 
 # -----------------------------------------------------------------------------
@@ -271,6 +273,56 @@ def run_dijkstra_analysis(G: nx.Graph, zones: dict[int, dict]) -> list[dict]:
         )
 
     return results
+
+
+def compute_network_centrality_and_resilience(
+    G: nx.Graph, zones: dict[int, dict]
+) -> dict[str, Any]:
+    """Computes Betweenness Centrality, bottlenecks, and all-pairs network resilience."""
+    compute_scenario_weights(G)
+
+    # Centrality metrics
+    betw_dry = nx.betweenness_centrality(G, weight="weight_dry")
+    betw_storm = nx.betweenness_centrality(G, weight="weight_storm")
+    degrees = dict(G.degree())
+
+    # Global shortest path lengths across all 552 OD pairs
+    all_pairs_dry = dict(nx.all_pairs_dijkstra_path_length(G, weight="weight_dry"))
+    all_pairs_storm = dict(nx.all_pairs_dijkstra_path_length(G, weight="weight_storm"))
+
+    times_dry = [all_pairs_dry[u][v] for u in G.nodes() for v in G.nodes() if u != v]
+    times_storm = [all_pairs_storm[u][v] for u in G.nodes() for v in G.nodes() if u != v]
+
+    avg_dry = float(np.mean(times_dry))
+    avg_storm = float(np.mean(times_storm))
+    avg_delay = float(((avg_storm - avg_dry) / avg_dry) * 100.0)
+
+    # Ranking of top bottleneck zones by betweenness
+    ranking = []
+    for zid, val in sorted(betw_dry.items(), key=lambda x: x[1], reverse=True):
+        ranking.append(
+            {
+                "zone_id": zid,
+                "name": zones[zid]["nombre"],
+                "stratum": zones[zid]["estrato"],
+                "betweenness_dry": round(val, 4),
+                "betweenness_storm": round(betw_storm[zid], 4),
+                "degree": int(degrees[zid]),
+            }
+        )
+
+    return {
+        "global_resilience": {
+            "total_pairs_evaluated": len(times_dry),
+            "avg_travel_time_dry_min": round(avg_dry, 2),
+            "avg_travel_time_storm_min": round(avg_storm, 2),
+            "network_delay_percentage": round(avg_delay, 1),
+            "diameter_dry_min": round(max(times_dry), 2),
+            "diameter_storm_min": round(max(times_storm), 2),
+        },
+        "top_bottlenecks": ranking[:8],
+        "all_zones_centrality": ranking,
+    }
 
 
 # -----------------------------------------------------------------------------
@@ -676,6 +728,17 @@ def main():
             f"  Demora:   +{r['storm_scenario']['delay_percentage']}% | Reruteo: {'SÍ' if r['storm_scenario']['path_rerouted'] else 'NO'}"
         )
 
+    # Run centrality & resilience analysis
+    centrality_resilience = compute_network_centrality_and_resilience(G, zones)
+    res_glob = centrality_resilience["global_resilience"]
+    print("\n--- [Análisis de Centralidad y Resiliencia Global de Red] ---")
+    print(
+        f"  Tiempo Promedio Global (552 pares OD): Seco = {res_glob['avg_travel_time_dry_min']} min | Tormenta = {res_glob['avg_travel_time_storm_min']} min (+{res_glob['network_delay_percentage']}%)"
+    )
+    print("  Top 5 Cuellos de Botella (Centralidad de Intermediación):")
+    for b in centrality_resilience["top_bottlenecks"][:5]:
+        print(f"    - Zona {b['zone_id']} ({b['name']}): Betweenness = {b['betweenness_dry']} | Grado = {b['degree']}")
+
     # Build JSON payload
     payload = {
         "description": "Optimizacion de Rutas de Despacho en Red Vial Urbana de Managua (Algoritmo de Dijkstra)",
@@ -687,6 +750,9 @@ def main():
             "storm_flood_speed_kmh": 11.2,
             "flood_prone_corridors_count": len([e for e in ROAD_EDGES if e[3]]),
         },
+        "global_resilience": centrality_resilience["global_resilience"],
+        "top_bottlenecks": centrality_resilience["top_bottlenecks"],
+        "all_zones_centrality": centrality_resilience["all_zones_centrality"],
         "routes": routes_results,
     }
 

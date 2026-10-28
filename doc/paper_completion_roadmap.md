@@ -14,9 +14,8 @@ This roadmap defines the complete, rigorous, and unambiguous implementation plan
 
 Following a thorough strategic re-alignment, the paper places its primary spotlight on **Data Engineering, DataOps, and Reproducibility Tools**:
 - **Data Engineering / DataOps (Primary Spotlight):** Kimball Star Schema deployed in Azure Database for PostgreSQL (3NF raw schema) via dbt Core (staging views $\to$ marts tables with MD5 surrogate keys and automated test suites), captured in an in-process local DuckDB columnar snapshot (`pipeline/data/analytics.duckdb`), and hydrated dynamically into `typst/data/` via Bash automation (`pipeline/hydrate_paper_data.sh`) and `justfile`.
-- **Applied Statistics (Lean Syllabus Requirement):** Simple Linear Regression (Ordinary Least Squares - OLS) with an ANOVA table ($F$-test) assessing how daily surge pricing impacts trip cancellations ($R^2 = 0.623$, $F = 601.53$).
-- **Numerical Methods (Lean Syllabus Requirement):** Root-Finding (Bisection and Newton-Raphson methods) solving the excess demand balance equation $f(m) = 0$ to identify the critical market equilibrium multiplier $m^* = 1.35\times$ with a $7\times$ speedup for Newton.
-- **Operations Optimization (Lean Syllabus Requirement):** Graph Theory applying Dijkstra's Shortest Path Algorithm across Managua's 12 urban quadrants under baseline versus storm/flooding scenarios (+49.3% delay and dynamic rerouting).
+- **Applied Statistics & Numerical Methods (Curricular Synergy):** Binary Logistic Regression (Logit) over $N = 77,487$ trips assessing conditional cancellation probability against surge pricing ($\text{OR} = 2.95, z = 37.15, p < 0.0001$), distance, and congestion. Solved numerically via multidimensional Newton-Raphson / IRLS with quadratic convergence in 5 iterations ($||\Delta \boldsymbol{\beta}|| < 10^{-7}$) and Likelihood Ratio Deviance testing ($\chi^2(4) = 4330.57$).
+- **Operations Optimization & Graph Theory (Curricular Requirement):** Graph Theory on Managua's 24 urban zones and 44 arterial corridors, evaluating Betweenness Centrality bottlenecks (Ciudad Jardín $C_B = 0.419$, Bolonia $C_B = 0.371$) and Dijkstra shortest path resilience across all 552 OD pairs (+42.8% global network delay under storm flooding).
 - **Document Engine (Typst):** Zero manual data copying (*single source of truth*). All tables, indicators, and callouts are dynamically bound to JSON datasets with zero human drift.
 
 ---
@@ -302,28 +301,32 @@ flowchart LR
 - [x] Decouple curricular mapping into dedicated `doc/curricular_integration.md`, leaving paper and slides with a natural scientific narrative.
 
 ### Milestone 4: Chapter 8 Drafting (`08_resultados.typ`)
-- [ ] Create `typst/document/chapters/08_resultados.typ` with five natural subsections:
-  - 8.1 Resultados de Ingeniería de Datos y Repositorio Analítico (DW, Kimball, DuckDB).
-  - 8.2 Modelación Econométrica y Descomposición de Varianza (Simple OLS, ANOVA).
-  - 8.3 Equilibrio Numérico de Mercado (Exceso de demanda, Bisección vs. Newton-Raphson).
-  - 8.4 Optimización Espacial en Redes y Resiliencia Vial (Dijkstra, demoras por lluvia).
-  - 8.5 Ecosistema DataOps y Reproducibilidad Computacional (CLI, automatización, zero drift).
-- [ ] Verify zero hardcoded numbers; all figures, tables, and callouts linked to data.
+- [ ] Create `typst/document/chapters/08_resultados.typ` structured around the 3 consolidated objectives:
+  - 8.1 Resultados de Ingeniería de Datos y Repositorio Analítico (DW Kimball, capas staging/marts, rendimiento DuckDB vs PostgreSQL).
+  - 8.2 Modelación Econométrica y Optimización Numérica (Regresión Logística Binaria, Odds Ratios, convergencia Newton-Raphson IRLS, tabla Deviance y curva sigmoide).
+  - 8.3 Topología de Red, Centralidad y Resiliencia ante Inundaciones (Grafo empírico 24 zonas, Betweenness Centrality, detección de cuellos de botella y Dijkstra multi-escenario).
+  - 8.4 Ecosistema DataOps y Reproducibilidad Computacional (Automatización CLI, cero deriva de datos, pipelines reproducibles).
+- [ ] Enforce zero hardcoded numbers; all figures, tables, and callouts dynamically linked to `typst/data/` and `typst/tables/`.
 
 ### Milestone 5: Chapter 9 Drafting (`09_conclusiones.typ`)
-- [ ] Create `typst/document/chapters/09_conclusiones.typ`:
-  - 9.1 Conclusiones por Objetivo de Investigación.
-  - 9.2 Recomendaciones Operativas para la Plataforma MoviGo.
-  - 9.3 Síntesis de Aportes Metodológicos y Líneas Futuras.
+- [ ] Create `typst/document/chapters/09_conclusiones.typ` under a formal tripartite structure:
+  - 9.1 Conclusiones por Objetivo de Investigación (Objetivo General y los 3 específicos fundamentados en las métricas empíricas: $\text{OR}_{\text{surge}} = 2.95$, $\chi^2 = 4330.57$, convergencia Newton-Raphson en 5 iteraciones, dilatación vial global de $+42.8\%$).
+  - 9.2 Recomendaciones Operativas para la Plataforma MoviGo (topes dinámicos de tarificación $m^* \approx 1.35\times$ y ruteo adaptativo evitando cuellos de botella en cauces).
+  - 9.3 Limitaciones del Estudio y Líneas de Investigación Futuras (incorporación de telemetría GPS en tiempo real y matrices OD dinámicas).
 
-### Milestone 6: Master Document Integration & Quality Assurance
+### Milestone 6: Master Document Integration & Quality Assurance (Official "Paper Finished" Gate)
+- [ ] Reorganize appendices: Rename `08_apendice_atlas.typ` to `10_apendice_atlas.typ` and place it following the APA 7ma References section.
 - [ ] Include Chapters 8 and 9 in `typst/document.typ`.
-- [ ] Compile with `just build-doc`.
-- [ ] Verify clean layout, zero broken citations, zero missing references (APA 7ma).
+- [ ] Update `typst/document/content/abstract.typ` with final empirical metrics in both Spanish and English.
+- [ ] Compile with `just build-doc` ensuring 0 warnings, 0 missing citations, and complete figure rendering (~30 to 45 pages).
+- [ ] **Sign-off on Paper Completion:** Formal closure of the research paper deliverable (`doc/output/document.pdf`).
 
+---
+
+### Subsequent Phase (Oral Defense): Milestone 7
 ### Milestone 7: Presentation Slides Synchronization (`typst/slides/`)
-- [ ] Update slides to present empirical results naturally.
-- [ ] Run `just build-slides` and `just build-all`.
+- [ ] Synchronize slide deck with the empirical results from Chapters 8 and 9.
+- [ ] Verify clean compilation with `just build-slides` and `just build-all`.
 
 ---
 
@@ -334,9 +337,9 @@ flowchart LR
 | **Session 1** (Completed) | Setup, Roadmap & Objective Alignment | **M0** | ✅ **Completed** | Dependencies installed, `doc/paper_completion_roadmap.md`, objectives aligned in Ch. 5, 6, 7; verified with `just build-all`. |
 | **Session 2** (Completed) | Computational Modeling Suite in Python | **M1** | ✅ **Completed** | `01_econometrics.py`, `02_numerical_methods.py`, `03_optimization.py`, 3 JSONs, 6 PNGs (300 DPI); verified with `just run-analysis`. |
 | **Session 3** (Completed) | Automated Hydration, Tables, Bindings & Curriculum | **M2, M3** | ✅ **Completed** | **M2 Completed:** Unified `just hydrate-data` (9 JSONs + 5 PNGs validated in 7s). **M3 Completed:** `data_bindings.typ`, modular tables (`typst/tables/`), `doc/curricular_integration.md`, `just check-types` (0 errors), natural narrative in Ch. 3-7. |
-| **Session 4** (Next) | Chapter 8 Drafting (Resultados y Discusión) | **M4** | ⏳ Scheduled | `08_resultados.typ` (Sections 8.1, 8.2, 8.3, 8.4, 8.5) |
-| **Session 5** | Chapter 9, Master PDF QA & Final Verification | **M5, M6** | ⏳ Scheduled | `09_conclusiones.typ`, `document.pdf` compiled cleanly |
-| **Session 6** | Defense Slides Synchronization | **M7** | ⏳ Scheduled | `slides.pdf` updated with real empirical results |
+| **Session 4** (Next) | Chapter 8 Drafting (Resultados y Discusión) | **M4** | ⏳ Scheduled | `08_resultados.typ` (Subsections 8.1, 8.2, 8.3, 8.4) |
+| **Session 5** | Chapter 9, Master PDF QA & Final Paper Sign-off | **M5, M6** | ⏳ Scheduled | `09_conclusiones.typ`, appendix reorganization, `document.pdf` compiled cleanly (**Paper Finished Gate**) |
+| **Session 6** (Post-Paper) | Defense Slides Synchronization | **M7** | ⏳ Scheduled | `slides.pdf` updated with real empirical results for oral defense |
 
 ---
 

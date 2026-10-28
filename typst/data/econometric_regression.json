@@ -1,51 +1,140 @@
 {
-  "sample_size": 366,
-  "dependent_variable": "tasa_cancelacion_pct",
-  "independent_variable": "multiplicador_promedio",
-  "pearson_r": 0.0899,
-  "r_squared": 0.0081,
-  "adj_r_squared": 0.0054,
-  "residual_std_error": 3.7791,
-  "f_statistic": 2.96,
-  "f_p_value": 0.08601733290893573,
+  "sample_size": 77487,
+  "dependent_variable": "es_cancelado",
+  "model_type": "Binary Logistic Regression (Logit - MLE)",
+  "solver": "Newton-Raphson / IRLS",
+  "solver_iterations": 5,
+  "solver_history": [
+    {
+      "step": 0,
+      "log_likelihood": -53709.9,
+      "gradient_norm": 63707.7851,
+      "step_norm": 4.05293489
+    },
+    {
+      "step": 1,
+      "log_likelihood": -48802.08,
+      "gradient_norm": 3128.4496,
+      "step_norm": 0.46931836
+    },
+    {
+      "step": 2,
+      "log_likelihood": -48770.16,
+      "gradient_norm": 51.9966,
+      "step_norm": 0.01120051
+    },
+    {
+      "step": 3,
+      "log_likelihood": -48770.15,
+      "gradient_norm": 0.0214,
+      "step_norm": 5.69e-06
+    },
+    {
+      "step": 4,
+      "log_likelihood": -48770.15,
+      "gradient_norm": 0.0,
+      "step_norm": 0.0
+    }
+  ],
+  "log_likelihood": -48770.15,
+  "log_likelihood_null": -50935.43,
+  "deviance": 97540.29,
+  "null_deviance": 101870.86,
+  "lr_statistic": 4330.57,
+  "lr_p_value": 0.0,
+  "pseudo_r_squared": 0.0425,
+  "aic": 97550.29,
+  "bic": 97596.58,
   "coefficients": {
     "intercept": {
-      "estimate": 26.6037,
-      "std_error": 5.6564,
-      "t_stat": 4.7,
-      "p_value": 3.640711793340174e-06,
+      "estimate": -4.2271,
+      "std_error": 0.1433,
+      "z_stat": -29.5,
+      "p_value": 3.260590998625065e-191,
       "ci_95": [
-        15.4803,
-        37.727
+        -4.508,
+        -3.9462
+      ],
+      "odds_ratio": 0.0146,
+      "odds_ratio_ci_95": [
+        0.011,
+        0.0193
       ]
     },
     "multiplicador": {
-      "estimate": 7.3687,
-      "std_error": 4.2805,
-      "t_stat": 1.72,
-      "p_value": 0.08601733290893178,
+      "estimate": 1.0828,
+      "std_error": 0.0291,
+      "z_stat": 37.16,
+      "p_value": 2.7599050240307405e-302,
       "ci_95": [
-        -1.0489,
-        15.7863
+        1.0257,
+        1.1399
+      ],
+      "odds_ratio": 2.953,
+      "odds_ratio_ci_95": [
+        2.7891,
+        3.1265
+      ]
+    },
+    "distancia_km": {
+      "estimate": 0.0869,
+      "std_error": 0.0017,
+      "z_stat": 51.38,
+      "p_value": 0.0,
+      "ci_95": [
+        0.0836,
+        0.0902
+      ],
+      "odds_ratio": 1.0907,
+      "odds_ratio_ci_95": [
+        1.0871,
+        1.0944
+      ]
+    },
+    "indice_congestion": {
+      "estimate": 1.211,
+      "std_error": 0.1081,
+      "z_stat": 11.21,
+      "p_value": 3.8224272602474725e-29,
+      "ci_95": [
+        0.9992,
+        1.4228
+      ],
+      "odds_ratio": 3.3568,
+      "odds_ratio_ci_95": [
+        2.716,
+        4.1487
+      ]
+    },
+    "es_hora_pico": {
+      "estimate": -0.1835,
+      "std_error": 0.0178,
+      "z_stat": -10.29,
+      "p_value": 7.669021547381749e-25,
+      "ci_95": [
+        -0.2184,
+        -0.1485
+      ],
+      "odds_ratio": 0.8324,
+      "odds_ratio_ci_95": [
+        0.8038,
+        0.862
       ]
     }
   },
-  "anova": {
-    "regression": {
-      "ss": 42.32,
-      "df": 1,
-      "ms": 42.32,
-      "f": 2.96,
-      "p_value": 0.08601733290893573
+  "deviance_table": {
+    "null_model": {
+      "df": 77486,
+      "deviance": 101870.86
     },
-    "residuals": {
-      "ss": 5198.56,
-      "df": 364,
-      "ms": 14.2818
+    "proposed_model": {
+      "df": 77482,
+      "deviance": 97540.29
     },
-    "total": {
-      "ss": 5240.89,
-      "df": 365
+    "difference": {
+      "df": 4,
+      "chi_square": 4330.57,
+      "p_value": 0.0
     }
   }
 }

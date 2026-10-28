@@ -8,6 +8,274 @@
     "storm_flood_speed_kmh": 11.2,
     "flood_prone_corridors_count": 10
   },
+  "global_resilience": {
+    "total_pairs_evaluated": 552,
+    "avg_travel_time_dry_min": 18.59,
+    "avg_travel_time_storm_min": 26.55,
+    "network_delay_percentage": 42.8,
+    "diameter_dry_min": 46.32,
+    "diameter_storm_min": 61.73
+  },
+  "top_bottlenecks": [
+    {
+      "zone_id": 10,
+      "name": "Ciudad Jardín",
+      "stratum": "popular",
+      "betweenness_dry": 0.419,
+      "betweenness_storm": 0.415,
+      "degree": 5
+    },
+    {
+      "zone_id": 6,
+      "name": "Bolonia",
+      "stratum": "medio",
+      "betweenness_dry": 0.3715,
+      "betweenness_storm": 0.3478,
+      "degree": 7
+    },
+    {
+      "zone_id": 7,
+      "name": "Bello Horizonte",
+      "stratum": "medio",
+      "betweenness_dry": 0.3557,
+      "betweenness_storm": 0.3439,
+      "degree": 5
+    },
+    {
+      "zone_id": 19,
+      "name": "Multicentro Las Américas / Villa Miguel Gutiérrez",
+      "stratum": "comercial",
+      "betweenness_dry": 0.2411,
+      "betweenness_storm": 0.2213,
+      "degree": 3
+    },
+    {
+      "zone_id": 5,
+      "name": "Altamira",
+      "stratum": "medio",
+      "betweenness_dry": 0.1779,
+      "betweenness_storm": 0.1383,
+      "degree": 5
+    },
+    {
+      "zone_id": 1,
+      "name": "Villa Fontana",
+      "stratum": "alto",
+      "betweenness_dry": 0.1581,
+      "betweenness_storm": 0.1581,
+      "degree": 5
+    },
+    {
+      "zone_id": 22,
+      "name": "Colonia Primero de Mayo / Villa Venezuela",
+      "stratum": "popular",
+      "betweenness_dry": 0.1502,
+      "betweenness_storm": 0.166,
+      "degree": 3
+    },
+    {
+      "zone_id": 2,
+      "name": "Las Colinas",
+      "stratum": "alto",
+      "betweenness_dry": 0.1146,
+      "betweenness_storm": 0.1265,
+      "degree": 4
+    }
+  ],
+  "all_zones_centrality": [
+    {
+      "zone_id": 10,
+      "name": "Ciudad Jardín",
+      "stratum": "popular",
+      "betweenness_dry": 0.419,
+      "betweenness_storm": 0.415,
+      "degree": 5
+    },
+    {
+      "zone_id": 6,
+      "name": "Bolonia",
+      "stratum": "medio",
+      "betweenness_dry": 0.3715,
+      "betweenness_storm": 0.3478,
+      "degree": 7
+    },
+    {
+      "zone_id": 7,
+      "name": "Bello Horizonte",
+      "stratum": "medio",
+      "betweenness_dry": 0.3557,
+      "betweenness_storm": 0.3439,
+      "degree": 5
+    },
+    {
+      "zone_id": 19,
+      "name": "Multicentro Las Américas / Villa Miguel Gutiérrez",
+      "stratum": "comercial",
+      "betweenness_dry": 0.2411,
+      "betweenness_storm": 0.2213,
+      "degree": 3
+    },
+    {
+      "zone_id": 5,
+      "name": "Altamira",
+      "stratum": "medio",
+      "betweenness_dry": 0.1779,
+      "betweenness_storm": 0.1383,
+      "degree": 5
+    },
+    {
+      "zone_id": 1,
+      "name": "Villa Fontana",
+      "stratum": "alto",
+      "betweenness_dry": 0.1581,
+      "betweenness_storm": 0.1581,
+      "degree": 5
+    },
+    {
+      "zone_id": 22,
+      "name": "Colonia Primero de Mayo / Villa Venezuela",
+      "stratum": "popular",
+      "betweenness_dry": 0.1502,
+      "betweenness_storm": 0.166,
+      "degree": 3
+    },
+    {
+      "zone_id": 2,
+      "name": "Las Colinas",
+      "stratum": "alto",
+      "betweenness_dry": 0.1146,
+      "betweenness_storm": 0.1265,
+      "degree": 4
+    },
+    {
+      "zone_id": 15,
+      "name": "Altagracia",
+      "stratum": "popular",
+      "betweenness_dry": 0.1146,
+      "betweenness_storm": 0.1146,
+      "degree": 2
+    },
+    {
+      "zone_id": 4,
+      "name": "Los Robles",
+      "stratum": "medio",
+      "betweenness_dry": 0.1047,
+      "betweenness_storm": 0.166,
+      "degree": 4
+    },
+    {
+      "zone_id": 23,
+      "name": "Villa Libertad / Laureles",
+      "stratum": "popular",
+      "betweenness_dry": 0.087,
+      "betweenness_storm": 0.1067,
+      "degree": 3
+    },
+    {
+      "zone_id": 12,
+      "name": "Mercado Roberto Huembes",
+      "stratum": "popular",
+      "betweenness_dry": 0.083,
+      "betweenness_storm": 0.083,
+      "degree": 6
+    },
+    {
+      "zone_id": 16,
+      "name": "San Judas / Sierra Maestra",
+      "stratum": "popular",
+      "betweenness_dry": 0.083,
+      "betweenness_storm": 0.083,
+      "degree": 3
+    },
+    {
+      "zone_id": 13,
+      "name": "Monseñor Lezcano / Batahola",
+      "stratum": "popular",
+      "betweenness_dry": 0.0079,
+      "betweenness_storm": 0.0553,
+      "degree": 3
+    },
+    {
+      "zone_id": 14,
+      "name": "Puerto Salvador Allende / Malecón",
+      "stratum": "comercial",
+      "betweenness_dry": 0.0079,
+      "betweenness_storm": 0.0079,
+      "degree": 3
+    },
+    {
+      "zone_id": 24,
+      "name": "Sabana Grande / Ciudad Belén",
+      "stratum": "popular",
+      "betweenness_dry": 0.0079,
+      "betweenness_storm": 0.0079,
+      "degree": 2
+    },
+    {
+      "zone_id": 20,
+      "name": "Mercado El Mayoreo",
+      "stratum": "popular",
+      "betweenness_dry": 0.004,
+      "betweenness_storm": 0.0,
+      "degree": 3
+    },
+    {
+      "zone_id": 3,
+      "name": "Santo Domingo",
+      "stratum": "alto",
+      "betweenness_dry": 0.0,
+      "betweenness_storm": 0.0,
+      "degree": 3
+    },
+    {
+      "zone_id": 8,
+      "name": "Linda Vista",
+      "stratum": "medio",
+      "betweenness_dry": 0.0,
+      "betweenness_storm": 0.0,
+      "degree": 4
+    },
+    {
+      "zone_id": 9,
+      "name": "Metrocentro / Eje Corporativo UCA",
+      "stratum": "comercial",
+      "betweenness_dry": 0.0,
+      "betweenness_storm": 0.0237,
+      "degree": 4
+    },
+    {
+      "zone_id": 11,
+      "name": "Mercado Oriental",
+      "stratum": "popular",
+      "betweenness_dry": 0.0,
+      "betweenness_storm": 0.0,
+      "degree": 4
+    },
+    {
+      "zone_id": 17,
+      "name": "Carretera Sur / Nejapa",
+      "stratum": "medio",
+      "betweenness_dry": 0.0,
+      "betweenness_storm": 0.0,
+      "degree": 2
+    },
+    {
+      "zone_id": 18,
+      "name": "Esquipulas / Carretera a Masaya km 11-14",
+      "stratum": "alto",
+      "betweenness_dry": 0.0,
+      "betweenness_storm": 0.0,
+      "degree": 2
+    },
+    {
+      "zone_id": 21,
+      "name": "Aeropuerto Augusto C. Sandino / Zona Franca",
+      "stratum": "comercial",
+      "betweenness_dry": 0.0,
+      "betweenness_storm": 0.0,
+      "degree": 3
+    }
+  ],
   "routes": [
     {
       "od_id": "OD_1",

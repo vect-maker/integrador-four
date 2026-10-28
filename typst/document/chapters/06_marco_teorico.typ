@@ -87,65 +87,58 @@ El diseño analítico sigue rigurosamente los principios de modelado dimensional
 
 A partir de la base de datos analítica consolidada, la investigación articula tres pilares cuantitativos complementarios y su marco de reproducibilidad computacional:
 
-=== Modelación Econométrica y Descomposición de Varianza (MCO y ANOVA)
+=== Modelación Econométrica y Numérica de la Cancelación (Regresión Logística y Newton-Raphson)
 
-Para evaluar el impacto del multiplicador tarifario sobre las cancelaciones, se recurre a la teoría de *Mínimos Cuadrados Ordinarios (MCO)*. En el modelo de regresión lineal simple:
+Para evaluar el impacto del multiplicador tarifario y las condiciones operativas sobre la decisión binaria de cancelación ($Y_i in {0, 1}$, donde $1$ representa viaje cancelado y $0$ viaje completado), se recurre a la teoría de los *Modelos Lineales Generalizados (GLM)* mediante la formulación de una *Regresión Logística Binaria (Logit)*. 
 
-$ Y_t = beta_0 + beta_1 X_t + epsilon_t $ <eq-mco-teoria>
+La probabilidad condicional de cancelación de un viaje $i$ dado el vector de covariables explicativas $bold(x)_i$ se modela a través de la función logística estándar (sigmoide):
 
-donde $Y_t$ es la tasa de cancelación observada en el día $t$, $X_t = overline(m)_t$ es el multiplicador dinámico promedio diario, y $epsilon_t$ es la perturbación estocástica con esperanza nula y varianza constante ($sigma^2$).
+$ P(Y_i = 1 mid bold(x)_i) = pi_i = frac(1, 1 + e^(-bold(x)_i bold(beta))) = frac(e^(bold(x)_i bold(beta)), 1 + e^(bold(x)_i bold(beta))) $ <eq-logit-prob>
 
-Los estimadores de los parámetros se obtienen minimizando la suma de los errores al cuadrado:
+Aplicando la transformación logit, la relación se linealiza en términos de logaritmo de los momios (_log-odds_):
 
-$ hat(beta)_1 = frac(sum_(t=1)^n (X_t - overline(X))(Y_t - overline(Y)), sum_(t=1)^n (X_t - overline(X))^2), quad hat(beta)_0 = overline(Y) - hat(beta)_1 overline(X) $
+$ ln(frac(pi_i, 1 - pi_i)) = bold(x)_i bold(beta) = beta_0 + beta_1 m_i + beta_2 d_i + beta_3 "cong"_i + beta_4 "pico"_i $ <eq-logit-lineal>
 
-La significancia global y la capacidad explicativa del modelo se contrastan formalmente a través del *Análisis de Varianza (ANOVA)*, que descompone la variabilidad total observada ($S S T$) en la variabilidad explicada por la regresión ($S S R$) y la variabilidad residual no explicada ($S S E$):
+donde $m_i$ representa el multiplicador de tarifa dinámica, $d_i$ la distancia del trayecto en kilómetros, $"cong"_i$ el índice exógeno de congestión vial y $"pico"_i$ la variable indicadora de hora pico. La interpretación microeconómica descansa en las *Razones de Momios (_Odds Ratios_)*, definidas como $"OR"_j = e^(beta_j)$, que cuantifican el cambio porcentual en el riesgo relativo de cancelación ante incrementos unitarios en el regresor correspondiente, manteniendo las demás variables constantes.
 
-$ S S T = S S R + S S E $
+Dado que los parámetros $bold(beta)$ no admiten una solución analítica en forma cerrada bajo mínimos cuadrados ordinarios, su estimación requiere el método de *Máxima Verosimilitud (MLE)*, maximizando la función de log-verosimilitud sobre el censo de $N = 77,487$ transacciones:
 
-El estadístico $F$ de Fisher-Snedecor contrasta la hipótesis nula de ausencia de relación ($H_0: beta_1 = 0$ frente a $H_1: beta_1 eq.not 0$):
+$ ln L(bold(beta)) = sum_(i=1)^N [y_i ln pi_i + (1 - y_i) ln(1 - pi_i)] $ <eq-log-likelihood>
 
-$ F = frac(M S R, M S E) = frac(S S R \/ 1, S S E \/ (n - 2)) $
+La resolución computacional de este sistema de ecuaciones no lineales de gradiente nulo ($nabla ln L(bold(beta)) = bold(0)$) se efectúa mediante el algoritmo numérico de *Newton-Raphson multidimensional* (o mínimos cuadrados reponderados iterativamente, _IRLS_):
 
-con un coeficiente de determinación $R^2 = frac(S S R, S S T)$ que mide la proporción de la varianza en cancelaciones explicada por la tarifa dinámica.
+$ bold(beta)^((k+1)) = bold(beta)^((k)) - [bold(H)(bold(beta)^((k)))]^(-1) bold(g)(bold(beta)^((k))) $ <eq-newton-raphson-mle>
 
-=== Análisis Numérico de Equilibrio de Mercado y Búsqueda de Raíces
+donde $bold(g) = bold(X)^T (bold(y) - bold(pi))$ es el vector gradiente (_score_) y $bold(H) = -bold(X)^T bold(W) bold(X)$ es la matriz Hessiana definida negativa, ponderada por la matriz diagonal de varianzas $bold(W) = "diag"(pi_i (1 - pi_i))$. Este método garantiza convergencia cuadrática (orden $r = 2$), alcanzando la solución numérica óptima en 5 iteraciones con una norma de paso inferior a $10^(-7)$.
 
-En los sistemas de transporte bajo demanda, la condición de balance entre la demanda de pasajeros $D(m)$ y la oferta de unidades $S(m)$ se formula como una ecuación no lineal continua:
+La significancia global y bondad de ajuste del modelo se evalúa formalmente a través del *Análisis de Deviance*, contrastando la deviance residual del modelo propuesto ($D = -2 ln L$) frente a la deviance del modelo nulo ($D_0 = -2 ln L_0$). El estadístico de *Razón de Verosimilitud (LR)* contrasta la hipótesis nula de nulidad conjunta de los coeficientes:
 
-$ f(m) = D(m) - S(m) = 0 $ <eq-balance-mercado>
+$ Delta D = D_0 - D = 2 [ln L(bold(beta)) - ln L_0] tilde.op chi^2_k $ <eq-lr-deviance>
 
-La intersección de ambas funciones microeconómicas determina el punto de equilibrio operativo $m^*$, donde el exceso de demanda se anula y la flota de conductores activos absorbe el volumen horario de viajes (@fig-market-equilibrium).
+complementado con el coeficiente de determinación Pseudo-$R^2$ de McFadden ($R^2_("McF") = 1 - frac(ln L, ln L_0)$) y pruebas individuales de significancia de Wald ($z = frac(hat(beta)_j, "SE"(hat(beta)_j))$).
 
-#fig-market-equilibrium <fig-market-equilibrium>
+=== Optimización Espacial en Redes, Centralidad y Resiliencia Vial
 
-Al carecer de solución analítica directa en forma cerrada, la determinación del multiplicador de equilibrio $m^*$ requiere algoritmos iterativos de búsqueda de raíces:
-
-+ *Método de la Bisección (Método Cerrado):* Fundamentado en el *Teorema del Valor Intermedio (Bolzano)*. Si $f(m)$ es continua en el intervalo $[a_0, b_0]$ y $f(a_0) dot f(b_0) < 0$, existe al menos una raíz en el intervalo. En cada paso se evalúa el punto medio $m_k = frac(a_k + b_k, 2)$, reduciendo el intervalo a la mitad con convergencia lineal de orden $r = 1$, garantizando estabilidad incondicional.
-+ *Método de Newton-Raphson (Método Abierto):* Aproxima la función localmente mediante su recta tangente utilizando la primera derivada analítica $f'(m)$:
-  $ m_(k+1) = m_k - frac(f(m_k), f'(m_k)) $
-  Presenta convergencia cuadrática de orden $r = 2$ en las proximidades de la raíz, requiriendo significativamente menos iteraciones para alcanzar una tolerancia de parada dada ($|f(m_k)| < epsilon$ con $epsilon = 10^(-6)$).
-
-La trayectoria de reducción del error absoluto estimado en escala semilogarítmica confirma la superioridad algorítmica de Newton-Raphson (5 iteraciones frente a 20 de la Bisección para una tolerancia de $10^(-6)$), tal como se expone en la @fig-numerical-convergence.
-
-#fig-numerical-convergence <fig-numerical-convergence>
-
-=== Optimización Espacial en Redes y Algoritmo de Ruta Más Corta (Dijkstra)
-
-La infraestructura vial urbana de Managua se modela formalmente como una red espacial mediante un *grafo dirigido y ponderado* $G = (V, E)$, donde:
+La infraestructura vial urbana de Managua se modela formalmente como una red espacial mediante un *grafo ponderado* $G = (V, E)$, donde:
 - $V = {v_1, v_2, dots, v_(24)}$ representa el conjunto de vértices correspondientes a los 24 centroides zonales de la capital.
 - $E subset.eq V times V$ representa el conjunto de 44 corredores y arterias viales principales (@fig-urban-network-topology).
 - Cada arista $(i, j) in E$ posee una función de costo o impedancia temporal $tau_(i j)$ que cuantifica el tiempo de viaje estimado en minutos:
   $ tau_(i j) (c) = frac(d_(i j), v_(i j) (c)) dot 60 $
-  donde $d_(i j)$ es la distancia vial entre zonas y $v_(i j)(c)$ es la velocidad de circulación condicionada por el régimen meteorológico $c in {"seco", "tormenta"}$.
+  donde $d_(i j)$ es la distancia vial corregida por el factor de tortuosidad metropolitana ($kappa = 1.30$) y $v_(i j)(c)$ es la velocidad de circulación condicionada por el régimen meteorológico $c in {"seco", "tormenta"}$.
 
 #fig-urban-network-topology <fig-urban-network-topology>
 
-Para determinar la trayectoria de mínima impedancia entre un punto de partida y un destino, se implementa el *Algoritmo de Dijkstra*, el cual mantiene una estimación de distancia tentativa desde el origen y actualiza progresivamente las etiquetas de los nodos adyacentes mediante la operación de *relajación de aristas*:
+Para identificar los puntos neurálgicos de estrangulamiento y vulnerabilidad estructural en el sistema de transporte, se analiza la *Centralidad de Intermediación (_Betweenness Centrality_)* de cada zona:
+
+$ C_B (v) = sum_(s eq.not v eq.not t) frac(sigma_(s t)(v), sigma_(s t)) $ <eq-betweenness>
+
+donde $sigma_(s t)$ es el número total de caminos más cortos entre los pares de origen y destino $s$ y $t$, y $sigma_(s t)(v)$ es la cantidad de dichos caminos que transitan obligatoriamente a través del vértice $v$. Las zonas con elevado $C_B$ (como Ciudad Jardín con 0.4190 y Bolonia con 0.3715) constituyen cuellos de botella sistémicos donde las perturbaciones viales multiplican los retrasos y disparan el multiplicador dinámico.
+
+Para determinar las trayectorias de mínima impedancia bajo condiciones normales y de contingencia pluvial, se implementa el *Algoritmo de Dijkstra*, el cual mantiene una estimación de distancia tentativa desde el origen y actualiza progresivamente las etiquetas de los nodos adyacentes mediante relajación de aristas:
 
 $ "dist"[j] = min("dist"[j], "dist"[i] + tau_(i j)) $
 
-Este enfoque permite cuantificar el incremento en el tiempo de viaje y los desvíos obligados cuando arterias neurálgicas sufren anegamientos severos. La @fig-urban-network-dijkstra ilustra este comportamiento para la diagonal metropolitana Linda Vista -- Santo Domingo (OD_1): bajo flujo seco el algoritmo traza la ruta directa vía Los Robles (25.48 min, 13.59 km), mientras que durante una tormenta tropical con cauces desbordados, Dijkstra re-rutea la unidad por Metrocentro, generando una demora adicional del 38.0% (35.17 min, 14.07 km).
+Este enfoque permite cuantificar formalmente la resiliencia de la red: a nivel global metropolitano (evaluando los 552 pares OD posibles), un evento de tormenta severa eleva el tiempo medio de traslado de 18.59 min a 26.55 min (un incremento global del 42.8%). En corredores críticos como la diagonal metropolitana Linda Vista -- Santo Domingo (OD_1, @fig-urban-network-dijkstra), el anegamiento de la Pista Juan Pablo II fuerza un desvío dinámico hacia el eje corporativo de Metrocentro, dilatando el trayecto en un 38.0% (de 25.48 min a 35.17 min).
 
 #fig-urban-network-dijkstra <fig-urban-network-dijkstra>
 

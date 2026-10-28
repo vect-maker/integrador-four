@@ -2,14 +2,12 @@
 
 == Objetivo General
 
-*Determinar* el impacto del esquema de tarificación dinámica sobre la tasa de cancelación de viajes del servicio de transporte selectivo MoviGo en el municipio de Managua durante el año 2024.
+*Determinar* el impacto del esquema de tarificación dinámica y los estrangulamientos viales de la red urbana sobre la probabilidad de cancelación de viajes del servicio de transporte selectivo MoviGo en el municipio de Managua durante el año 2024.
 
 == Objetivos Específicos
 
-+ *Implementar* un pipeline de ingeniería de datos bajo el paradigma ELT (API REST, Apache Parquet, Azure Database for PostgreSQL, dbt Core y DuckDB) para la consolidación del repositorio analítico de operaciones 2024.
++ *Implementar* un pipeline de ingeniería de datos bajo el paradigma ELT (API REST, Apache Parquet, Azure Database for PostgreSQL, dbt Core y DuckDB) para la consolidación y explotación de un repositorio analítico columnar de 77,487 operaciones.
 
-+ *Modelar* la tasa de cancelación de viajes frente a variaciones en el multiplicador dinámico mediante técnicas de regresión lineal simple (MCO) y análisis de varianza (ANOVA).
++ *Modelar* la probabilidad condicional de cancelación de viajes a nivel transaccional en función del multiplicador de tarifa dinámica y fricciones operacionales mediante regresión logística binaria (Logit), calibrada numéricamente mediante el algoritmo iterativo de Newton-Raphson (IRLS) y evaluando la significancia inferencial mediante el análisis de Deviance y razones de momios (_Odds Ratios_).
 
-+ *Calcular* el multiplicador tarifario de equilibrio de mercado en la función de exceso de demanda mediante algoritmos numéricos de búsqueda de raíces (Bisección y Newton-Raphson).
-
-+ *Optimizar* las trayectorias de desplazamiento en la red vial urbana de Managua mediante el algoritmo de ruta más corta de Dijkstra en teoría de grafos, evaluando la resiliencia operativa de los corredores ante perturbaciones climáticas y congestión severa.
++ *Construir y optimizar* la red de movilidad urbana metropolitana mediante teoría de grafos sobre los flujos origen-destino observados (24 zonas), evaluando métricas de centralidad de intermediación (_betweenness_), cuellos de botella viales y la resiliencia operativa de los corredores ante perturbaciones hidrológicas y congestión severa.
