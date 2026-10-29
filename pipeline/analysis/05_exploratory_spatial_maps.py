@@ -50,6 +50,49 @@ ZONE_24_PALETTE = [
     "#6b6ecf", "#b5cf6b", "#e7ba52", "#de9ed6"
 ]
 
+# Anti-collision label offsets for the 24 urban zones
+ZONE_LABEL_OFFSETS: dict[int, tuple[float, float, str, str]] = {
+    # zone_id: (dx, dy, ha, va)
+    1: (0.0000, -0.0030, "center", "top"),      # Villa Fontana
+    2: (-0.0020, -0.0025, "right", "top"),      # Las Colinas
+    3: (0.0025, 0.0022, "left", "bottom"),      # Santo Domingo
+    4: (-0.0035, 0.0025, "right", "bottom"),    # Los Robles (Northwest)
+    5: (0.0030, 0.0010, "left", "center"),      # Altamira (East)
+    6: (-0.0025, 0.0022, "right", "bottom"),    # Bolonia
+    7: (0.0000, -0.0030, "center", "top"),      # Bello Horizonte (South)
+    8: (0.0000, 0.0028, "center", "bottom"),    # Linda Vista
+    9: (0.0035, -0.0025, "left", "top"),        # Metrocentro (Southeast)
+    10: (0.0000, 0.0028, "center", "bottom"),   # Ciudad Jardín
+    11: (0.0000, 0.0028, "center", "bottom"),   # Mercado Oriental
+    12: (0.0020, -0.0028, "left", "top"),       # Mercado Roberto Huembes
+    13: (-0.0025, 0.0025, "right", "bottom"),   # Monseñor Lezcano
+    14: (0.0000, 0.0028, "center", "bottom"),   # Puerto Salvador Allende
+    15: (-0.0025, -0.0022, "right", "top"),     # Altagracia
+    16: (0.0000, -0.0030, "center", "top"),     # San Judas (South)
+    17: (0.0000, 0.0028, "center", "bottom"),   # Carretera Sur
+    18: (0.0000, 0.0028, "center", "bottom"),   # Esquipulas
+    19: (0.0000, 0.0030, "center", "bottom"),   # Multicentro (North)
+    20: (0.0025, 0.0022, "left", "bottom"),     # Mercado El Mayoreo (North)
+    21: (0.0000, 0.0028, "center", "bottom"),   # Aeropuerto
+    22: (0.0000, -0.0028, "center", "top"),     # Primero de Mayo
+    23: (0.0020, -0.0025, "left", "top"),       # Villa Libertad (South)
+    24: (0.0000, 0.0028, "center", "bottom"),   # Sabana Grande
+}
+
+
+def clean_zone_name(raw_name: str) -> str:
+    """Produces compact, legible names for map labels without overlaps."""
+    name = raw_name.split(" / ")[0]
+    replacements = {
+        "Multicentro Las Américas": "Multicentro",
+        "Aeropuerto Augusto C. Sandino": "Aeropuerto Sandino",
+        "Colonia Primero de Mayo": "Primero de Mayo",
+        "Puerto Salvador Allende": "Salvador Allende",
+    }
+    for old, new in replacements.items():
+        name = name.replace(old, new)
+    return name
+
 
 def load_basemap() -> tuple[Image.Image | None, dict[str, float] | None]:
     """Loads pre-cached OpenStreetMap basemap and bounding metadata."""
@@ -150,7 +193,7 @@ def plot_quadrants_by_zone(
     # 2. Draw 24 Zone Centroids and Badges
     for z in zones:
         zid = int(z[0])
-        zname = str(z[1]).split(" / ")[0]
+        zname = clean_zone_name(str(z[1]))
         zlat = float(z[4])
         zlon = float(z[5])
         color = ZONE_24_PALETTE[(zid - 1) % len(ZONE_24_PALETTE)]
@@ -165,14 +208,15 @@ def plot_quadrants_by_zone(
             zorder=5,
         )
 
+        dx, dy, ha, va = ZONE_LABEL_OFFSETS.get(zid, (0.0, 0.0028, "center", "bottom"))
         ax.text(
-            zlon,
-            zlat + 0.0028,
+            zlon + dx,
+            zlat + dy,
             f"Z{zid}: {zname}",
             fontsize=7.2,
             fontweight="bold",
-            ha="center",
-            va="bottom",
+            ha=ha,
+            va=va,
             bbox=dict(
                 boxstyle="round,pad=0.20",
                 facecolor="#ffffff",
@@ -311,12 +355,13 @@ def plot_od_mobility_flows(
             zorder=5,
         )
 
+        dx, dy, ha, va = ZONE_LABEL_OFFSETS.get(zid, (0.0, 0.0028, "center", "bottom"))
         ax.text(
-            zlon, zlat + 0.0028,
+            zlon + dx, zlat + dy,
             f"Z{zid}",
             fontsize=7.5,
             fontweight="bold",
-            ha="center", va="bottom",
+            ha=ha, va=va,
             bbox=dict(boxstyle="circle,pad=0.15", facecolor="#ffffff", edgecolor="#10002b", alpha=0.92),
             zorder=6,
         )
@@ -439,7 +484,8 @@ def plot_cancellation_causes(
         zid = int(z[0])
         zlat, zlon = z[2], z[3]
         ax.scatter([zlon], [zlat], s=90, c="#ffffff", edgecolors="#212529", linewidths=1.5, zorder=5)
-        ax.text(zlon, zlat + 0.0026, f"Z{zid}", fontsize=7.0, fontweight="bold", ha="center", va="bottom",
+        dx, dy, ha, va = ZONE_LABEL_OFFSETS.get(zid, (0.0, 0.0028, "center", "bottom"))
+        ax.text(zlon + dx, zlat + dy, f"Z{zid}", fontsize=7.0, fontweight="bold", ha=ha, va=va,
                 bbox=dict(boxstyle="round,pad=0.15", facecolor="#ffffff", edgecolor="#212529", alpha=0.90),
                 zorder=6)
 
@@ -530,10 +576,11 @@ def plot_flood_risk_quadrants(
     # Zone centroids
     for z in zones:
         zid = int(z[0])
-        zname = str(z[1]).split(" / ")[0]
+        zname = clean_zone_name(str(z[1]))
         zlat, zlon = z[2], z[3]
+        dx, dy, ha, va = ZONE_LABEL_OFFSETS.get(zid, (0.0, 0.0028, "center", "bottom"))
         ax.scatter([zlon], [zlat], s=110, c="#ffffff", edgecolors="#d90429", linewidths=1.8, zorder=5)
-        ax.text(zlon, zlat + 0.0026, f"Z{zid}: {zname}", fontsize=7.2, fontweight="bold", ha="center", va="bottom",
+        ax.text(zlon + dx, zlat + dy, f"Z{zid}: {zname}", fontsize=7.2, fontweight="bold", ha=ha, va=va,
                 bbox=dict(boxstyle="round,pad=0.20", facecolor="#ffffff", edgecolor="#d90429", alpha=0.92, linewidth=1.1),
                 zorder=6)
 
@@ -611,7 +658,7 @@ def plot_wait_times(
 
     for r in zone_waits:
         zid = int(r[0])
-        zname = str(r[1]).split(" / ")[0]
+        zname = clean_zone_name(str(r[1]))
         zlon, zlat = r[3], r[4]
         ztrips = r[5]
         wait_min = r[6]
@@ -625,12 +672,13 @@ def plot_wait_times(
         # Core marker
         ax.scatter([zlon], [zlat], s=size, c=[color], edgecolors="#ffffff", linewidths=1.8, alpha=0.92, zorder=5)
 
+        dx, dy, ha, va = ZONE_LABEL_OFFSETS.get(zid, (0.0, 0.0028, "center", "bottom"))
         ax.text(
-            zlon, zlat + 0.0028,
+            zlon + dx, zlat + dy,
             f"Z{zid}: {zname}\n{wait_min:.1f} min",
             fontsize=7.2,
             fontweight="bold",
-            ha="center", va="bottom",
+            ha=ha, va=va,
             bbox=dict(boxstyle="round,pad=0.20", facecolor="#ffffff", edgecolor=color, alpha=0.94, linewidth=1.2),
             zorder=6,
         )

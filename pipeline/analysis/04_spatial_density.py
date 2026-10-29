@@ -149,14 +149,51 @@ def generate_density_plot(
         "popular": "#6a0572",
     }
 
+    # Anti-collision label offsets for the 24 urban zones
+    zone_label_offsets: dict[int, tuple[float, float, str, str]] = {
+        1: (0.0000, -0.0030, "center", "top"),      # Villa Fontana
+        2: (-0.0020, -0.0025, "right", "top"),      # Las Colinas
+        3: (0.0025, 0.0022, "left", "bottom"),      # Santo Domingo
+        4: (-0.0035, 0.0025, "right", "bottom"),    # Los Robles (Northwest)
+        5: (0.0030, 0.0010, "left", "center"),      # Altamira (East)
+        6: (-0.0025, 0.0022, "right", "bottom"),    # Bolonia
+        7: (0.0000, -0.0030, "center", "top"),      # Bello Horizonte (South)
+        8: (0.0000, 0.0028, "center", "bottom"),    # Linda Vista
+        9: (0.0035, -0.0025, "left", "top"),        # Metrocentro (Southeast)
+        10: (0.0000, 0.0028, "center", "bottom"),   # Ciudad Jardín
+        11: (0.0000, 0.0028, "center", "bottom"),   # Mercado Oriental
+        12: (0.0020, -0.0028, "left", "top"),       # Mercado Roberto Huembes
+        13: (-0.0025, 0.0025, "right", "bottom"),   # Monseñor Lezcano
+        14: (0.0000, 0.0028, "center", "bottom"),   # Puerto Salvador Allende
+        15: (-0.0025, -0.0022, "right", "top"),     # Altagracia
+        16: (0.0000, -0.0030, "center", "top"),     # San Judas (South)
+        17: (0.0000, 0.0028, "center", "bottom"),   # Carretera Sur
+        18: (0.0000, 0.0028, "center", "bottom"),   # Esquipulas
+        19: (0.0000, 0.0030, "center", "bottom"),   # Multicentro (North)
+        20: (0.0025, 0.0022, "left", "bottom"),     # Mercado El Mayoreo (North)
+        21: (0.0000, 0.0028, "center", "bottom"),   # Aeropuerto
+        22: (0.0000, -0.0028, "center", "top"),     # Primero de Mayo
+        23: (0.0020, -0.0025, "left", "top"),       # Villa Libertad (South)
+        24: (0.0000, 0.0028, "center", "bottom"),   # Sabana Grande
+    }
+
     # 5. Plot Urban Zone Centroids and Labels
     for row in zones_rows:
         zid = int(row[0])
         zname = str(row[1]).split(" / ")[0]
+        replacements = {
+            "Multicentro Las Américas": "Multicentro",
+            "Aeropuerto Augusto C. Sandino": "Aeropuerto Sandino",
+            "Colonia Primero de Mayo": "Primero de Mayo",
+            "Puerto Salvador Allende": "Salvador Allende",
+        }
+        for old, new in replacements.items():
+            zname = zname.replace(old, new)
         stratum = str(row[2]).lower()
         lat = float(row[3])
         lon = float(row[4])
         color = stratum_colors.get(stratum, "#333333")
+        dx, dy, ha, va = zone_label_offsets.get(zid, (0.0, 0.0028, "center", "bottom"))
 
         ax.scatter(
             [lon],
@@ -169,15 +206,15 @@ def generate_density_plot(
         )
 
         ax.text(
-            lon,
-            lat + 0.0024,
+            lon + dx,
+            lat + dy,
             f"Z{zid}: {zname}",
-            fontsize=7.5,
+            fontsize=7.2,
             fontweight="bold",
-            ha="center",
-            va="bottom",
+            ha=ha,
+            va=va,
             bbox=dict(
-                boxstyle="round,pad=0.22",
+                boxstyle="round,pad=0.20",
                 facecolor="white",
                 edgecolor=color,
                 alpha=0.92,

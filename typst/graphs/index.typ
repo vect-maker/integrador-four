@@ -2,7 +2,7 @@
 
 #let fig-regression-fit = figure(
   image("regression_fit.png", width: 90%),
-  caption: [Ajuste de Regresión Lineal Simple (MCO): Tasa de Cancelación vs. Multiplicador Dinámico Promedio],
+  caption: [Curva de Regresión Logística Binaria (Logit): Probabilidad de Cancelación Condicional vs. Multiplicador Dinámico ($N = 77,487$)],
 )
 
 #let fig-market-equilibrium = figure(

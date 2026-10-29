@@ -457,27 +457,46 @@ def generate_topology_plot(
         ax=ax,
     )
 
-    # Custom label offsets to eliminate crowding in dense urban zones (e.g. Metrocentro, Los Robles, Altamira)
+    # Custom label offsets to eliminate crowding in dense urban zones
     custom_offsets: dict[int, tuple[float, float, str, str]] = {
         # zone_id: (dx, dy, ha, va)
-        4: (-0.0020, 0.0026, "right", "bottom"),   # Los Robles
-        9: (0.0025, -0.0028, "left", "top"),       # Metrocentro
-        5: (0.0000, -0.0028, "center", "top"),     # Altamira
-        10: (0.0000, 0.0028, "center", "bottom"),  # Ciudad Jardín
-        6: (-0.0020, 0.0026, "right", "bottom"),   # Bolonia
-        15: (-0.0020, -0.0026, "right", "top"),    # Altagracia
-        19: (0.0000, 0.0028, "center", "bottom"),  # Multicentro
-        20: (0.0025, 0.0010, "left", "center"),    # Mayoreo
-        22: (0.0000, -0.0028, "center", "top"),    # Primero de Mayo
-        12: (0.0000, -0.0028, "center", "top"),    # Roberto Huembes
-        2: (0.0000, -0.0028, "center", "top"),     # Las Colinas
-        3: (0.0020, 0.0026, "left", "bottom"),     # Santo Domingo
-        18: (0.0000, -0.0028, "center", "top"),    # Esquipulas
+        1: (0.0000, -0.0030, "center", "top"),      # Villa Fontana
+        2: (-0.0020, -0.0025, "right", "top"),      # Las Colinas
+        3: (0.0025, 0.0022, "left", "bottom"),      # Santo Domingo
+        4: (-0.0035, 0.0025, "right", "bottom"),    # Los Robles (Northwest)
+        5: (0.0030, 0.0010, "left", "center"),      # Altamira (East)
+        6: (-0.0025, 0.0022, "right", "bottom"),    # Bolonia
+        7: (0.0000, -0.0030, "center", "top"),      # Bello Horizonte (South)
+        8: (0.0000, 0.0028, "center", "bottom"),    # Linda Vista
+        9: (0.0035, -0.0025, "left", "top"),        # Metrocentro (Southeast)
+        10: (0.0000, 0.0028, "center", "bottom"),   # Ciudad Jardín
+        11: (0.0000, 0.0028, "center", "bottom"),   # Mercado Oriental
+        12: (0.0020, -0.0028, "left", "top"),       # Mercado Roberto Huembes
+        13: (-0.0025, 0.0025, "right", "bottom"),   # Monseñor Lezcano
+        14: (0.0000, 0.0028, "center", "bottom"),   # Puerto Salvador Allende
+        15: (-0.0025, -0.0022, "right", "top"),     # Altagracia
+        16: (0.0000, -0.0030, "center", "top"),     # San Judas (South)
+        17: (0.0000, 0.0028, "center", "bottom"),   # Carretera Sur
+        18: (0.0000, 0.0028, "center", "bottom"),   # Esquipulas
+        19: (0.0000, 0.0030, "center", "bottom"),   # Multicentro (North)
+        20: (0.0025, 0.0022, "left", "bottom"),     # Mercado El Mayoreo (North)
+        21: (0.0000, 0.0028, "center", "bottom"),   # Aeropuerto
+        22: (0.0000, -0.0028, "center", "top"),     # Primero de Mayo
+        23: (0.0020, -0.0025, "left", "top"),       # Villa Libertad (South)
+        24: (0.0000, 0.0028, "center", "bottom"),   # Sabana Grande
     }
 
     # Offset zone name text with collision avoidance
     for n, (x, y) in pos.items():
         name = zones[n]["nombre"].split(" / ")[0]  # shorter name
+        replacements = {
+            "Multicentro Las Américas": "Multicentro",
+            "Aeropuerto Augusto C. Sandino": "Aeropuerto Sandino",
+            "Colonia Primero de Mayo": "Primero de Mayo",
+            "Puerto Salvador Allende": "Salvador Allende",
+        }
+        for old, new in replacements.items():
+            name = name.replace(old, new)
         dx, dy, ha, va = custom_offsets.get(n, (0.0, 0.0028, "center", "bottom"))
         ax.text(
             x + dx,
