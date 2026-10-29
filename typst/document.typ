@@ -89,3 +89,17 @@
 // APÉNDICE A: ATLAS CARTOGRÁFICO Y EXPLORATORIO
 // ==========================================
 #include "document/chapters/08_apendice_atlas.typ"
+
+#pagebreak()
+
+// ==========================================
+// APÉNDICE B: CATÁLOGO TERRITORIAL DE ZONAS URBANAS
+// ==========================================
+#include "document/chapters/apendice_b_catalog.typ"
+
+#pagebreak()
+
+// ==========================================
+// APÉNDICE C: ESPECIFICACIÓN TÉCNICA DE INGENIERÍA
+// ==========================================
+#include "document/chapters/apendice_c_engineering.typ"

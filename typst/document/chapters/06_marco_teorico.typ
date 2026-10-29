@@ -1,13 +1,8 @@
 #show bibliography: none
 #bibliography("../../references.bib")
 #import "../../data_bindings.typ": total-trips-fmt, total-zones
-#import "../../tables/index.typ": fig-zones-catalog
-#import "../../graphs/index.typ": (
-  fig-market-equilibrium,
-  fig-numerical-convergence,
-  fig-urban-network-topology,
-  fig-urban-network-dijkstra,
-)
+#import "../../tables/index.typ": fig-strata-summary
+#import "../../graphs/index.typ": fig-urban-network-topology
 
 = Marco Teórico
 
@@ -45,13 +40,9 @@ Donde el multiplicador dinámico oscila habitualmente entre $1.00times$ y $2.80t
 
 La teoría de la justicia espacial y el acceso al transporte urbano postula que las tarifas y la disponibilidad de los servicios de movilidad no deben discriminar ni excluir a las poblaciones de menores recursos.
 
-En el municipio de Managua, la estructura urbana se caracteriza por una marcada heterogeneidad y fragmentación espacial. MoviGo estructura la capital en 24 zonas urbanas agrupadas en cuatro estratos socioeconómicos y subdivididas en 298 cuadrantes espaciales (@tbl-zones-catalog):
-- *Alto:* Villa Fontana, Las Colinas, Santo Domingo (bajada de bandera base de C\$ 70.0 a C\$ 80.0 NIO).
-- *Medio:* Los Robles, Altamira, Bolonia, Bello Horizonte, Linda Vista (bajada de bandera base de C\$ 48.0 a C\$ 55.0 NIO).
-- *Comercial:* Metrocentro / Eje Corporativo UCA, Centro Cívico, Carretera Norte (bajada de bandera base de C\$ 55.0 a C\$ 60.0 NIO).
-- *Popular:* Ciudad Jardín, Mercado Oriental, Mercado Roberto Huembes, Villa Libertad, Sabana Grande (bajada de bandera base de C\$ 35.0 a C\$ 45.0 NIO).
+En el municipio de Managua, la estructura urbana se caracteriza por una marcada heterogeneidad y fragmentación socioespacial. MoviGo discretiza la capital en 24 zonas urbanas agrupadas en cuatro estratos socioeconómicos y subdivididas en 298 cuadrantes operacionales (@tbl-strata-summary; el catálogo pormenorizado con coordenadas y radios de cobertura se detalla en el Apéndice B, @tbl-zones-catalog):
 
-#fig-zones-catalog <tbl-zones-catalog>
+#fig-strata-summary <tbl-strata-summary>
 
 En la arquitectura del servicio, la *zona de origen* del viaje ($z_"origen"$) es el factor determinante que fija el costo inicial del servicio mediante la tarifa de bajada de bandera ($"BajadaBandera"_(z_"origen")$). Este costo base, sumado a los cargos paramétricos por distancia ($18.00 "NIO/km"$) y tiempo ($4.50 "NIO/min"$), constituye la base imponible sobre la cual se aplica el multiplicador dinámico ($m$).
 
@@ -60,14 +51,14 @@ Esta estructuración genera una fuerte *asimetría en la propensión a la cancel
 + *Inelasticidad en Cuadrantes Altos:* Por el contrario, en los cuadrantes de estrato alto y comercial predomina el pago digital con *tarjeta de crédito o débito*, donde los usuarios presentan menor elasticidad-precio y mayor capacidad de absorber incrementos en la tarifa final sin recurrir a la cancelación.
 + *Doble Rol Dimensional:* Dentro del modelo analítico, la zona de origen actúa como la entidad generadora del viaje y rectora del precio base, mientras que la zona de destino determina la longitud del trayecto y las rutas de desplazamiento sobre la red vial capitalina.
 
-== Arquitectura de Datos y Paradigma ELT vía API REST
+== Arquitectura de Datos y Paradigma ELT
 
 Para investigar empíricamente este fenómeno, se requiere una arquitectura analítica moderna capaz de transformar registros transaccionales dispersos en un repositorio estructurado para la toma de decisiones. 
 
-Dado que MoviGo expone sus datos a través de una API REST pública (proporcionada en una URL temporal para fines académicos), la solución tecnológica se estructura bajo el paradigma *ELT (Extract, Load, Transform)*:
+Bajo las mejores prácticas de la ingeniería de datos contemporánea, la solución tecnológica se estructura bajo el paradigma *ELT (Extract, Load, Transform)*:
 
-+ *Ingesta y Carga Cruda (Python $arrow.r$ Azure PostgreSQL):* Un cliente modular en Python (`fetcher.py`) consume los endpoints transaccionales y de catálogo, gestionando paginación sistemática (`limit=200`, `offset`), serializando archivos columnares en Apache Parquet y asegurando la integridad referencial antes de persistir los datos en un servicio administrado en la nube (*Azure Database for PostgreSQL*). Esta capa opera como réplica transaccional estructurada en la base de datos `postgres` bajo el esquema `raw` (OLTP).
-+ *Transformación Analítica con dbt Core:* La orquestación del almacén de datos se delega en *dbt (Data Build Tool)*, estructurando las transformaciones en un flujo de dos niveles: una capa de limpieza y enriquecimiento operacional (_staging_) materializada como vistas lógicas, y una capa dimensional de negocio (_marts_) materializada físicamente en tablas optimizadas para procesamiento analítico en línea (OLAP) @kimball2013.
++ *Ingesta y Carga Cruda (Paradigma ELT):* Los procesos de extracción consumen las fuentes transaccionales y de catálogo, gestionando paginación sistemática, serializando archivos columnares en Apache Parquet y asegurando la integridad referencial antes de persistir los datos en un servicio administrado en la nube (*Azure Database for PostgreSQL*). Esta capa opera como réplica transaccional estructurada en la base de datos bajo el esquema `raw` (OLTP).
++ *Transformación Analítica con dbt Core:* La orquestación del almacén de datos se delega en herramientas declarativas de ingeniería analítica (*dbt Core*), estructurando las transformaciones en un flujo de dos niveles: una capa de limpieza y enriquecimiento operacional (_staging_) materializada como vistas lógicas, y una capa dimensional de negocio (_marts_) materializada físicamente en tablas optimizadas para procesamiento analítico en línea (OLAP) @kimball2013.
 
 == Modelado Dimensional Kimball y Esquema en Estrella para Análisis del Viaje
 
@@ -138,9 +129,7 @@ Para determinar las trayectorias de mínima impedancia bajo condiciones normales
 
 $ "dist"[j] = min("dist"[j], "dist"[i] + tau_(i j)) $
 
-Este enfoque permite cuantificar formalmente la resiliencia de la red: a nivel global metropolitano (evaluando los 552 pares OD posibles), un evento de tormenta severa eleva el tiempo medio de traslado de 18.59 min a 26.55 min (un incremento global del 42.8%). En corredores críticos como la diagonal metropolitana Linda Vista -- Santo Domingo (OD_1, @fig-urban-network-dijkstra), el anegamiento de la Pista Juan Pablo II fuerza un desvío dinámico hacia el eje corporativo de Metrocentro, dilatando el trayecto en un 38.0% (de 25.48 min a 35.17 min).
-
-#fig-urban-network-dijkstra <fig-urban-network-dijkstra>
+Este marco matemático posibilita contrastar analíticamente el comportamiento de la red ante escenarios meteorológicos dispares: bajo condiciones basales de flujo seco frente a eventos de saturación hidrológica donde arterias neurálgicas sufren anegamientos severos, forzando la reasignación de trayectorias hacia vías alternas y alterando la impedancia global de la red (cuya evaluación empírica detallada se presenta en el Capítulo 8).
 
 === Arquitectura DataOps y Reproducibilidad Computacional
 

@@ -1,13 +1,7 @@
 #show bibliography: none
 #bibliography("../../references.bib")
-#import "../../snippets.typ": (
-  fig-raw-ddl,
-  fig-loader-azure,
-  fig-fct-viajes,
-  fig-marts-models,
-)
 #import "../../diagrams/star_schema.typ": fig-star-schema
-#import "../../tables/star_schema.typ": fig-star-schema-table
+#import "../../tables/index.typ": fig-variables-operationalization
 #import "../../graphs/index.typ": fig-trip-origins-density
 #import "../../data_bindings.typ": total-trips-fmt, total-zones, total-campaigns
 #import "../../metadata.typ": repo-url
@@ -23,6 +17,10 @@ El diseño metodológico establece la secuencia técnica, analítica y computaci
 - *Alcance Mixto (Descriptivo, Correlacional y Prescriptivo):* Trasciende la descripción exploratoria del comportamiento del servicio; cuantifica e infiere la relación estadística entre el multiplicador tarifario y la tasa de cancelación (alcance correlacional), determina numéricamente el punto de equilibrio operativo de mercado y prescribe rutas óptimas de contingencia vial ante disrupciones climáticas (alcance prescriptivo).
 - *Unidad de Análisis:* El viaje individual o solicitud de traslado ($N = #total-trips-fmt$ registros), caracterizado por su origen, destino, marca temporal, multiplicador dinámico aplicado, condiciones climáticas concurrentes y estado final de atención o cancelación.
 
+A fin de operacionalizar formalmente las hipótesis y dimensiones analíticas del estudio, la @tbl-variables-operationalization desglosa la matriz metodológica de variables, definiendo para cada una su rol analítico, definición conceptual, operacionalización computacional, escala de medición y entidad del repositorio analítico de procedencia.
+
+#fig-variables-operationalization <tbl-variables-operationalization>
+
 == Fases Metodológicas de la Investigación
 
 === Fase 1: Pipeline de Datos ELT, Procesamiento y Esquema en Estrella (Objetivo 1)
@@ -31,7 +29,7 @@ Para consolidar el repositorio analítico de operaciones 2024 a partir de las fu
 
 + *Extracción y Serialización Parquet:* Consumo sistemático de los endpoints de la API REST mediante un cliente en Python (`fetcher.py`) con control dinámico de paginación (`limit=200`, `offset`). Los conjuntos recuperados se serializan en siete archivos columnares *Apache Parquet* (`pipeline/data/raw/*.parquet`: zonas, usuarios, conductores, campañas, clima, viajes y telemetría), garantizando inmutabilidad, reducción volumétrica de almacenamiento y desacoplamiento de la red.
 
-+ *Carga Transaccional Relacional en Azure PostgreSQL:* Despliegue del esquema DDL estricto (`raw_schema.sql`) en el esquema dedicado `raw` de *Azure Database for PostgreSQL*, asegurando tipificación fuerte, restricciones de clave primaria y foránea, así como validaciones de dominio mediante reglas `CHECK` como se ilustra en el @lst-ddl. El script cargador (`loader.py`) aplica casteo de marcas temporales, establece conexión cifrada TLS/SSL y ejecuta inserciones por bloques de 2,000 registros respetando el orden topológico de dependencias (@lst-loader).
++ *Carga Transaccional Relacional en Azure PostgreSQL:* Despliegue del esquema DDL estricto (`raw_schema.sql`) en el esquema dedicado `raw` de *Azure Database for PostgreSQL*, asegurando tipificación fuerte, restricciones de clave primaria y foránea, así como validaciones de dominio mediante reglas `CHECK` (código DDL documentado en el Apéndice C, @lst-ddl). El script cargador (`loader.py`) aplica casteo de marcas temporales, establece conexión cifrada TLS/SSL y ejecuta inserciones por bloques de 2,000 registros respetando el orden topológico de dependencias (@lst-loader).
 
 + *Capa de Preparación y Limpieza (Staging en dbt Core):* Implementación de modelos intermedios en dbt materializados como vistas lógicas (`view`) puras 1:1 bajo la capa `staging`. En esta fase se homogenizan formatos en inglés, se descartan dependencias cruzadas y se realiza tipificación formal:
   - En `stg_trips`: extracción y casteo de identificadores (`trip_id`, `user_id`, `driver_id`), cuadrantes de origen y destino (`origin_quadrant_id`, `destination_quadrant_id`), componentes temporales (`request_date`, `request_hour`, `iso_day_of_week`), indicadores booleanos de hora pico (`is_peak_hour`) y fin de semana (`is_weekend`), métricas operativas de distancia y duración (`distance_km`, `duration_minutes`), y binarización determinística del resultado del servicio (`is_cancelled`, `is_cancelled_by_user`, `is_cancelled_by_driver`, `is_completed`).
@@ -43,26 +41,16 @@ Para consolidar el repositorio analítico de operaciones 2024 a partir de las fu
   - En `stg_vehicles` y `stg_vehicle_maintenance`: parque automotor y registros de mantenimiento mecánico preventivo y correctivo.
 
 + *Capa Dimensional y Esquema en Estrella (Marts en dbt Core):* Transformación y estructuración de los datos en un *Esquema en Estrella* (_Star Schema_) según la metodología de Ralph Kimball @kimball2013, materializado físicamente como tablas (`table`) en la base de datos para maximizar el rendimiento analítico (OLAP):
-  - *Tabla de Hechos Atómica (`fct_viajes`):* Grano atómico de un registro por cada intento o servicio de transporte ($N = #total-trips-fmt$). Integra llaves primarias y foráneas subrogadas conformadas calculadas mediante la función criptográfica `md5(cast(id as text))` (`sk_trip`, `sk_zone_origin`, `sk_zone_destination`, `sk_driver`, `sk_user`, `sk_weather`), métricas financieras de tarifa dinámica, métricas operacionales de tiempo y distancia, y la variable respuesta dicotómica de cancelación para el modelado econométrico (@lst-fct-viajes).
-  - *Dimensiones Conformadas (`dim_zones`, `dim_quadrants`, `dim_weather`, `dim_users`, `dim_drivers`, `dim_campaigns`):* Tablas de contexto desacopladas que almacenan respectivamente la estratificación urbana de las 24 zonas, la malla de 298 cuadrantes territoriales, el régimen meteorológico y de escorrentía diario, el perfil socio-financiero de pasajeros, el parque vehicular enriquecido con métricas acumuladas de taller, y los programas presupuestarios de incentivos (@fig-star-schema y @tbl-star-schema). Destaca en particular `dim_zones` como dimensión de doble rol (_role-playing dimension_), donde la llave `sk_zone_origin` fija la tarifa base de bajada de bandera del servicio y el estrato socioeconómico de partida, mientras que `sk_zone_destination` delimita el alcance geográfico del trayecto.
+  - *Tabla de Hechos Atómica (`fct_viajes`):* Grano atómico de un registro por cada intento o servicio de transporte ($N = #total-trips-fmt$). Integra llaves primarias y foráneas subrogadas conformadas calculadas mediante la función criptográfica `md5(cast(id as text))` (`sk_trip`, `sk_zone_origin`, `sk_zone_destination`, `sk_driver`, `sk_user`, `sk_weather`), métricas financieras de tarifa dinámica, métricas operacionales de tiempo y distancia, y la variable respuesta dicotómica de cancelación para el modelado econométrico (especificación SQL en @lst-fct-viajes).
+  - *Dimensiones Conformadas (`dim_zones`, `dim_quadrants`, `dim_weather`, `dim_users`, `dim_drivers`, `dim_campaigns`):* Tablas de contexto desacopladas que almacenan respectivamente la estratificación urbana de las 24 zonas, la malla de 298 cuadrantes territoriales, el régimen meteorológico y de escorrentía diario, el perfil socio-financiero de pasajeros, el parque vehicular enriquecido con métricas acumuladas de taller, y los programas presupuestarios de incentivos (@fig-star-schema; ver diccionario completo de campos en el Apéndice C, @tbl-star-schema). Destaca en particular `dim_zones` como dimensión de doble rol (_role-playing dimension_), donde la llave `sk_zone_origin` fija la tarifa base de bajada de bandera del servicio y el estrato socioeconómico de partida, mientras que `sk_zone_destination` delimita el alcance geográfico del trayecto.
 
-+ *Marco de Calidad y Pruebas Automatizadas de Integridad:* Implementación de pruebas declarativas automatizadas en `sources.yml`, `_staging__models.yml` y `_marts__models.yml` ejecutadas mediante `dbt test`. El marco valida formalmente la unicidad (`unique`) y completitud (`not_null`) de todas las claves primarias y foráneas subrogadas, la integridad referencial cruzada (`relationships`) entre `fct_viajes` y las dimensiones correspondientes, y la no nulidad en la variable dependiente booleana de cancelación (`is_cancelled: not_null`), tal como se detalla en el @lst-dbt-marts.
++ *Marco de Calidad y Pruebas Automatizadas de Integridad:* Implementación de pruebas declarativas automatizadas en `sources.yml`, `_staging__models.yml` y `_marts__models.yml` ejecutadas mediante `dbt test`. El marco valida formalmente la unicidad (`unique`) y completitud (`not_null`) de todas las claves primarias y foráneas subrogadas, la integridad referencial cruzada (`relationships`) entre `fct_viajes` y las dimensiones correspondientes, y la no nulidad en la variable dependiente booleana de cancelación (`is_cancelled: not_null`), tal como se detalla en el Apéndice C (@lst-dbt-marts).
 
 + *Análisis de Densidad Espacial y Distribución Geográfica:* La captura granular de coordenadas GPS en origen y destino permite proyectar el universo transaccional sobre la malla urbana de Managua mediante un mapa base arterial georreferenciado de OpenStreetMap (@fig-trip-origins-density). Esta visualización revela la concentración espacial de solicitudes en polos comerciales y corporativos (Metrocentro, Villa Fontana, Los Robles) frente a la dispersión de puntos de cancelación en zonas populares y periféricas.
 
 #fig-star-schema <fig-star-schema>
 
-#fig-star-schema-table <tbl-star-schema>
-
 #fig-trip-origins-density <fig-trip-origins-density>
-
-#fig-raw-ddl <lst-ddl>
-
-#fig-loader-azure <lst-loader>
-
-#fig-fct-viajes <lst-fct-viajes>
-
-#fig-marts-models <lst-dbt-marts>
 
 === Fase 2: Modelación Econométrica y Optimización Numérica de Cancelaciones (Objetivo 2)
 A partir de las transacciones individuales consolidadas en el repositorio analítico ($N = 77,487$ viajes registrados en 2024), se formula un modelo de regresión logística binaria (Logit) para cuantificar la probabilidad condicional de cancelación de viajes frente a variaciones en la tarifa dinámica y fricciones operacionales:
