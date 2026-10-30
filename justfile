@@ -93,6 +93,10 @@ dbt *args="debug":
 duckdb-snapshot:
     @bash pipeline/snapshot_duckdb.sh
 
+# Ejecutar suite de Métodos Numéricos (Regresión multivariable SVD en scikit-learn, JSON y figuras)
+run-numerical:
+    @.venv/bin/python pipeline/analysis/02_numerical_methods.py
+
 # Ejecutar optimización de rutas (Teoría de Grafos y Dijkstra en red vial, JSON e imágenes PNG)
 run-optimization:
     @.venv/bin/python pipeline/analysis/03_optimization.py
@@ -109,8 +113,8 @@ run-spatial:
 run-exploratory-maps:
     @.venv/bin/python pipeline/analysis/05_exploratory_spatial_maps.py
 
-# Ejecutar la suite completa de modelado computacional (Optimización de Redes y Cartografía)
-run-analysis: run-optimization run-spatial run-exploratory-maps
+# Ejecutar la suite completa de modelado computacional (Métodos Numéricos, Optimización de Redes y Cartografía)
+run-analysis: run-numerical run-optimization run-spatial run-exploratory-maps
     @echo "🎉 Suite completa de análisis computacional ejecutada exitosamente."
 
 # Hidratar datasets agregados en typst/data a partir de DuckDB y análisis

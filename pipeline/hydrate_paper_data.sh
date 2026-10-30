@@ -112,6 +112,9 @@ if [ ! -f "${ROOT_DIR}/pipeline/data/managua_basemap.png" ] || [ ! -f "${ROOT_DI
     "${PYTHON_BIN}" "${SCRIPT_DIR}/analysis/cache_basemap.py" > /dev/null
 fi
 
+echo "   ▶ Running 02_numerical_methods.py (Multivariable SVD Regression Models)..."
+"${PYTHON_BIN}" "${SCRIPT_DIR}/analysis/02_numerical_methods.py" > /dev/null
+
 echo "   ▶ Running 03_optimization.py (Dijkstra Shortest Path on Road Graph)..."
 "${PYTHON_BIN}" "${SCRIPT_DIR}/analysis/03_optimization.py" > /dev/null
 
@@ -136,6 +139,7 @@ JSON_FILES=(
     "cancellations_by_weather.json"
     "campaigns_optimization.json"
     "zones.json"
+    "numerical_methods.json"
     "routing_optimization.json"
     "spatial_density_summary.json"
     "exploratory_spatial_kpis.json"
@@ -150,6 +154,9 @@ PNG_FILES=(
     "map_exploratory_cancellation_causes.png"
     "map_exploratory_flood_risk_quadrants.png"
     "map_exploratory_wait_times.png"
+    "numerical_duration.png"
+    "numerical_speed.png"
+    "numerical_fare.png"
 )
 
 # Validate JSON files
