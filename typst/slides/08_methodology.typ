@@ -1,12 +1,12 @@
 #import "@preview/touying:0.6.1": *
 #import "template.typ": *
 
-== 08. Diseño Metodológico Cuantitativo
+== 08. Diseño Metodológico Mixto
 
 #speaker-note[
 ⏱ *07:30 - 08:45* | Duración: 1:15 min | *Fase: Metodología*
 
-Adoptamos un *enfoque cuantitativo* y un *alcance descriptivo-prescriptivo* bajo un diseño no experimental longitudinal.
+Adoptamos un *enfoque mixto (con predominio cuantitativo)* y un *alcance descriptivo-prescriptivo* bajo un diseño no experimental longitudinal.
 
 La investigación se articula en *dos fases secuenciales*:
 *Fase 1: Pipeline ELT y Star Schema*. Ingesta Parquet, carga en Azure PostgreSQL, transformaciones y pruebas de integridad con dbt Core y DuckDB.
@@ -32,9 +32,9 @@ La investigación se articula en *dos fases secuenciales*:
 #grid(
   columns: (1fr, 1fr, 1fr, 1fr),
   gutter: 7pt,
-  card(title: [Cuantitativo], label: [A • Paradigma], accent: brand-red)[
+  card(title: [Mixto], label: [A • Paradigma], accent: brand-red)[
     #text(size: 8.5pt)[
-      Preponderancia cuantitativa (77k registros, almacén OLAP y teoría de redes) articulada con la contextualización territorial de Managua.
+      Enfoque mixto con predominio cuantitativo (77k registros, analítica dimensional y grafos) articulado con análisis cualitativo urbano territorial.
     ]
   ],
   card(title: [Descriptivo-Prescriptivo], label: [B • Tipo y Alcance], accent: brand-dark)[
