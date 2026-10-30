@@ -25,7 +25,9 @@ A fin de operacionalizar formalmente las hipótesis y dimensiones analíticas de
 
 === Fase 1: Pipeline de Datos ELT, Procesamiento y Esquema en Estrella (Objetivo 1)
 
-Para consolidar el repositorio analítico de operaciones 2024 a partir de las fuentes desagregadas de la plataforma MoviGo, se ejecutó integralmente un pipeline de datos moderno bajo el paradigma *ELT (Extract, Load, Transform)* articulado en las siguientes etapas computacionales:
+Los datos primarios de la investigación provienen de una API REST que expone un entorno de simulación sintética de alta fidelidad, diseñado específicamente para emular de manera fidedigna la dinámica transaccional, operativa y espacial de una plataforma de transporte selectivo metropolitana en Managua. Aunque el motor de simulación dispone de capacidades de generación continua horaria, para asegurar la reproducibilidad científica estricta y auditoría del estudio se delimitó la extracción al censo anual cerrado del año 2024 ($N = #total-trips-fmt$ operaciones).
+
+Para consolidar el repositorio analítico a partir de las fuentes desacopladas de la API, se ejecutó integralmente un pipeline de datos bajo el paradigma *ELT (Extract, Load, Transform)* articulado en las siguientes etapas computacionales:
 
 + *Extracción y Serialización Parquet:* Consumo sistemático de los endpoints de la API REST mediante un cliente en Python (`fetcher.py`) con control dinámico de paginación (`limit=200`, `offset`). Los conjuntos recuperados se serializan en siete archivos columnares *Apache Parquet* (`pipeline/data/raw/*.parquet`: zonas, usuarios, conductores, campañas, clima, viajes y telemetría), garantizando inmutabilidad, reducción volumétrica de almacenamiento y desacoplamiento de la red.
 

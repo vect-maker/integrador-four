@@ -36,7 +36,7 @@ Muchas gracias a los profesores y miembros del jurado evaluador. Abrimos con gus
   columns: (1fr, 1fr, 1fr),
   gutter: 7pt,
   card(title: [Base Fija: API + dbt], label: [Pregunta Frecuente 1], accent: brand-red)[
-    Garantiza reproducibilidad inmutable, linaje formal y tests de integridad sobre >65,000 registros antes de ejecutar inferencia o simulación.
+    Garantiza reproducibilidad inmutable, linaje formal y tests de integridad sobre 77,487 registros antes de ejecutar inferencia o simulación.
   ],
   card(title: [Modelos Contrastados], label: [Pregunta Frecuente 2], accent: brand-dark)[
     Las técnicas de optimización y estimación se calibran empíricamente según la distribución observada en Managua, evitando supuestos rígidos a priori.

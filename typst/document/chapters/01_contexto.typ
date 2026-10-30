@@ -66,16 +66,20 @@ Frente a la limitación de apoyarse exclusivamente en la tarificación dinámica
 
 Estos programas buscan inyectar horas activas de conexión en franjas y zonas críticas mediante incentivos económicos directos, sin traspasar íntegramente el sobrecosto al usuario final. La optimización de estos programas bajo restricciones de presupuesto operativo (problema de optimización de la mochila) emerge como la contraparte analítica y prescriptiva al análisis tarifario: resolver la escasez de oferta mediante incentivos planificados en lugar de subidas desproporcionadas del multiplicador.
 
-== Perspectiva de Ciencia de Datos y Acceso Exclusivo vía API REST
+== Perspectiva de Ciencia de Datos: Entorno de Simulación y API REST
 
-Desde la perspectiva de la Ciencia de Datos, el problema ofrece condiciones propicias para articular procesos de recolección, depuración, almacenamiento relacional, modelación analítica y evaluación estadística.
+Desde la perspectiva de la Ciencia de Datos, el problema ofrece un escenario de alta fidelidad para articular procesos de ingeniería de datos, almacenamiento relacional, modelado analítico dimensional y optimización prescriptiva en redes.
 
-Para la contextualización del estudio es fundamental diferenciar entre las condiciones generales del sistema de movilidad y los registros específicos de la empresa:
-1. En esta fase de propuesta, las magnitudes exactas de viajes, patrones de asignación, telemetría y tarifas efectivas no se asumen de manera apriorística ni arbitraria.
-2. Los datos operacionales corresponden a un entorno transaccional sintético de alta fidelidad (que modela un año completo de operaciones con 77,386 registros de viajes, 19,375 pings de telemetría GPS, catálogos de zonas y conductores, y series meteorológicas continuas), al cual los investigadores acceden *exclusivamente consumiendo una API REST en una URL pública temporal provista para el curso* (cuyo repositorio de código fuente se referenciará e integrará en etapas posteriores).
+Para la contextualización de los datos es fundamental definir la procedencia y naturaleza del sistema transaccional analizado:
+
++ *Naturaleza Sintética y Simulación de Movilidad Urbana:* Los datos operacionales no provienen de una concesión comercial privada inaccesible, sino de un *entorno de simulación sintética de alta fidelidad* desarrollado específicamente en el marco del Proyecto Integrador. Este motor probabilístico reproduce de manera realista la dinámica transaccional que caracterizaría a una aplicación móvil de transporte selectivo en el área metropolitana de Managua: solicitudes de viaje en tiempo real, asignación y fricción de conductores, interacción de oferta y demanda bajo elasticidades de precios, impacto meteorológico por lluvias torrenciales y registros continuos de telemetría GPS.
+
++ *Acceso Desacoplado y Exclusivo vía API REST:* En estricta concordancia con los desafíos de los proyectos contemporáneos de datos, los investigadores no disponen de acceso directo al motor de base de datos de la plataforma, sino que interactúan con el sistema consumiendo de forma desacoplada los endpoints de una *API REST abierta* (`/movigo`). Este servicio expone colecciones paginadas para viajes, cuadrantes, conductores, vehículos, pagos, telemetría y clima.
+
++ *Generación Continua vs. Delimitación Censal de la Investigación (2024):* Si bien el motor de la API cuenta con la capacidad de simular y generar eventos transaccionales de forma continua y horaria en tiempo real, la presente investigación delimita y congela como muestra censal el *año completo 2024* ($N = 77,487$ viajes y 366 días de registro meteorológico). Esta delimitación garantiza un universo cerrado, inmutable y estrictamente reproducible (*single source of truth*) para la evaluación de la infraestructura analítica y la calibración de los modelos de optimización espacial.
 
 En concordancia, el flujo de trabajo computacional se estructura en las siguientes fases:
-+ *Ingesta:* Construcción de un pipeline automatizado en Python (`httpx` / `requests`) con control de paginación y manejo de errores para extraer los endpoints de la API.
-+ *Almacenamiento Transaccional:* Ingesta y persistencia de los datos brutos en una base de datos relacional en la nube (*Azure Database for PostgreSQL*), configurada en la base de datos `postgres` bajo el esquema transaccional `raw` (OLTP).
-+ *Transformación y Modelado Analítico:* Despliegue de un almacén analítico estructurado en estrella mediante *dbt (Data Build Tool)*, garantizando trazabilidad y calidad de datos.
-+ *Inferencia y Evaluación:* Aplicación de análisis estadístico, estimación de elasticidades de demanda y modelación matemática sobre el repositorio analítico resultante.
++ *Ingesta:* Construcción de un pipeline automatizado en Python (`fetcher.py`) con control dinámico de paginación (`limit=200`, `offset`) y verificación de integridad para extraer los endpoints de la API.
++ *Almacenamiento Transaccional:* Ingesta y persistencia de los datos brutos en una base de datos relacional en la nube (*Azure Database for PostgreSQL*), configurada bajo el esquema transaccional `raw` (OLTP) en Tercera Forma Normal (3NF).
++ *Transformación y Almacén Dimensional:* Despliegue de un almacén analítico estructurado en estrella (*Star Schema*) mediante *dbt Core* y captura en un motor columnar local (*DuckDB*), garantizando pruebas automáticas de integridad y consultas analíticas de baja latencia.
++ *Optimización Espacial y Resiliencia:* Construcción de la red vial en grafos y evaluación de rutas críticas de contingencia ante eventos hidrológicos mediante algoritmos de caminos mínimos.

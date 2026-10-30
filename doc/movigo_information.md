@@ -6,7 +6,18 @@ Este documento contiene la especificación integral del caso de transporte urban
 
 ## 1. Contexto del Negocio y Variables de la Simulación
 
-**MoviGo** opera servicios de transporte de pasajeros en el área metropolitana de **Managua, Nicaragua** mediante tres categorías: `movigo_estandar`, `movigo_comfort` y `movigo_moto`.
+**MoviGo** opera servicios de transporte de pasajeros en el área metropolitana de **Managua, Nicaragua** mediante tres categorías: `movigo_estandar`, `movigo_comfort` y `movigo_moto`. Los datos provienen de un motor de simulación sintética de alta fidelidad diseñado para reflejar con verosimilitud probabilística la dinámica operativa de una aplicación móvil de movilidad urbana.
+
+### Motor de Simulación Continua y Despliegue Local
+El motor de simulación sintética cuenta con generación continua de datos transaccionales por hora. A través del endpoint `GET /movigo/simulation/status` es posible monitorear el progreso de la simulación horaria, las fechas objetivo y el estado de sincronización (*catching up*).
+
+El servicio de la API puede ser consultado en el entorno local de desarrollo:
+- **URL Base Local:** `http://localhost:8000/` (o endpoint remoto configurado en `.env`).
+- **Documentación Interactiva Swagger:** `http://localhost:8000/docs`
+- **Especificación OpenAPI:** `http://localhost:8000/openapi.json`
+- **Estado de la Simulación:** `http://localhost:8000/movigo/simulation/status`
+
+> **Nota Metodológica de Delimitación:** Aunque la API genera datos transaccionales continuos hacia el presente, para efectos de la investigación científica y reproducibilidad matemática estricta se delimita la muestra al ciclo anual cerrado de **2024** ($N = 77,487$ viajes).
 
 ### Dinámica Urbana Modelada
 1. **Puntos Críticos de Tráfico:** Corredores principales y rotondas viales propensas a embotellamientos en horas pico (*Metrocentro, Rotonda Centroamérica, Rotonda Rubén Darío, Pista Juan Pablo II*).

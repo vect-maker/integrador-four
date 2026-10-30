@@ -55,5 +55,5 @@ Y en tercer lugar, la *dimensión tarifaria*: un esquema de precios estático no
 
 #v(2pt)
 #callout-box(accent: brand-blue)[
-  *Datos Integrados:* > 65,000 viajes modelados • Flota distribuida en categorías Estándar, Comfort y Moto • Monitoreo meteorológico vía `/movigo/clima`.
+  *Entorno de Simulación:* Motor sintético de alta fidelidad vía API REST • Censo 2024: 77,487 viajes • Monitoreo meteorológico y espacial de Managua.
 ]

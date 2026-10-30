@@ -33,7 +33,7 @@ Esta tabla resume la *Matriz de Descriptores* estructurada a partir de los verbo
   [*Estructurar* \ #text(size: 6.5pt, fill: text-muted)[Pipeline dbt]],
   [Extracción paginada API REST, staging PostgreSQL y marts dbt.],
   [Ingesta API, raw stage, staging, marts dimensionales.],
-  [>65k registros, integridad referencial, tests dbt superados.],
+  [77,487 registros, integridad referencial, tests dbt superados.],
   [API REST, dbt Core, SQL.],
 
   [#strong[02]],

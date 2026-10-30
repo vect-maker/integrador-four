@@ -103,7 +103,7 @@ def main():
     con.close()
 
     print("\n" + "-" * 80)
-    print("1. RESUMEN DE DISTRIBUCIONES OPERACIONALES (N = 77,036 viajes)")
+    print(f"1. RESUMEN DE DISTRIBUCIONES OPERACIONALES (N = {len(df_trips):,} viajes)")
     print("-" * 80)
 
     trip_metrics = [

@@ -11,7 +11,7 @@ Buenos días, estimado comité evaluador y profesores. Hoy presentamos la defens
 
 El núcleo de nuestra investigación es articular tres dimensiones que tradicionalmente se tratan de forma aislada: la *eficiencia operativa* de la flota (reduciendo recorridos en vacío o _deadhead_), la *heterogeneidad territorial* de Managua (con su estructura policéntrica y asimétrica), y el *impacto climático* (precipitaciones severas que alteran la velocidad de la red vial).
 
-Trabajamos sobre una base de más de *65,000 registros* modelados a través de la API REST oficial de Movi Go.
+Trabajamos sobre un censo analítico de *77,487 registros de viajes* estructurados a partir de la API REST oficial de Movi Go.
 
 👉 _Transición:_ "Para comprender la complejidad del desafío, veamos cómo interactúan estas tres dimensiones en la operación diaria."
 ]

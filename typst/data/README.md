@@ -16,7 +16,7 @@ Every dataset is serialized as structured JSON (`array[dictionary]`), providing 
 
 | Dataset File | Grain / Description | Records | SQL Source |
 | :--- | :--- | :---: | :--- |
-| **`general_kpis.json`** | Macro operational and pricing metrics for the 2024 annual cycle ($N = 77,036$). | 1 | `01_general_kpis.sql` |
+| **`general_kpis.json`** | Macro operational and pricing metrics for the 2024 annual cycle ($N = 77,487$). | 1 | `01_general_kpis.sql` |
 | **`cancellations_by_hour.json`** | Hourly distribution ($0..23$ hrs), peak vs off-peak indicator, surge multiplier and cancellation rate. | 24 | `02_cancellations_by_hour.sql` |
 | **`cancellations_by_stratum.json`** | Price sensitivity and cancellation propensities across socioeconomic strata ($1..4$). | 4 | `03_cancellations_by_stratum.sql` |
 | **`cancellations_by_weather.json`** | Contingency analysis linking rainfall severity, traffic congestion index, fares and cancellations. | 4 | `04_cancellations_by_weather.sql` |
