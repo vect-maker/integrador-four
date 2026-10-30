@@ -29,7 +29,7 @@ flowchart TD
     end
 
     subgraph S2["2. Computational Modeling Suite (Python via uv)"]
-        P1["pipeline/analysis/01_regression.py<br/>(SVD Multivariable Regression & 95% CI)"]
+        P1["pipeline/analysis/01_regression.py<br/>(SGD Gradient Descent Regression & 95% CI)"]
         P2["pipeline/analysis/02_optimization.py<br/>(Dijkstra Shortest Path & Centrality)"]
         P3["pipeline/analysis/03_spatial_density.py<br/>(GPS Density on Basemap)"]
         P4["pipeline/analysis/04_exploratory_maps.py<br/>(Atlas of 5 Exploratory Maps)"]

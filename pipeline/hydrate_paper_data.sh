@@ -112,7 +112,7 @@ if [ ! -f "${ROOT_DIR}/pipeline/data/managua_basemap.png" ] || [ ! -f "${ROOT_DI
     "${PYTHON_BIN}" "${SCRIPT_DIR}/analysis/cache_basemap.py" > /dev/null
 fi
 
-echo "   ▶ Running 01_regression.py (Multivariable SVD Regression & 95% CI)..."
+echo "   ▶ Running 01_regression.py (Multivariable Gradient Descent SGD Regression & 95% CI)..."
 "${PYTHON_BIN}" "${SCRIPT_DIR}/analysis/01_regression.py" > /dev/null
 
 echo "   ▶ Running 02_optimization.py (Dijkstra Shortest Path on Road Graph)..."

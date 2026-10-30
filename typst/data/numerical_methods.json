@@ -1,9 +1,10 @@
 {
   "metadata": {
     "title": "MoviGo: Modelado de Regresión Multivariable mediante Métodos Numéricos y Estadística II",
-    "academic_context": "Proyecto Integrador IV (UNAN-Managua) - Asignaturas: Métodos Numéricos (SVD / MCO) y Estadística II (Intervalos de Confianza al 95%)",
-    "solver": "Descomposición en Valores Singulares (SVD) vía LAPACK dgelsd (scikit-learn)",
-    "inference_framework": "Inferencia por Intervalos de Confianza al 95% para Coeficientes y Predicciones",
+    "academic_context": "Proyecto Integrador IV (UNAN-Managua) - Asignaturas: Métodos Numéricos (Descenso de Gradiente / SGD) y Estadística II (Intervalos de Confianza al 95%)",
+    "numerical_solver": "Descenso de Gradiente Estocástico (SGDRegressor vía scikit-learn)",
+    "loss_function": "Squared Error (Error Cuadrático: 0.5 * (y - y_hat)^2)",
+    "inference_framework": "Inferencia por Intervalos de Confianza al 95% para Coeficientes Paramétricos",
     "confidence_level": 0.95,
     "z_critical": 1.96,
     "n_total_observations": 49049,
@@ -21,69 +22,66 @@
         "origin_congestion_index",
         "origin_precipitation_mm"
       ],
-      "equation": "-19.25 +2.5917 * distance_km +15.7218 * origin_congestion_index +2.7708 * origin_precipitation_mm",
+      "equation": "-21.29 + 2.5952 * distance_km + 17.2590 * origin_congestion_index + 2.7700 * origin_precipitation_mm",
       "coefficients": {
-        "intercept": -19.252,
-        "distance_km": 2.5917,
-        "origin_congestion_index": 15.7218,
-        "origin_precipitation_mm": 2.7708
+        "intercept": -21.2933,
+        "distance_km": 2.5952,
+        "origin_congestion_index": 17.259,
+        "origin_precipitation_mm": 2.77
       },
       "confidence_intervals_95_coefficients": {
         "intercept": {
-          "estimate": -19.252,
-          "std_error": 0.1956,
-          "ci_95_lower": -19.6354,
-          "ci_95_upper": -18.8686
+          "estimate": -21.2933,
+          "std_error": 0.1961,
+          "ci_95_lower": -21.6775,
+          "ci_95_upper": -20.909
         },
         "distance_km": {
-          "estimate": 2.5917,
+          "estimate": 2.5952,
           "std_error": 0.0058,
-          "ci_95_lower": 2.5803,
-          "ci_95_upper": 2.6031
+          "ci_95_lower": 2.5837,
+          "ci_95_upper": 2.6066
         },
         "origin_congestion_index": {
-          "estimate": 15.7218,
-          "std_error": 0.1473,
-          "ci_95_lower": 15.4331,
-          "ci_95_upper": 16.0106
+          "estimate": 17.259,
+          "std_error": 0.1476,
+          "ci_95_lower": 16.9697,
+          "ci_95_upper": 17.5484
         },
         "origin_precipitation_mm": {
-          "estimate": 2.7708,
-          "std_error": 0.0424,
-          "ci_95_lower": 2.6877,
-          "ci_95_upper": 2.8539
+          "estimate": 2.77,
+          "std_error": 0.0425,
+          "ci_95_lower": 2.6867,
+          "ci_95_upper": 2.8533
         }
       },
       "metrics_train": {
-        "r2": 0.8609,
-        "rmse": 5.03,
-        "mae": 1.97
+        "r2": 0.8603,
+        "rmse": 5.04,
+        "mae": 2.03
       },
       "metrics_test": {
-        "r2": 0.8742,
-        "adjusted_r2": 0.8741,
-        "rmse": 4.7,
-        "mae": 1.97,
+        "r2": 0.8737,
+        "adjusted_r2": 0.8737,
+        "rmse": 4.71,
+        "mae": 2.02,
         "n_observations": 9810
       },
-      "svd_diagnostics": {
-        "features_included": [
-          "intercept",
+      "gradient_descent_diagnostics": {
+        "numerical_method": "Descenso de Gradiente Estocástico (SGD / Gradient Descent)",
+        "loss_function": "Squared Error (Error Cuadrático Medio: 0.5 * (y - y_hat)^2)",
+        "optimization_rule": "beta^(k+1) = beta^(k) - eta * grad(L)",
+        "learning_rate_schedule": "invscaling",
+        "initial_learning_rate_eta0": 0.01,
+        "convergence_tolerance": 0.001,
+        "iterations_to_convergence": 13,
+        "n_samples_seen": 510108,
+        "features_standardized": true,
+        "features_list": [
           "distance_km",
           "origin_congestion_index",
           "origin_precipitation_mm"
-        ],
-        "singular_values": [
-          1886.5133,
-          168.3526,
-          133.0905,
-          20.6256
-        ],
-        "condition_number_svd": 91.46,
-        "condition_number_normal_equations": 8365.82,
-        "matrix_rank": 4,
-        "numerical_method": "Singular Value Decomposition (SVD / LAPACK dgelsd)",
-        "stability_advantage": "SVD maintains condition number kappa(X) = 91.46, preventing normal equation squaring kappa(X^T X) = 8.37e+03."
+        ]
       }
     },
     "speed_decay": {
@@ -95,60 +93,58 @@
         "origin_congestion_index",
         "origin_precipitation_mm"
       ],
-      "equation": "+37.35 -12.3377 * origin_congestion_index +0.0433 * origin_precipitation_mm",
+      "equation": "+36.40 + -11.6614 * origin_congestion_index + 0.2129 * origin_precipitation_mm",
       "coefficients": {
-        "intercept": 37.345,
-        "origin_congestion_index": -12.3377,
-        "origin_precipitation_mm": 0.0433
+        "intercept": 36.3976,
+        "origin_congestion_index": -11.6614,
+        "origin_precipitation_mm": 0.2129
       },
       "confidence_intervals_95_coefficients": {
         "intercept": {
-          "estimate": 37.345,
-          "std_error": 0.1007,
-          "ci_95_lower": 37.1476,
-          "ci_95_upper": 37.5425
+          "estimate": 36.3976,
+          "std_error": 0.1012,
+          "ci_95_lower": 36.1993,
+          "ci_95_upper": 36.5959
         },
         "origin_congestion_index": {
-          "estimate": -12.3377,
-          "std_error": 0.078,
-          "ci_95_lower": -12.4906,
-          "ci_95_upper": -12.1848
+          "estimate": -11.6614,
+          "std_error": 0.0784,
+          "ci_95_lower": -11.815,
+          "ci_95_upper": -11.5078
         },
         "origin_precipitation_mm": {
-          "estimate": 0.0433,
-          "std_error": 0.0225,
-          "ci_95_lower": -0.0007,
-          "ci_95_upper": 0.0873
+          "estimate": 0.2129,
+          "std_error": 0.0226,
+          "ci_95_lower": 0.1687,
+          "ci_95_upper": 0.2571
         }
       },
       "metrics_train": {
-        "r2": 0.4992,
-        "rmse": 2.66,
-        "mae": 1.86
+        "r2": 0.4948,
+        "rmse": 2.68,
+        "mae": 1.89
       },
       "metrics_test": {
-        "r2": 0.5028,
-        "adjusted_r2": 0.5027,
+        "r2": 0.4997,
+        "adjusted_r2": 0.4996,
         "rmse": 2.67,
-        "mae": 1.87,
+        "mae": 1.9,
         "n_observations": 9810
       },
-      "svd_diagnostics": {
-        "features_included": [
-          "intercept",
+      "gradient_descent_diagnostics": {
+        "numerical_method": "Descenso de Gradiente Estocástico (SGD / Gradient Descent)",
+        "loss_function": "Squared Error (Error Cuadrático Medio: 0.5 * (y - y_hat)^2)",
+        "optimization_rule": "beta^(k+1) = beta^(k) - eta * grad(L)",
+        "learning_rate_schedule": "invscaling",
+        "initial_learning_rate_eta0": 0.01,
+        "convergence_tolerance": 0.001,
+        "iterations_to_convergence": 15,
+        "n_samples_seen": 588586,
+        "features_standardized": true,
+        "features_list": [
           "origin_congestion_index",
           "origin_precipitation_mm"
-        ],
-        "singular_values": [
-          334.5643,
-          144.979,
-          20.8431
-        ],
-        "condition_number_svd": 16.05,
-        "condition_number_normal_equations": 257.65,
-        "matrix_rank": 3,
-        "numerical_method": "Singular Value Decomposition (SVD / LAPACK dgelsd)",
-        "stability_advantage": "SVD maintains condition number kappa(X) = 16.05, preventing normal equation squaring kappa(X^T X) = 2.58e+02."
+        ]
       }
     },
     "pricing_fare": {
@@ -161,171 +157,67 @@
         "duration_minutes",
         "surge_multiplier"
       ],
-      "equation": "-122.73 +9.6681 * distance_km +7.5126 * duration_minutes +145.2836 * surge_multiplier",
+      "equation": "-126.82 + 10.3602 * distance_km + 7.5527 * duration_minutes + 144.0179 * surge_multiplier",
       "coefficients": {
-        "intercept": -122.7296,
-        "distance_km": 9.6681,
-        "duration_minutes": 7.5126,
-        "surge_multiplier": 145.2836
+        "intercept": -126.8212,
+        "distance_km": 10.3602,
+        "duration_minutes": 7.5527,
+        "surge_multiplier": 144.0179
       },
       "confidence_intervals_95_coefficients": {
         "intercept": {
-          "estimate": -122.7296,
-          "std_error": 2.5977,
-          "ci_95_lower": -127.821,
-          "ci_95_upper": -117.6382
+          "estimate": -126.8212,
+          "std_error": 2.5995,
+          "ci_95_lower": -131.9162,
+          "ci_95_upper": -121.7262
         },
         "distance_km": {
-          "estimate": 9.6681,
-          "std_error": 0.2151,
-          "ci_95_lower": 9.2465,
-          "ci_95_upper": 10.0897
+          "estimate": 10.3602,
+          "std_error": 0.2152,
+          "ci_95_lower": 9.9384,
+          "ci_95_upper": 10.7821
         },
         "duration_minutes": {
-          "estimate": 7.5126,
-          "std_error": 0.0697,
-          "ci_95_lower": 7.3759,
-          "ci_95_upper": 7.6493
+          "estimate": 7.5527,
+          "std_error": 0.0698,
+          "ci_95_lower": 7.4159,
+          "ci_95_upper": 7.6895
         },
         "surge_multiplier": {
-          "estimate": 145.2836,
-          "std_error": 1.8641,
-          "ci_95_lower": 141.6299,
-          "ci_95_upper": 148.9373
+          "estimate": 144.0179,
+          "std_error": 1.8654,
+          "ci_95_lower": 140.3617,
+          "ci_95_upper": 147.6742
         }
       },
       "metrics_train": {
-        "r2": 0.6966,
-        "rmse": 96.82,
-        "mae": 66.82
+        "r2": 0.6962,
+        "rmse": 96.89,
+        "mae": 67.09
       },
       "metrics_test": {
-        "r2": 0.6733,
-        "adjusted_r2": 0.6732,
-        "rmse": 108.14,
-        "mae": 67.87,
+        "r2": 0.6735,
+        "adjusted_r2": 0.6734,
+        "rmse": 108.1,
+        "mae": 68.19,
         "n_observations": 9810
       },
-      "svd_diagnostics": {
-        "features_included": [
-          "intercept",
+      "gradient_descent_diagnostics": {
+        "numerical_method": "Descenso de Gradiente Estocástico (SGD / Gradient Descent)",
+        "loss_function": "Squared Error (Error Cuadrático Medio: 0.5 * (y - y_hat)^2)",
+        "optimization_rule": "beta^(k+1) = beta^(k) - eta * grad(L)",
+        "learning_rate_schedule": "invscaling",
+        "initial_learning_rate_eta0": 0.01,
+        "convergence_tolerance": 0.001,
+        "iterations_to_convergence": 21,
+        "n_samples_seen": 824020,
+        "features_standardized": true,
+        "features_list": [
           "distance_km",
           "duration_minutes",
           "surge_multiplier"
-        ],
-        "singular_values": [
-          5697.2529,
-          463.9556,
-          152.2851,
-          30.8896
-        ],
-        "condition_number_svd": 184.44,
-        "condition_number_normal_equations": 34017.83,
-        "matrix_rank": 4,
-        "numerical_method": "Singular Value Decomposition (SVD / LAPACK dgelsd)",
-        "stability_advantage": "SVD maintains condition number kappa(X) = 184.44, preventing normal equation squaring kappa(X^T X) = 3.40e+04."
+        ]
       }
     }
-  },
-  "simulated_scenarios": [
-    {
-      "scenario_name": "Horario Valle en Temporada Seca",
-      "description": "Viaje estándar de mediodía con tráfico fluido y sin precipitación.",
-      "inputs": {
-        "distance_km": 6.5,
-        "congestion_index": 1.1,
-        "precipitation_mm": 0.0,
-        "surge_multiplier": 1.0
-      },
-      "predictions": {
-        "effective_speed_kmh": {
-          "estimate": 23.8,
-          "ci_95_lower": 18.6,
-          "ci_95_upper": 29.0,
-          "margin_error": 5.2,
-          "unit": "km/h"
-        },
-        "duration_minutes": {
-          "estimate": 14.9,
-          "ci_95_lower": 5.0,
-          "ci_95_upper": 24.7,
-          "margin_error": 9.9,
-          "unit": "minutos"
-        },
-        "final_fare_nio": {
-          "estimate": 197.24,
-          "ci_95_lower": 7.46,
-          "ci_95_upper": 387.03,
-          "margin_error": 189.79,
-          "unit": "NIO"
-        }
-      }
-    },
-    {
-      "scenario_name": "Hora Pico Vespertina Seca",
-      "description": "Tránsito denso de salida laboral en pistas arteriales sin lluvia.",
-      "inputs": {
-        "distance_km": 9.0,
-        "congestion_index": 1.65,
-        "precipitation_mm": 0.0,
-        "surge_multiplier": 1.35
-      },
-      "predictions": {
-        "effective_speed_kmh": {
-          "estimate": 17.0,
-          "ci_95_lower": 11.8,
-          "ci_95_upper": 22.2,
-          "margin_error": 5.2,
-          "unit": "km/h"
-        },
-        "duration_minutes": {
-          "estimate": 30.0,
-          "ci_95_lower": 20.2,
-          "ci_95_upper": 39.9,
-          "margin_error": 9.9,
-          "unit": "minutos"
-        },
-        "final_fare_nio": {
-          "estimate": 385.9,
-          "ci_95_lower": 196.12,
-          "ci_95_upper": 575.69,
-          "margin_error": 189.78,
-          "unit": "NIO"
-        }
-      }
-    },
-    {
-      "scenario_name": "Tormenta Tropical en Hora Pico",
-      "description": "Lluvia torrencial severa con alta fricción y tarifa dinámica elevada.",
-      "inputs": {
-        "distance_km": 8.0,
-        "congestion_index": 1.85,
-        "precipitation_mm": 25.0,
-        "surge_multiplier": 1.8
-      },
-      "predictions": {
-        "effective_speed_kmh": {
-          "estimate": 15.6,
-          "ci_95_lower": 10.3,
-          "ci_95_upper": 20.9,
-          "margin_error": 5.3,
-          "unit": "km/h"
-        },
-        "duration_minutes": {
-          "estimate": 99.8,
-          "ci_95_lower": 89.8,
-          "ci_95_upper": 109.9,
-          "margin_error": 10.1,
-          "unit": "minutos"
-        },
-        "final_fare_nio": {
-          "estimate": 966.16,
-          "ci_95_lower": 776.09,
-          "ci_95_upper": 1156.23,
-          "margin_error": 190.07,
-          "unit": "NIO"
-        }
-      }
-    }
-  ]
+  }
 }
