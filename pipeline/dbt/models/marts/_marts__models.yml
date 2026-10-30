@@ -146,3 +146,9 @@ models:
         description: "Boolean indicator of cancelled trip"
         tests:
           - not_null
+      - name: origin_congestion_index
+        description: "Observed road traffic congestion index in origin quadrant at request hour"
+      - name: origin_precipitation_mm
+        description: "Observed precipitation in mm in origin quadrant at request hour"
+      - name: effective_speed_kmh
+        description: "Effective operational trip travel speed in km/h"

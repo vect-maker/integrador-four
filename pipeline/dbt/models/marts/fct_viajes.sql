@@ -12,6 +12,12 @@ cancellations as (
 ),
 ratings as (
     select * from {{ ref('stg_trip_ratings') }}
+),
+weather_quadrant as (
+    select * from {{ ref('stg_quadrant_weather') }}
+),
+vehicles as (
+    select * from {{ ref('stg_vehicles') }}
 )
 
 select
@@ -113,7 +119,7 @@ select
     c.origin_available_drivers as conductores_disponibles_origen,
     c.origin_available_drivers,
 
-    -- Métricas operativas
+    -- Métricas operativas básicas
     t.distance_km as distancia_km,
     t.distance_km,
     t.duration_minutes as duracion_minutos,
@@ -139,10 +145,50 @@ select
     r.user_rating as calificacion_usuario,
     r.user_rating,
     r.driver_rating as calificacion_conductor,
-    r.driver_rating
+    r.driver_rating,
+
+    -- Métricas de microclima y congestión localizada en origen (cuadrante y hora)
+    wq.congestion_index as indice_congestion_origen,
+    wq.congestion_index as origin_congestion_index,
+    wq.precipitation_mm as precipitacion_origen_mm,
+    wq.precipitation_mm as origin_precipitation_mm,
+    wq.channel_runoff_mm as escorrentia_origen_mm,
+    wq.channel_runoff_mm as origin_channel_runoff_mm,
+    wq.flooded_roads as calles_inundadas_origen,
+    wq.flooded_roads as origin_flooded_roads,
+    wq.sky_condition as condicion_cielo_origen,
+    wq.sky_condition as origin_sky_condition,
+    wq.temperature_c as temperatura_origen_c,
+    wq.temperature_c as origin_temperature_c,
+
+    -- Métricas operacionales y físicas derivadas
+    case 
+        when t.duration_minutes > 0 
+        then round((t.distance_km / (t.duration_minutes / 60.0))::numeric, 2)
+        else null 
+    end as velocidad_media_kmh,
+    case 
+        when t.duration_minutes > 0 
+        then round((t.distance_km / (t.duration_minutes / 60.0))::numeric, 2)
+        else null 
+    end as effective_speed_kmh,
+    case 
+        when v.fuel_efficiency_km_l is not null and v.fuel_efficiency_km_l > 0 
+        then round((t.distance_km / v.fuel_efficiency_km_l)::numeric, 2)
+        else null 
+    end as consumo_combustible_litros,
+    case 
+        when v.fuel_efficiency_km_l is not null and v.fuel_efficiency_km_l > 0 
+        then round((t.distance_km / v.fuel_efficiency_km_l)::numeric, 2)
+        else null 
+    end as estimated_fuel_liters
 from trips t
 left join quadrants qo on t.origin_quadrant_id = qo.quadrant_id
 left join quadrants qd on t.destination_quadrant_id = qd.quadrant_id
 left join payments p on t.trip_id = p.trip_id
 left join cancellations c on t.trip_id = c.trip_id
 left join ratings r on t.trip_id = r.trip_id
+left join weather_quadrant wq on t.origin_quadrant_id = wq.quadrant_id 
+                             and t.request_date = wq.weather_date 
+                             and t.request_hour = wq.weather_hour
+left join vehicles v on t.driver_id = v.driver_id

@@ -65,12 +65,29 @@ models:
           - not_null
 
   - name: stg_weather
-    description: "Capa de staging pura para series temporales de clima y escorrentía"
+    description: "Capa de staging pura para series temporales de clima y escorrentía agregada diaria"
     columns:
       - name: date
         description: "Calendar date of the daily weather aggregation"
         tests:
           - unique
+          - not_null
+
+  - name: stg_quadrant_weather
+    description: "Capa de staging pura 1:1 para series temporales horarias de clima y congestión por cuadrante"
+    columns:
+      - name: weather_id
+        description: "Unique identifier of the quadrant weather observation"
+        tests:
+          - unique
+          - not_null
+      - name: quadrant_id
+        description: "Foreign key to quadrants"
+        tests:
+          - not_null
+      - name: congestion_index
+        description: "Observed congestion index in the quadrant at that hour"
+        tests:
           - not_null
 
   - name: stg_trips
