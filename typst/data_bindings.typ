@@ -7,8 +7,6 @@
 #let cancellations-by-stratum = json("data/cancellations_by_stratum.json")
 #let cancellations-by-weather = json("data/cancellations_by_weather.json")
 #let campaigns = json("data/campaigns_optimization.json")
-#let econometrics = json("data/econometric_regression.json")
-#let numerical = json("data/numerical_methods.json")
 #let routing = json("data/routing_optimization.json")
 
 // Formatter for integers with thousands separator (comma)
@@ -49,62 +47,6 @@
 #let total-users = general-kpis.total_usuarios
 #let total-drivers = general-kpis.total_conductores
 #let total-campaigns = general-kpis.total_campanias
-
-// -----------------------------------------------------------------------------
-// Estadistica II & Metodos Numericos: Regresion Logistica Binaria (Logit & Newton-Raphson)
-// -----------------------------------------------------------------------------
-#let logit-n = econometrics.sample_size
-#let logit-n-fmt = fmt-int(logit-n)
-#let logit-pseudo-r2 = econometrics.pseudo_r_squared
-#let logit-lr-stat = econometrics.lr_statistic
-#let logit-lr-p = econometrics.lr_p_value
-#let logit-dev-null = econometrics.null_deviance
-#let logit-dev-model = econometrics.deviance
-#let logit-aic = econometrics.aic
-#let logit-bic = econometrics.bic
-#let logit-solver-iters = econometrics.solver_iterations
-
-#let logit-b0 = econometrics.coefficients.intercept.estimate
-#let logit-b0-se = econometrics.coefficients.intercept.std_error
-#let logit-b0-z = econometrics.coefficients.intercept.z_stat
-#let logit-b0-or = econometrics.coefficients.intercept.odds_ratio
-
-#let logit-b-surge = econometrics.coefficients.multiplicador.estimate
-#let logit-b-surge-se = econometrics.coefficients.multiplicador.std_error
-#let logit-b-surge-z = econometrics.coefficients.multiplicador.z_stat
-#let logit-b-surge-or = econometrics.coefficients.multiplicador.odds_ratio
-#let logit-b-surge-or-ci = econometrics.coefficients.multiplicador.odds_ratio_ci_95
-
-#let logit-b-dist = econometrics.coefficients.distancia_km.estimate
-#let logit-b-dist-se = econometrics.coefficients.distancia_km.std_error
-#let logit-b-dist-z = econometrics.coefficients.distancia_km.z_stat
-#let logit-b-dist-or = econometrics.coefficients.distancia_km.odds_ratio
-
-#let logit-b-cong = econometrics.coefficients.indice_congestion.estimate
-#let logit-b-cong-se = econometrics.coefficients.indice_congestion.std_error
-#let logit-b-cong-z = econometrics.coefficients.indice_congestion.z_stat
-#let logit-b-cong-or = econometrics.coefficients.indice_congestion.odds_ratio
-
-#let logit-b-pico = econometrics.coefficients.es_hora_pico.estimate
-#let logit-b-pico-se = econometrics.coefficients.es_hora_pico.std_error
-#let logit-b-pico-z = econometrics.coefficients.es_hora_pico.z_stat
-#let logit-b-pico-or = econometrics.coefficients.es_hora_pico.odds_ratio
-
-// -----------------------------------------------------------------------------
-// Metodos Numericos: Raiz de Equilibrio Tarifario
-// -----------------------------------------------------------------------------
-#let num-d0 = numerical.parameters.demand_base_d0
-#let num-s0 = numerical.parameters.supply_base_s0
-#let num-alpha = numerical.parameters.demand_elasticity_alpha
-#let num-beta = numerical.parameters.supply_incentive_beta
-#let num-tol = numerical.parameters.tolerance_epsilon
-
-#let num-m-star = numerical.root_equilibrium.m_star
-#let num-q-star = numerical.root_equilibrium.balanced_volume_trips_per_hour
-
-#let num-bisect-iters = numerical.bisection.total_iterations
-#let num-newton-iters = numerical.newton_raphson.total_iterations
-#let num-speedup = numerical.comparison.iteration_reduction_ratio
 
 // -----------------------------------------------------------------------------
 // Optimizacion: Red Vial y Algoritmo de Dijkstra

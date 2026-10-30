@@ -12,15 +12,12 @@ A partir del análisis de los *77,386 registros históricos de viajes* y las ser
 - *Reducción del Desabastecimiento en Horas Pico:* Diagnostica las brechas de oferta en los corredores más saturados de Managua, determinando cuándo la tarifa regular resulta insuficiente para activar la conexión de conductores.
 - *Optimización de Presupuestos Operativos:* Provee un marco riguroso para asignar los fondos destinados a programas de incentivos para socios conductores, sustituyendo el aumento ciego de tarifas por subsidios orientados a objetivos medibles de conexión.
 
-== Relevancia Científica y Metodológica: Métodos Numéricos y Econometría del Surge Pricing
+== Relevancia Científica y Metodológica: Optimización Espacial y Modelado en Grafos
 
-Desde el punto de vista científico y metodológico, la investigación trasciende la mera analítica descriptiva para articular herramientas formales de *econometría, análisis numérico e investigación de operaciones*:
+Desde el punto de vista científico y metodológico, la investigación trasciende la analítica descriptiva tradicional para articular herramientas formales de *teoría de grafos, análisis de redes espaciales e investigación de operaciones*:
 
-+ *Modelación Econométrica e Inferencia Rigurosa:* Cuantifica formalmente el impacto del multiplicador de tarifa dinámica sobre la tasa de cancelación mediante regresión lineal simple (MCO) y análisis de varianza (ANOVA), contrastando la significancia global del modelo mediante la prueba $F$ y midiendo la variabilidad explicada ($R^2$).
-+ *Aproximación Numérica del Punto de Equilibrio:* Aborda la calibración tarifaria mediante métodos de búsqueda de raíces no lineales (*Bisección y Newton-Raphson*), resolviendo numéricamente la función de exceso de demanda:
-  $ f(m) = "Demanda"(m) - "Oferta"(m) = 0 $
-  para identificar el umbral de multiplicador óptimo ($m^* = 1.35times$) y comparando la eficiencia algorítmica y orden de convergencia entre ambos métodos.
-+ *Optimización Espacial de Redes y Teoría de Grafos:* Modela la red vial urbana de las 24 zonas de Managua como un grafo ponderado $G = (V, E)$, aplicando el *Algoritmo de Dijkstra* para evaluar el impacto de perturbaciones climáticas e inundaciones sobre los tiempos de viaje y desvíos obligados, identificando el estrangulamiento físico que detona cancelaciones de servicio.
++ *Modelado Topológico y Cuellos de Botella Sistémicos:* Modela la red vial metropolitana de las 24 zonas urbanas de Managua como un grafo ponderado $G = (V, E)$ de 44 corredores principales, aplicando métricas de *Centralidad de Intermediación (_Betweenness Centrality_)* para rankear y diagnosticar objetivamente los nudos viales con mayor vulnerabilidad estructural.
++ *Optimización de Trayectorias y Resiliencia ante Eventos Meteorológicos:* Aplica el *Algoritmo de Dijkstra* sobre la totalidad de los pares origen-destino urbanos para cuantificar los costos temporales y la dilatación de traslados generada por anegamientos e inundaciones de cauces, identificando el estrangulamiento físico de la red que incide directamente sobre la degradación del servicio.
 
 == Relevancia Tecnológica y Arquitectura de Ingeniería de Datos (ELT con dbt)
 
@@ -43,7 +40,5 @@ La presente investigación demuestra la sinergia práctica de la ciencia de dato
 
 - *Ingeniería y Almacenamiento Analítico:* Arquitectura ELT, diseño dimensional en estrella bajo metodología Kimball (`fct_viajes` atómica y dimensiones conformadas), transformaciones con *dbt Core* y motor OLAP columnar en proceso con *DuckDB*.
 - *Automatización y Reproducibilidad Computacional:* Automatización de ingesta desde API REST paginada, scripts Bash estructurados (`set -euo pipefail`), orquestación mediante `justfile`, entorno reproducible con `uv` y verificación estática con `basedpyright`.
-- *Modelado Econométrico e Inferencial:* Estimación de regresión lineal simple por MCO ($R^2 = 0.62$), descomposición ANOVA y prueba de significancia global $F$.
-- *Análisis y Simulación Numérica:* Modelación no lineal del exceso de demanda ($f(m)=0$), resolución iterativa por Bisección vs. Newton-Raphson y evaluación de órdenes de convergencia.
 - *Investigación de Operaciones y Redes:* Teoría de grafos, modelado de red vial urbana y algoritmo de Dijkstra para cuantificar retrasos y desvíos forzados ante contingencias pluviales.
 - *Persistencia Transaccional Relacional:* Diseño relacional normalizado (3NF) y almacenamiento estructurado en la nube sobre Azure Database for PostgreSQL.

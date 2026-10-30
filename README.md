@@ -35,11 +35,11 @@ just setup-env
 > **Nota:** Si `uv` no está presente en tu `$PATH`, la receta lo instalará automáticamente desde su instalador oficial de Astral.
 
 ### 2. Ejecutar Modelos Analíticos
-Los scripts analíticos leen directamente el snapshot analítico local de DuckDB (`pipeline/data/analytics.duckdb`) y exportan métricas JSON y gráficos vectoriales SVG:
+Los scripts analíticos leen directamente el snapshot analítico local de DuckDB (`pipeline/data/analytics.duckdb`) y exportan métricas JSON y mapas de optimización:
 
 ```bash
-# Ejecutar modelo econométrico MCO y tabla ANOVA
-just run-econometrics
+# Ejecutar optimización de rutas (Dijkstra y grafo de Managua)
+just run-optimization
 
 # Hidratar y refrescar todos los datos agregados en typst/data/
 just hydrate-data
@@ -68,7 +68,9 @@ movigo-analytics/
 │   └── README.md                    # Índice del directorio de documentación
 ├── pipeline/                   # Pipeline ELT y suite de análisis computacional
 │   ├── analysis/               # Scripts de modelado científico (Python nativo en .venv)
-│   │   └── 01_econometrics.py  # Regresión MCO, ANOVA, diagnósticos y gráfico SVG
+│   │   ├── 03_optimization.py  # Teoría de grafos, centralidad de intermediación y Dijkstra
+│   │   ├── 04_spatial_density.py # Densidad espacial y proyección WGS84 sobre mapa base OSM
+│   │   └── 05_exploratory_spatial_maps.py # Atlas de 5 mapas geoespaciales exploratorios
 │   ├── dbt/                    # Proyecto dbt Core (capas staging y marts / Star Schema)
 │   ├── sql/                    # Consultas SQL modulares de hidratación analítica
 │   ├── data/                   # Datos locales (raw parquet y snapshot analytics.duckdb)
@@ -109,7 +111,7 @@ Ejecuta `just` o `just --list` en la raíz del repositorio para ver todas las re
 | `just pipeline-load` | Carga el esquema DDL y los datos Parquet en Azure PostgreSQL. |
 | `just dbt [args]` | Ejecuta comandos de dbt (`run`, `test`, `debug`) mediante Podman. |
 | `just duckdb-snapshot`| Descarga y actualiza el snapshot local `analytics.duckdb` desde PostgreSQL. |
-| `just run-econometrics`| Ejecuta el modelo MCO, tabla ANOVA, exporta JSON y gráfico SVG. |
+| `just run-optimization`| Ejecuta el modelo de rutas, centralidad y Dijkstra en red vial. |
 | `just hydrate-data` | Purga y refresca todos los archivos JSON en `typst/data/`. |
 | `just duckdb` | Inicia la consola interactiva CLI de DuckDB sobre el snapshot analítico. |
 | `just duckdb-sql "..."`| Ejecuta una consulta SQL rápida sobre el snapshot local. |

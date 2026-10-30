@@ -12,10 +12,10 @@
 
 This roadmap defines the complete, rigorous, and unambiguous implementation plan to finalize the undergraduate research paper on the **MoviGo** ride-hailing service in Managua, Nicaragua.
 
-Following a thorough strategic re-alignment, the paper places its primary spotlight on **Data Engineering, DataOps, and Reproducibility Tools**:
+Following a thorough strategic re-alignment, the paper places its primary spotlight on **Data Engineering, DataOps, and Spatial Network Optimization**:
 - **Data Engineering / DataOps (Primary Spotlight):** Kimball Star Schema deployed in Azure Database for PostgreSQL (3NF raw schema) via dbt Core (staging views $\to$ marts tables with MD5 surrogate keys and automated test suites), captured in an in-process local DuckDB columnar snapshot (`pipeline/data/analytics.duckdb`), and hydrated dynamically into `typst/data/` via Bash automation (`pipeline/hydrate_paper_data.sh`) and `justfile`.
-- **Applied Statistics & Numerical Methods (Curricular Synergy):** Binary Logistic Regression (Logit) over $N = 77,487$ trips assessing conditional cancellation probability against surge pricing ($\text{OR} = 2.95, z = 37.15, p < 0.0001$), distance, and congestion. Solved numerically via multidimensional Newton-Raphson / IRLS with quadratic convergence in 5 iterations ($||\Delta \boldsymbol{\beta}|| < 10^{-7}$) and Likelihood Ratio Deviance testing ($\chi^2(4) = 4330.57$).
-- **Operations Optimization & Graph Theory (Curricular Requirement):** Graph Theory on Managua's 24 urban zones and 44 arterial corridors, evaluating Betweenness Centrality bottlenecks (Ciudad Jardín $C_B = 0.419$, Bolonia $C_B = 0.371$) and Dijkstra shortest path resilience across all 552 OD pairs (+42.8% global network delay under storm flooding).
+- **Operations Optimization & Graph Theory (Core Pillar):** Graph Theory on Managua's 24 urban zones and 44 arterial corridors, evaluating Betweenness Centrality bottlenecks (Ciudad Jardín $C_B = 0.419$, Bolonia $C_B = 0.371$) and Dijkstra shortest path resilience across all 552 OD pairs (+42.8% global network delay under storm flooding).
+- **Statistical Modeling & Machine Learning:** Decoupled and pending rewrite with a machine learning / difference of squares formulation.
 - **Document Engine (Typst):** Zero manual data copying (*single source of truth*). All tables, indicators, and callouts are dynamically bound to JSON datasets with zero human drift.
 
 ---
@@ -28,41 +28,35 @@ flowchart TD
         DuckDB[("pipeline/data/analytics.duckdb<br/>(fct_viajes: 77,487 rows<br/>dim_weather: 366 days<br/>dim_zones: 24 zones)")]
     end
 
-    subgraph S2["2. Computational Modeling Suite (Python 3.14 via uv)"]
-        P1["pipeline/analysis/01_econometrics.py<br/>(Multiple Linear Regression - OLS)"]
-        P2["pipeline/analysis/02_numerical_methods.py<br/>(Bisection & Newton-Raphson)"]
-        P3["pipeline/analysis/03_optimization.py<br/>(Dijkstra Shortest Path on Network)"]
+    subgraph S2["2. Computational Modeling Suite (Python via uv)"]
+        P3["pipeline/analysis/03_optimization.py<br/>(Dijkstra Shortest Path & Centrality)"]
+        P4["pipeline/analysis/04_spatial_density.py<br/>(GPS Density on Basemap)"]
+        P5["pipeline/analysis/05_exploratory_spatial_maps.py<br/>(Atlas of 5 Exploratory Maps)"]
     end
 
     subgraph S3["3. Hydrated Data & Vector Assets"]
-        J1["typst/data/econometric_regression.json"]
-        J2["typst/data/numerical_methods.json"]
         J3["typst/data/routing_optimization.json"]
-        G1["typst/graphs/regression_fit.png"]
-        G2["typst/graphs/root_finding_convergence.png"]
-        G3["typst/graphs/urban_network_dijkstra.png"]
+        J4["typst/data/spatial_density_summary.json"]
+        J5["typst/data/exploratory_spatial_kpis.json"]
+        G3["typst/graphs/urban_network_topology.png"]
+        G4["typst/graphs/urban_network_dijkstra.png"]
+        G5["typst/graphs/trip_origins_density.png"]
     end
 
     subgraph S4["4. Typst Document Engine (Single Source of Truth)"]
         Bindings["typst/data_bindings.typ<br/>(Relative paths, zero human drift)"]
-        T1["typst/tables/econometric_results.typ"]
-        T2["typst/tables/numerical_convergence.typ"]
         T3["typst/tables/routing_comparison.typ"]
-        C8["typst/document/chapters/08_resultados.typ"]
-        C9["typst/document/chapters/09_conclusiones.typ"]
+        T4["typst/tables/general_kpis.typ"]
         DocPDF["typst/document.pdf"]
         SlidesPDF["typst/slides.pdf"]
     end
 
-    DuckDB --> P1 & P2 & P3
-    P1 --> J1 & G1
-    P2 --> J2 & G2
-    P3 --> J3 & G3
-    J1 & J2 & J3 --> Bindings
-    Bindings --> T1 & T2 & T3 & C8
-    G1 & G2 & G3 --> C8
-    C8 & C9 --> DocPDF
-    C8 & C9 --> SlidesPDF
+    DuckDB --> P3 & P4 & P5
+    P3 --> J3 & G3 & G4
+    P4 --> J4 & G5
+    P5 --> J5
+    J3 & J4 & J5 --> Bindings
+    Bindings --> T3 & T4 & DocPDF & SlidesPDF
 ```
 
 ---
@@ -301,17 +295,16 @@ flowchart LR
 - [x] Decouple curricular mapping into dedicated `doc/curricular_integration.md`, leaving paper and slides with a natural scientific narrative.
 
 ### Milestone 4: Chapter 8 Drafting (`08_resultados.typ`)
-- [ ] Create `typst/document/chapters/08_resultados.typ` structured around the 3 consolidated objectives:
+- [ ] Create `typst/document/chapters/08_resultados.typ` structured around the 2 consolidated objectives:
   - 8.1 Resultados de Ingeniería de Datos y Repositorio Analítico (DW Kimball, capas staging/marts, rendimiento DuckDB vs PostgreSQL).
-  - 8.2 Modelación Econométrica y Optimización Numérica (Regresión Logística Binaria, Odds Ratios, convergencia Newton-Raphson IRLS, tabla Deviance y curva sigmoide).
-  - 8.3 Topología de Red, Centralidad y Resiliencia ante Inundaciones (Grafo empírico 24 zonas, Betweenness Centrality, detección de cuellos de botella y Dijkstra multi-escenario).
-  - 8.4 Ecosistema DataOps y Reproducibilidad Computacional (Automatización CLI, cero deriva de datos, pipelines reproducibles).
+  - 8.2 Topología de Red, Centralidad y Resiliencia ante Inundaciones (Grafo empírico 24 zonas, Betweenness Centrality, detección de cuellos de botella y Dijkstra multi-escenario).
+  - 8.3 Ecosistema DataOps y Reproducibilidad Computacional (Automatización CLI, cero deriva de datos, pipelines reproducibles).
 - [ ] Enforce zero hardcoded numbers; all figures, tables, and callouts dynamically linked to `typst/data/` and `typst/tables/`.
 
 ### Milestone 5: Chapter 9 Drafting (`09_conclusiones.typ`)
 - [ ] Create `typst/document/chapters/09_conclusiones.typ` under a formal tripartite structure:
-  - 9.1 Conclusiones por Objetivo de Investigación (Objetivo General y los 3 específicos fundamentados en las métricas empíricas: $\text{OR}_{\text{surge}} = 2.95$, $\chi^2 = 4330.57$, convergencia Newton-Raphson en 5 iteraciones, dilatación vial global de $+42.8\%$).
-  - 9.2 Recomendaciones Operativas para la Plataforma MoviGo (topes dinámicos de tarificación $m^* \approx 1.35\times$ y ruteo adaptativo evitando cuellos de botella en cauces).
+  - 9.1 Conclusiones por Objetivo de Investigación (Objetivo General y los 2 específicos: repositorio analítico Kimball y dilatación vial global de $+42.8\%$).
+  - 9.2 Recomendaciones Operativas para la Plataforma MoviGo (ruteo adaptativo evitando cuellos de botella en cauces y gestión preventiva de flota).
   - 9.3 Limitaciones del Estudio y Líneas de Investigación Futuras (incorporación de telemetría GPS en tiempo real y matrices OD dinámicas).
 
 ### Milestone 6: Master Document Integration & Quality Assurance (Official "Paper Finished" Gate)
@@ -350,17 +343,16 @@ flowchart LR
 .venv/bin/python -c "import pandas, scipy, statsmodels, matplotlib, networkx, duckdb; print('All installed!')"
 
 # 2. Test analysis scripts
-.venv/bin/python pipeline/analysis/01_econometrics.py
-.venv/bin/python pipeline/analysis/02_numerical_methods.py
 .venv/bin/python pipeline/analysis/03_optimization.py
+.venv/bin/python pipeline/analysis/04_spatial_density.py
+.venv/bin/python pipeline/analysis/05_exploratory_spatial_maps.py
 
 # 3. Test full hydration pipeline
 just hydrate-data
 
 # 4. Validate JSON integrity
-python -m json.tool typst/data/econometric_regression.json > /dev/null
-python -m json.tool typst/data/numerical_methods.json > /dev/null
 python -m json.tool typst/data/routing_optimization.json > /dev/null
+python -m json.tool typst/data/spatial_density_summary.json > /dev/null
 
 # 5. Compile document and slides
 just build-doc

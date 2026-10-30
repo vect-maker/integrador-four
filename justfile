@@ -93,14 +93,6 @@ dbt *args="debug":
 duckdb-snapshot:
     @bash pipeline/snapshot_duckdb.sh
 
-# Ejecutar script econométrico MCO (statsmodels, ANOVA, JSON e imágenes PNG)
-run-econometrics:
-    @.venv/bin/python pipeline/analysis/01_econometrics.py
-
-# Ejecutar búsqueda de raíces numéricas (Bisección vs Newton-Raphson, JSON e imágenes PNG)
-run-numerical:
-    @.venv/bin/python pipeline/analysis/02_numerical_methods.py
-
 # Ejecutar optimización de rutas (Teoría de Grafos y Dijkstra en red vial, JSON e imágenes PNG)
 run-optimization:
     @.venv/bin/python pipeline/analysis/03_optimization.py
@@ -117,8 +109,8 @@ run-spatial:
 run-exploratory-maps:
     @.venv/bin/python pipeline/analysis/05_exploratory_spatial_maps.py
 
-# Ejecutar la suite completa de modelado computacional (Econometría, Métodos Numéricos, Optimización y Cartografía)
-run-analysis: run-econometrics run-numerical run-optimization run-spatial run-exploratory-maps
+# Ejecutar la suite completa de modelado computacional (Optimización de Redes y Cartografía)
+run-analysis: run-optimization run-spatial run-exploratory-maps
     @echo "🎉 Suite completa de análisis computacional ejecutada exitosamente."
 
 # Hidratar datasets agregados en typst/data a partir de DuckDB y análisis

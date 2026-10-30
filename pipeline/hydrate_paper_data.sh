@@ -6,8 +6,8 @@ set -euo pipefail
 # Orchestrates end-to-end data extraction, analytical modeling, and visual asset generation:
 #   1. Purges stale JSON datasets and PNG figures (preserving README.md docs).
 #   2. Executes DuckDB SQL dimensional and transactional queries -> 6 JSON files.
-#   3. Executes Python scientific suite (.venv) -> 3 JSON models + 6 high-res PNG plots.
-#   4. Performs rigorous integrity validation on all 15 generated artifacts.
+#   3. Executes Python scientific suite (.venv) -> 3 JSON models + 8 high-res PNG plots.
+#   4. Performs rigorous integrity validation on all 17 generated artifacts.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
@@ -112,12 +112,6 @@ if [ ! -f "${ROOT_DIR}/pipeline/data/managua_basemap.png" ] || [ ! -f "${ROOT_DI
     "${PYTHON_BIN}" "${SCRIPT_DIR}/analysis/cache_basemap.py" > /dev/null
 fi
 
-echo "   ▶ Running 01_econometrics.py (OLS Multiple Regression & ANOVA)..."
-"${PYTHON_BIN}" "${SCRIPT_DIR}/analysis/01_econometrics.py" > /dev/null
-
-echo "   ▶ Running 02_numerical_methods.py (Bisection & Newton-Raphson)..."
-"${PYTHON_BIN}" "${SCRIPT_DIR}/analysis/02_numerical_methods.py" > /dev/null
-
 echo "   ▶ Running 03_optimization.py (Dijkstra Shortest Path on Road Graph)..."
 "${PYTHON_BIN}" "${SCRIPT_DIR}/analysis/03_optimization.py" > /dev/null
 
@@ -130,7 +124,7 @@ echo "   ▶ Running 05_exploratory_spatial_maps.py (Atlas of 5 Exploratory Spat
 echo "   ✅ All Python modeling scripts executed successfully."
 
 # -----------------------------------------------------------------------------
-# 5. Integrity Validation Loop (11 JSONs + 11 PNGs)
+# 5. Integrity Validation Loop (9 JSONs + 8 PNGs)
 # -----------------------------------------------------------------------------
 echo ""
 echo "🔍 Step 4: Validating artifact integrity and data schemas..."
@@ -142,17 +136,12 @@ JSON_FILES=(
     "cancellations_by_weather.json"
     "campaigns_optimization.json"
     "zones.json"
-    "econometric_regression.json"
-    "numerical_methods.json"
     "routing_optimization.json"
     "spatial_density_summary.json"
     "exploratory_spatial_kpis.json"
 )
 
 PNG_FILES=(
-    "regression_fit.png"
-    "market_equilibrium_curves.png"
-    "numerical_convergence.png"
     "urban_network_topology.png"
     "urban_network_dijkstra.png"
     "trip_origins_density.png"

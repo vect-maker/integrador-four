@@ -8,13 +8,11 @@
 
 Definimos nuestro *Objetivo General* de manera muy clara y medible:
 
-Determinar el impacto del esquema de tarificación dinámica sobre la tasa de cancelación de viajes del servicio de transporte selectivo MoviGo en el municipio de Managua durante el año 2024.
+Analizar la resiliencia operativa y la conectividad de la red de transporte selectivo MoviGo ante estrangulamientos viales y contingencias climáticas en el municipio de Managua durante el año 2024.
 
-Este objetivo se desglosa en *cuatro objetivos específicos* con verbos rectores unívocos:
-1. *Implementar* el pipeline analítico ELT con Azure PostgreSQL, dbt Core y DuckDB.
-2. *Modelar* la tasa de cancelación frente al multiplicador dinámico mediante regresión lineal simple (MCO) y ANOVA.
-3. *Calcular* el multiplicador tarifario de equilibrio de mercado mediante búsqueda numérica de raíces (Bisección y Newton-Raphson).
-4. *Optimizar* los tiempos de traslado y evaluar la resiliencia en la red vial urbana mediante teoría de grafos y el algoritmo de Dijkstra.
+Este objetivo se desglosa en *dos objetivos específicos*, cada uno con un único verbo rector y formulado en un nivel conceptual agnóstico a marcas tecnológicas:
+1. *Consolidar* un repositorio analítico multidimensional a partir de los registros operativos del servicio mediante un flujo de extracción, carga y transformación para la integración y explotación de los datos transaccionales.
+2. *Optimizar* las trayectorias de desplazamiento y la resiliencia de la red vial metropolitana mediante modelos de redes espaciales y algoritmos de camino mínimo ante perturbaciones meteorológicas y cuellos de botella urbanos.
 
 👉 _Transición:_ "Pasemos a ver cómo operacionalizamos formalmente cada una de las variables involucradas."
 ]
@@ -29,34 +27,24 @@ Este objetivo se desglosa en *cuatro objetivos específicos* con verbos rectores
   [
     #text(size: 8pt, weight: "bold", fill: brand-red)[OBJETIVO GENERAL] \
     #text(size: 9.5pt, weight: "bold", fill: brand-dark)[
-      Determinar el impacto del esquema de tarificación dinámica sobre la tasa de cancelación de viajes del servicio de transporte selectivo MoviGo en el municipio de Managua durante el año 2024.
+      Analizar la resiliencia operativa y la conectividad de la red de transporte selectivo MoviGo ante estrangulamientos viales y contingencias climáticas en el municipio de Managua durante el año 2024.
     ]
   ]
 )
 
-#v(4pt)
+#v(8pt)
 
 #grid(
-  columns: (1fr, 1fr, 1fr, 1fr),
-  gutter: 7pt,
-  card(title: [Implementar], label: [OE 1 • Pipeline DataOps], accent: brand-red)[
-    #text(size: 8pt)[
-      Implementar un pipeline ELT (*Azure PostgreSQL, dbt Core y DuckDB*) a partir de la API REST para consolidar el repositorio analítico 2024 con pruebas automáticas.
+  columns: (1fr, 1fr),
+  gutter: 14pt,
+  card(title: [Consolidar], label: [OE 1 • Repositorio Analítico], accent: brand-red)[
+    #text(size: 8.5pt)[
+      Consolidar un repositorio analítico multidimensional a partir de los registros operativos del servicio mediante un flujo de extracción, carga y transformación para la integración y explotación de los datos transaccionales.
     ]
   ],
-  card(title: [Modelar], label: [OE 2 • Econometría], accent: brand-dark)[
-    #text(size: 8pt)[
-      Modelar la tasa de cancelación frente al multiplicador dinámico mediante *regresión lineal simple (MCO) y análisis de varianza (ANOVA)*.
-    ]
-  ],
-  card(title: [Calcular], label: [OE 3 • Métodos Numéricos], accent: brand-blue)[
-    #text(size: 8pt)[
-      Calcular el multiplicador de equilibrio de mercado en la función de exceso de demanda mediante búsqueda de raíces (*Bisección y Newton-Raphson*).
-    ]
-  ],
-  card(title: [Optimizar], label: [OE 4 • Teoría de Grafos], accent: brand-red)[
-    #text(size: 8pt)[
-      Optimizar las rutas en la red vial urbana y evaluar la resiliencia ante lluvias e inundaciones mediante el *algoritmo de Dijkstra*.
+  card(title: [Optimizar], label: [OE 2 • Redes & Resiliencia], accent: brand-blue)[
+    #text(size: 8.5pt)[
+      Optimizar las trayectorias de desplazamiento y la resiliencia de la red vial metropolitana mediante modelos de redes espaciales y algoritmos de camino mínimo ante perturbaciones meteorológicas y cuellos de botella urbanos.
     ]
   ]
 )

@@ -74,41 +74,7 @@ El diseño analítico sigue rigurosamente los principios de modelado dimensional
   - `dim_campaigns`: Almacena el portafolio de programas de incentivos y bonos para conductores, especificando el costo presupuestario, horas de conexión proyectadas y zona urbana objetivo.
 + *Llaves Subrogadas Sintéticas Determinísticas (MD5):* En concordancia con las mejores prácticas de la ingeniería analítica moderna, el enlace entre la tabla de hechos y las dimensiones no depende de las claves primarias autoincrementales del sistema origen, sino de llaves subrogadas hash (`sk_*`) generadas mediante la función criptográfica `md5(cast(id as text))`. Este mecanismo desacopla el almacén de posibles colisiones o mutaciones en los identificadores operativos, garantizando idempotencia, inmutabilidad y máxima eficiencia en las operaciones de cruce (_joins_).
 
-== Fundamentos Teóricos para el Análisis Cuantitativo
-
-A partir de la base de datos analítica consolidada, la investigación articula tres pilares cuantitativos complementarios y su marco de reproducibilidad computacional:
-
-=== Modelación Econométrica y Numérica de la Cancelación (Regresión Logística y Newton-Raphson)
-
-Para evaluar el impacto del multiplicador tarifario y las condiciones operativas sobre la decisión binaria de cancelación ($Y_i in {0, 1}$, donde $1$ representa viaje cancelado y $0$ viaje completado), se recurre a la teoría de los *Modelos Lineales Generalizados (GLM)* mediante la formulación de una *Regresión Logística Binaria (Logit)*. 
-
-La probabilidad condicional de cancelación de un viaje $i$ dado el vector de covariables explicativas $bold(x)_i$ se modela a través de la función logística estándar (sigmoide):
-
-$ P(Y_i = 1 mid bold(x)_i) = pi_i = frac(1, 1 + e^(-bold(x)_i bold(beta))) = frac(e^(bold(x)_i bold(beta)), 1 + e^(bold(x)_i bold(beta))) $ <eq-logit-prob>
-
-Aplicando la transformación logit, la relación se linealiza en términos de logaritmo de los momios (_log-odds_):
-
-$ ln(frac(pi_i, 1 - pi_i)) = bold(x)_i bold(beta) = beta_0 + beta_1 m_i + beta_2 d_i + beta_3 "cong"_i + beta_4 "pico"_i $ <eq-logit-lineal>
-
-donde $m_i$ representa el multiplicador de tarifa dinámica, $d_i$ la distancia del trayecto en kilómetros, $"cong"_i$ el índice exógeno de congestión vial y $"pico"_i$ la variable indicadora de hora pico. La interpretación microeconómica descansa en las *Razones de Momios (_Odds Ratios_)*, definidas como $"OR"_j = e^(beta_j)$, que cuantifican el cambio porcentual en el riesgo relativo de cancelación ante incrementos unitarios en el regresor correspondiente, manteniendo las demás variables constantes.
-
-Dado que los parámetros $bold(beta)$ no admiten una solución analítica en forma cerrada bajo mínimos cuadrados ordinarios, su estimación requiere el método de *Máxima Verosimilitud (MLE)*, maximizando la función de log-verosimilitud sobre el censo de $N = 77,487$ transacciones:
-
-$ ln L(bold(beta)) = sum_(i=1)^N [y_i ln pi_i + (1 - y_i) ln(1 - pi_i)] $ <eq-log-likelihood>
-
-La resolución computacional de este sistema de ecuaciones no lineales de gradiente nulo ($nabla ln L(bold(beta)) = bold(0)$) se efectúa mediante el algoritmo numérico de *Newton-Raphson multidimensional* (o mínimos cuadrados reponderados iterativamente, _IRLS_):
-
-$ bold(beta)^((k+1)) = bold(beta)^((k)) - [bold(H)(bold(beta)^((k)))]^(-1) bold(g)(bold(beta)^((k))) $ <eq-newton-raphson-mle>
-
-donde $bold(g) = bold(X)^T (bold(y) - bold(pi))$ es el vector gradiente (_score_) y $bold(H) = -bold(X)^T bold(W) bold(X)$ es la matriz Hessiana definida negativa, ponderada por la matriz diagonal de varianzas $bold(W) = "diag"(pi_i (1 - pi_i))$. Este método garantiza convergencia cuadrática (orden $r = 2$), alcanzando la solución numérica óptima en 5 iteraciones con una norma de paso inferior a $10^(-7)$.
-
-La significancia global y bondad de ajuste del modelo se evalúa formalmente a través del *Análisis de Deviance*, contrastando la deviance residual del modelo propuesto ($D = -2 ln L$) frente a la deviance del modelo nulo ($D_0 = -2 ln L_0$). El estadístico de *Razón de Verosimilitud (LR)* contrasta la hipótesis nula de nulidad conjunta de los coeficientes:
-
-$ Delta D = D_0 - D = 2 [ln L(bold(beta)) - ln L_0] tilde.op chi^2_k $ <eq-lr-deviance>
-
-complementado con el coeficiente de determinación Pseudo-$R^2$ de McFadden ($R^2_("McF") = 1 - frac(ln L, ln L_0)$) y pruebas individuales de significancia de Wald ($z = frac(hat(beta)_j, "SE"(hat(beta)_j))$).
-
-=== Optimización Espacial en Redes, Centralidad y Resiliencia Vial
+== Fundamentos Teóricos para la Optimización Espacial y Resiliencia en Redes
 
 La infraestructura vial urbana de Managua se modela formalmente como una red espacial mediante un *grafo ponderado* $G = (V, E)$, donde:
 - $V = {v_1, v_2, dots, v_(24)}$ representa el conjunto de vértices correspondientes a los 24 centroides zonales de la capital.

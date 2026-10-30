@@ -13,8 +13,8 @@ Muchas gracias a los profesores y miembros del jurado evaluador. Abrimos con gus
 • _¿Por qué la ingesta con API REST y dbt es la base fija?_
 "Porque los datos provienen del servicio real/emulado en la API /movigo, y dbt garantiza reproducibilidad total, linaje formal y pruebas de integridad referencial antes de alimentar cualquier modelo analítico o prescriptivo."
 
-• _¿Por qué los modelos matemáticos y estadísticos se presentan como exploratorios?_
-"Porque las técnicas numéricas, de inferencia y optimización deben contrastarse y calibrarse según la distribución empírica de los datos observados en Managua, sin asumir métodos rígidos a priori."
+• _¿Por qué los modelos matemáticos y de optimización se calibran empíricamente?_
+"Porque las técnicas de teoría de redes y optimización espacial deben contrastarse y calibrarse según la morfología vial y la distribución empírica observada en Managua, sin asumir supuestos rígidos a priori."
 
 • _¿Cómo se garantiza la reproducibilidad de los datos?_
 "Todo el pipeline está versionado en Git, con seeds y modelos de dbt, scripts de ingesta estructurados y documentación técnica completa."

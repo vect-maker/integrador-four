@@ -1,18 +1,16 @@
 #import "@preview/touying:0.6.1": *
 #import "template.typ": *
 
-== 08. Diseño Metodológico Mixto
+== 08. Diseño Metodológico Cuantitativo
 
 #speaker-note[
 ⏱ *07:30 - 08:45* | Duración: 1:15 min | *Fase: Metodología*
 
-Adoptamos un *enfoque mixto con predominio cuantitativo* y un *alcance correlacional-prescriptivo* bajo un diseño no experimental longitudinal.
+Adoptamos un *enfoque cuantitativo* y un *alcance descriptivo-prescriptivo* bajo un diseño no experimental longitudinal.
 
-La investigación se articula en *cuatro fases secuenciales* alineadas estrictamente a los cuatro objetivos:
+La investigación se articula en *dos fases secuenciales*:
 *Fase 1: Pipeline ELT y Star Schema*. Ingesta Parquet, carga en Azure PostgreSQL, transformaciones y pruebas de integridad con dbt Core y DuckDB.
-*Fase 2: Modelación Econométrica MCO*. Regresión lineal simple y descomposición ANOVA para medir la sensibilidad de la tasa de cancelación ante el multiplicador tarifario.
-*Fase 3: Búsqueda Numérica de Raíces*. Algoritmos de Bisección y Newton-Raphson para resolver la condición de vaciado de mercado y hallar el multiplicador de equilibrio $m^* = 1.35times$.
-*Fase 4: Optimización en Redes Viales*. Algoritmo de Dijkstra para determinar la ruta mínima y cuantificar el impacto de anegamientos pluviales en Managua.
+*Fase 2: Optimización en Redes Viales*. Modelado de grafo metropolitano (24 zonas y 44 corredores), métricas de centralidad de intermediación y algoritmo de Dijkstra para cuantificar la resiliencia ante anegamientos pluviales en Managua.
 
 👉 _Transición:_ "Entremos al detalle de la arquitectura del pipeline de datos con API, Azure, dbt y DuckDB."
 ]
@@ -21,31 +19,27 @@ La investigación se articula en *cuatro fases secuenciales* alineadas estrictam
 
 // Roadmap flow
 #grid(
-  columns: (1fr, auto, 1fr, auto, 1fr, auto, 1fr),
+  columns: (1fr, auto, 1fr),
   align: horizon,
-  gutter: 4pt,
-  pipeline-step([FASE 1], [Pipeline ELT], [Azure, dbt & DuckDB], accent: brand-red),
-  [#text(size: 14pt, fill: text-muted)[→]],
-  pipeline-step([FASE 2], [Econometría MCO], [Regresión & ANOVA], accent: brand-dark),
-  [#text(size: 14pt, fill: text-muted)[→]],
-  pipeline-step([FASE 3], [Raíces Numéricas], [Equilibrio de Mercado], accent: brand-blue),
-  [#text(size: 14pt, fill: text-muted)[→]],
-  pipeline-step([FASE 4], [Optimización Grafos], [Dijkstra ante Lluvia], accent: brand-red),
+  gutter: 14pt,
+  pipeline-step([FASE 1], [Pipeline ELT & Kimball], [Azure, dbt Core & DuckDB], accent: brand-red),
+  [#text(size: 16pt, fill: text-muted)[→]],
+  pipeline-step([FASE 2], [Optimización en Grafos], [Centralidad & Dijkstra ante Lluvia], accent: brand-blue),
 )
 
-#v(4pt)
+#v(8pt)
 
 #grid(
   columns: (1fr, 1fr, 1fr, 1fr),
   gutter: 7pt,
-  card(title: [Enfoque Mixto], label: [A • Paradigma], accent: brand-red)[
+  card(title: [Cuantitativo], label: [A • Paradigma], accent: brand-red)[
     #text(size: 8.5pt)[
-      Preponderancia cuantitativa (77k registros, MCO, raíces no lineales y grafos) complementada con análisis cualitativo y socio-espacial de Managua.
+      Preponderancia cuantitativa (77k registros, almacén OLAP y teoría de redes) articulada con la contextualización territorial de Managua.
     ]
   ],
-  card(title: [Alcance Mixto], label: [B • Tipo y Alcance], accent: brand-dark)[
+  card(title: [Descriptivo-Prescriptivo], label: [B • Tipo y Alcance], accent: brand-dark)[
     #text(size: 8.5pt)[
-      Trasciende lo descriptivo: evalúa correlaciones causales con MCO y formula soluciones prescriptivas de equilibrio tarifario y ruteo vial resiliente.
+      Describe la movilidad urbana de la capital y formula soluciones prescriptivas de ruteo vial resiliente ante eventos meteorológicos.
     ]
   ],
   card(title: [No Experimental], label: [C • Diseño], accent: brand-blue)[

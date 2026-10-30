@@ -41,24 +41,24 @@ Esta tabla resume la *Matriz de Descriptores* estructurada a partir de los verbo
   [Demanda, demoras y cancelaciones ante factores climáticos y tráfico.],
   [Flujos horarios, lluvia, congestión vial, estratos.],
   [Volumen viajes, variación duración por lluvia, cancelaciones.],
-  [Inferencia estadística, Series temporales.],
+  [Analítica OLAP en DuckDB.],
 
   [#strong[03]],
   [*Evaluar* \ #text(size: 6.5pt, fill: text-muted)[Tarifa Dinámica]],
-  [Respuesta oferta/demanda ante variaciones del multiplicador.],
+  [Respuesta operativa ante variaciones del multiplicador y estratos.],
   [Multiplicador surge, sensibilidad, balance oferta/demanda.],
-  [Distribución de $m$, elasticidad, equilibrio de mercado.],
-  [Modelación analítica, Métodos numéricos.],
+  [Distribución de $m$, sobrecostos, cancelaciones por zona.],
+  [Análisis exploratorio dimensional.],
 
   [#strong[04]],
   [*Formular* \ #text(size: 6.5pt, fill: text-muted)[Optimización]],
-  [Modelos de despacho y rebalanceo para mitigar deadhead.],
-  [Emparejamiento unidad-viaje, ruteo en red vial, incentivos.],
-  [Tiempo espera medio, km en vacío reducidos, cobertura.],
-  [Optimización matemática, Simulación.]
+  [Modelos de ruteo vial y resiliencia ante contingencias pluviales.],
+  [Topología de red vial, caminos mínimos, desvíos por anegamiento.],
+  [Retrasos de red, centralidad de intermediación, rutas óptimas.],
+  [Teoría de grafos, Algoritmo de Dijkstra.]
 )
 
 #v(1pt)
 #text(size: 7pt, fill: text-muted)[
-  *Instrumentos:* API REST (/movigo) • dbt Core sobre PostgreSQL • Inferencia y optimización computacional en Python.
+  *Instrumentos:* API REST (/movigo) • dbt Core sobre PostgreSQL • DuckDB • Optimización de redes en Python (NetworkX).
 ]

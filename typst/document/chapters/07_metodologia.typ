@@ -8,13 +8,13 @@
 
 = Diseño Metodológico
 
-El diseño metodológico establece la secuencia técnica, analítica y computacional estructurada para dar cumplimiento a los tres objetivos de la investigación, articulando la ingeniería de datos, el modelado econométrico y numérico (Logit y Newton-Raphson) y la optimización prescriptiva en redes espaciales.
+El diseño metodológico establece la secuencia técnica, analítica y computacional estructurada para dar cumplimiento a los objetivos de la investigación, articulando la ingeniería de datos bajo modelado dimensional Kimball y la optimización prescriptiva de la red vial en redes espaciales.
 
 == Enfoque, Tipo y Alcance
 
-- *Enfoque Mixto (con predominio cuantitativo):* De acuerdo con la tipología metodológica de @sampieri2014, la investigación adopta un diseño mixto donde convergen el rigor analítico formal del modelado econométrico y numérico (regresión logística binaria optimizada por Newton-Raphson IRLS) y la teoría de grafos en redes viales sobre $N = #total-trips-fmt$ registros transaccionales, complementado con la contextualización socioespacial de los estratos urbanos y la vulnerabilidad ante anegamientos en Managua.
+- *Enfoque Cuantitativo:* De acuerdo con la tipología metodológica de @sampieri2014, la investigación adopta un enfoque cuantitativo formal soportado en la teoría de grafos y optimización en redes viales sobre el universo de $N = #total-trips-fmt$ registros transaccionales, complementado con la contextualización socioespacial de los estratos urbanos y la vulnerabilidad ante anegamientos en Managua.
 - *Diseño No Experimental y Longitudinal:* Se observan transacciones operativas y registros meteorológicos a lo largo del ciclo anual 2024 ($n = 366$ días), sin manipulación deliberada ni intervención exógena sobre las variables del sistema de transporte.
-- *Alcance Mixto (Descriptivo, Correlacional y Prescriptivo):* Trasciende la descripción exploratoria del comportamiento del servicio; cuantifica e infiere la relación estadística entre el multiplicador tarifario y la tasa de cancelación (alcance correlacional), determina numéricamente el punto de equilibrio operativo de mercado y prescribe rutas óptimas de contingencia vial ante disrupciones climáticas (alcance prescriptivo).
+- *Alcance Descriptivo y Prescriptivo:* Trasciende la descripción exploratoria del comportamiento de movilidad del servicio; cuantifica las métricas de operación y concentración espacial de solicitudes y cancelaciones (alcance descriptivo), y prescribe rutas óptimas de contingencia vial y mitigación de demoras ante disrupciones climáticas severas mediante algoritmos de caminos mínimos (alcance prescriptivo).
 - *Unidad de Análisis:* El viaje individual o solicitud de traslado ($N = #total-trips-fmt$ registros), caracterizado por su origen, destino, marca temporal, multiplicador dinámico aplicado, condiciones climáticas concurrentes y estado final de atención o cancelación.
 
 A fin de operacionalizar formalmente las hipótesis y dimensiones analíticas del estudio, la @tbl-variables-operationalization desglosa la matriz metodológica de variables, definiendo para cada una su rol analítico, definición conceptual, operacionalización computacional, escala de medición y entidad del repositorio analítico de procedencia.
@@ -52,14 +52,7 @@ Para consolidar el repositorio analítico de operaciones 2024 a partir de las fu
 
 #fig-trip-origins-density <fig-trip-origins-density>
 
-=== Fase 2: Modelación Econométrica y Optimización Numérica de Cancelaciones (Objetivo 2)
-A partir de las transacciones individuales consolidadas en el repositorio analítico ($N = 77,487$ viajes registrados en 2024), se formula un modelo de regresión logística binaria (Logit) para cuantificar la probabilidad condicional de cancelación de viajes frente a variaciones en la tarifa dinámica y fricciones operacionales:
-+ *Especificación del Modelo Logit Transaccional:* 
-  $ ln(frac(pi_i, 1 - pi_i)) = beta_0 + beta_1 m_i + beta_2 d_i + beta_3 "cong"_i + beta_4 "pico"_i $
-  donde $pi_i = P(Y_i = 1 mid bold(x)_i)$ es la probabilidad de que el viaje sea cancelado, $m_i$ es el multiplicador dinámico asignado, $d_i$ es la distancia de ruta en kilómetros, $"cong"_i$ es el índice diario de congestión vial y $"pico"_i$ es la variable dummy de hora pico.
-+ *Optimización Numérica por Newton-Raphson (IRLS) e Inferencia:* Dado que el modelo no admite estimación analítica cerrada, los parámetros $bold(beta)$ se obtienen por Máxima Verosimilitud mediante el algoritmo iterativo de Newton-Raphson multidimensional, registrando la convergencia cuadrática del vector gradiente y la matriz Hessiana. La significancia estadística se evalúa a través de la tabla de Análisis de Deviance (prueba de razón de verosimilitud $chi^2$), contrastes individuales de Wald ($z$) y el cálculo de las Razones de Momios (_Odds Ratios_ $= e^(beta_j)$) con intervalos de confianza al 95%.
-
-=== Fase 3: Modelado de Redes, Centralidad y Resiliencia Espacial ante Inundaciones (Objetivo 3)
+=== Fase 2: Modelado de Redes, Centralidad y Resiliencia Espacial ante Inundaciones (Objetivo 2)
 Para mitigar los retrasos operacionales y evaluar la vulnerabilidad de la movilidad ante eventos climáticos severos:
 + *Modelado de la Red Vial como Grafo Ponderado:* Se estructura la red de las 24 zonas urbanas de Managua (`dim_zones`) como un grafo $G = (V, E)$ de 44 corredores arteriales principales (Pista Juan Pablo II, Carretera a Masaya, Eje Tiscapa, radiales comerciales), calibrados con distancias Haversine corregidas por tortuosidad vial ($kappa = 1.30$).
 + *Análisis de Centralidad de Intermediación (_Betweenness_):* Se computa la métrica de intermediación $C_B(v)$ sobre los 24 vértices para rankear e identificar los cuellos de botella sistémicos de la infraestructura vial de Managua.
@@ -71,16 +64,14 @@ Para asegurar la validez metodológica y la reproducibilidad científica estrict
 
 + *Análisis Exploratorio y Consultas OLAP de Baja Latencia (DuckDB CLI):* Para la exploración inicial y la generación de agregaciones multidimensionales sobre los #total-trips-fmt registros, se emplea *DuckDB CLI*. Su motor columnar en proceso permite ejecutar analítica OLAP de alto rendimiento con latencias de milisegundos directamente sobre el almacén analítico. A través de DuckDB se extraen agregaciones espaciotemporales consolidadas (distribución de cancelaciones por estrato, franja horaria y condición meteorológica), las cuales se exportan de forma automatizada hacia artefactos estructurados en formato `.json`.
 
-+ *Inferencia Econométrica, Métodos Numéricos y Optimización (Python):* El cálculo científico avanzado se ejecuta mediante scripts modulares en *Python* soportados en librerías especializadas (`statsmodels`, `scipy`, `networkx`, `matplotlib`). Este entorno recibe las tablas analíticas depuradas para:
-  - Estimar los parámetros del modelo de regresión logística binaria (Logit), calcular errores estándar de Wald, razones de momios (_Odds Ratios_) y el análisis de Deviance con prueba de razón de verosimilitud (Fase 2).
-  - Auditar la convergencia numérica cuadrática del algoritmo multidimensional de Newton-Raphson / IRLS en la maximización de la log-verosimilitud (Fase 2).
-  - Computar las métricas de centralidad de intermediación (_betweenness_), cuellos de botella viales y simular la resiliencia de la red ante inundaciones mediante el algoritmo de Dijkstra (Fase 3).
++ *Optimización Espacial en Redes y Grafos (Python):* El cálculo científico avanzado se ejecuta mediante scripts modulares en *Python* soportados en librerías especializadas (`networkx`, `scipy`, `matplotlib`). Este entorno recibe las tablas analíticas depuradas para:
+  - Computar las métricas de centralidad de intermediación (_betweenness_), cuellos de botella viales y simular la resiliencia de la red ante inundaciones mediante el algoritmo de Dijkstra (Fase 2).
 
 + *Renderizado Programático y Trazabilidad sin Error Humano (Typst):* La inclusión de *Typst* como motor de maquetación científica trasciende la tipografía convencional al operar como un procesador de documentos enlazado dinámicamente a los datos:
   - Typst consume directamente los archivos `.json` generados por DuckDB y los parámetros cuantitativos calculados por Python mediante funciones nativas de ingesta de datos (`#json(...)`).
-  - Las tablas estadísticas, indicadores cuantitativos y visualizaciones gráficas del paper se sintetizan algorítmicamente en tiempo de compilación (`just build-doc`).
+  - Las tablas de optimización, indicadores cuantitativos y visualizaciones gráficas del paper se sintetizan algorítmicamente en tiempo de compilación (`just build-doc`).
   - Esta arquitectura programática establece una *fuente única de verdad* (_single source of truth_), eliminando por completo el riesgo de transcripción manual o desalineación de cifras (*human drift*), garantizando que toda actualización en los datos o en los modelos se refleje de manera inmediata, exacta y determinística en el documento final.
 
 == Disponibilidad de Código, Datos y Reproducibilidad
 
-En concordancia con los principios de reproducibilidad científica y ciencia abierta, la totalidad de los artefactos computacionales de la investigación —incluyendo los scripts de extracción y carga, las definiciones DDL y transformaciones en dbt Core, el almacén de datos columnar en DuckDB, los scripts de modelación econométrica, numérica y de optimización en Python, así como los archivos fuentes de maquetación y generación de figuras en Typst— se encuentran versionados y disponibles públicamente en el repositorio oficial del proyecto @movigo2024repo (#link(repo-url)).
+En concordancia con los principios de reproducibilidad científica y ciencia abierta, la totalidad de los artefactos computacionales de la investigación —incluyendo los scripts de extracción y carga, las definiciones DDL y transformaciones en dbt Core, el almacén de datos columnar en DuckDB, los scripts de modelación y optimización en Python, así como los archivos fuentes de maquetación y generación de figuras en Typst— se encuentran versionados y disponibles públicamente en el repositorio oficial del proyecto @movigo2024repo (#link(repo-url)).

@@ -50,10 +50,10 @@ Los datos que reflejan este fenómeno se encuentran fragmentados en endpoints de
 - Factores exógenos diarios de lluvia y tráfico en `/movigo/clima`.
 - Zonas, usuarios, conductores y campañas en sus respectivos directorios.
 
-Sin un pipeline automatizado de ingeniería de datos (ingesta en Python, almacenamiento en Azure PostgreSQL y transformación dimensional auditable con *dbt Core* y *DuckDB*), resulta inviable cuantificar con precisión la tasa de cancelación, modelar el comportamiento del usuario, estimar numéricamente el multiplicador de equilibrio ni optimizar las rutas de desplazamiento sobre la red urbana.
+Sin un pipeline automatizado de ingeniería de datos (ingesta en Python, almacenamiento en Azure PostgreSQL y transformación dimensional auditable con *dbt Core* y *DuckDB*), resulta inviable cuantificar con precisión la tasa de cancelación, evaluar la concentración espacial de los fallos del servicio ni optimizar las rutas de desplazamiento sobre la red urbana.
 
 == Formulación del Problema Central de Investigación
 
 A partir de las problemáticas descritas, el problema central de investigación se sintetiza en la siguiente interrogante formulada:
 
-¿Cuál es el impacto del esquema de tarificación dinámica (*surge pricing*) sobre la tasa de cancelación de viajes en el servicio MoviGo en el municipio de Managua durante 2024, y de qué manera pueden determinarse umbrales tarifarios de equilibrio mediante métodos numéricos y optimizarse las rutas de desplazamiento en la red vial urbana mediante teoría de grafos para mitigar el abandono del servicio bajo perturbaciones climáticas y asimetrías territoriales?
+¿De qué manera la articulación de un repositorio analítico columnar bajo modelado dimensional Kimball y la optimización espacial de la red vial urbana mediante teoría de grafos y algoritmos de camino mínimo permiten cuantificar los estrangulamientos viales y mitigar las demoras operativas ante perturbaciones climáticas severas en el servicio MoviGo en el municipio de Managua durante 2024?
