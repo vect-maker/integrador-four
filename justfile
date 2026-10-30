@@ -93,13 +93,13 @@ dbt *args="debug":
 duckdb-snapshot:
     @bash pipeline/snapshot_duckdb.sh
 
-# Ejecutar suite de Métodos Numéricos (Regresión multivariable SVD en scikit-learn, JSON y figuras)
-run-numerical:
-    @.venv/bin/python pipeline/analysis/02_numerical_methods.py
+# Ejecutar modelado de regresión multivariable (Métodos Numéricos & Estadística II, JSON y figuras)
+run-regression:
+    @.venv/bin/python pipeline/analysis/01_regression.py
 
 # Ejecutar optimización de rutas (Teoría de Grafos y Dijkstra en red vial, JSON e imágenes PNG)
 run-optimization:
-    @.venv/bin/python pipeline/analysis/03_optimization.py
+    @.venv/bin/python pipeline/analysis/02_optimization.py
 
 # Pre-cachear y coser teselas de mapa base de Managua desde OpenStreetMap (gratuito)
 cache-basemap *args="":
@@ -107,14 +107,14 @@ cache-basemap *args="":
 
 # Generar mapa geoespacial de densidad de orígenes de viajes (WGS84 y Basemap OSM)
 run-spatial:
-    @.venv/bin/python pipeline/analysis/04_spatial_density.py
+    @.venv/bin/python pipeline/analysis/03_spatial_density.py
 
 # Generar atlas de 5 mapas geoespaciales exploratorios (cuadrantes, flujos OD, causas de cancelación, riesgo pluvial y esperas)
 run-exploratory-maps:
-    @.venv/bin/python pipeline/analysis/05_exploratory_spatial_maps.py
+    @.venv/bin/python pipeline/analysis/04_exploratory_maps.py
 
-# Ejecutar la suite completa de modelado computacional (Métodos Numéricos, Optimización de Redes y Cartografía)
-run-analysis: run-numerical run-optimization run-spatial run-exploratory-maps
+# Ejecutar la suite completa de modelado computacional (Regresión, Optimización de Redes y Cartografía)
+run-analysis: run-regression run-optimization run-spatial run-exploratory-maps
     @echo "🎉 Suite completa de análisis computacional ejecutada exitosamente."
 
 # Hidratar datasets agregados en typst/data a partir de DuckDB y análisis

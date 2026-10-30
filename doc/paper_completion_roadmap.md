@@ -29,9 +29,10 @@ flowchart TD
     end
 
     subgraph S2["2. Computational Modeling Suite (Python via uv)"]
-        P3["pipeline/analysis/03_optimization.py<br/>(Dijkstra Shortest Path & Centrality)"]
-        P4["pipeline/analysis/04_spatial_density.py<br/>(GPS Density on Basemap)"]
-        P5["pipeline/analysis/05_exploratory_spatial_maps.py<br/>(Atlas of 5 Exploratory Maps)"]
+        P1["pipeline/analysis/01_regression.py<br/>(SVD Multivariable Regression & 95% CI)"]
+        P2["pipeline/analysis/02_optimization.py<br/>(Dijkstra Shortest Path & Centrality)"]
+        P3["pipeline/analysis/03_spatial_density.py<br/>(GPS Density on Basemap)"]
+        P4["pipeline/analysis/04_exploratory_maps.py<br/>(Atlas of 5 Exploratory Maps)"]
     end
 
     subgraph S3["3. Hydrated Data & Vector Assets"]
@@ -343,9 +344,10 @@ flowchart LR
 .venv/bin/python -c "import pandas, scipy, statsmodels, matplotlib, networkx, duckdb; print('All installed!')"
 
 # 2. Test analysis scripts
-.venv/bin/python pipeline/analysis/03_optimization.py
-.venv/bin/python pipeline/analysis/04_spatial_density.py
-.venv/bin/python pipeline/analysis/05_exploratory_spatial_maps.py
+.venv/bin/python pipeline/analysis/01_regression.py
+.venv/bin/python pipeline/analysis/02_optimization.py
+.venv/bin/python pipeline/analysis/03_spatial_density.py
+.venv/bin/python pipeline/analysis/04_exploratory_maps.py
 
 # 3. Test full hydration pipeline
 just hydrate-data

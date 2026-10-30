@@ -112,17 +112,17 @@ if [ ! -f "${ROOT_DIR}/pipeline/data/managua_basemap.png" ] || [ ! -f "${ROOT_DI
     "${PYTHON_BIN}" "${SCRIPT_DIR}/analysis/cache_basemap.py" > /dev/null
 fi
 
-echo "   ▶ Running 02_numerical_methods.py (Multivariable SVD Regression Models)..."
-"${PYTHON_BIN}" "${SCRIPT_DIR}/analysis/02_numerical_methods.py" > /dev/null
+echo "   ▶ Running 01_regression.py (Multivariable SVD Regression & 95% CI)..."
+"${PYTHON_BIN}" "${SCRIPT_DIR}/analysis/01_regression.py" > /dev/null
 
-echo "   ▶ Running 03_optimization.py (Dijkstra Shortest Path on Road Graph)..."
-"${PYTHON_BIN}" "${SCRIPT_DIR}/analysis/03_optimization.py" > /dev/null
+echo "   ▶ Running 02_optimization.py (Dijkstra Shortest Path on Road Graph)..."
+"${PYTHON_BIN}" "${SCRIPT_DIR}/analysis/02_optimization.py" > /dev/null
 
-echo "   ▶ Running 04_spatial_density.py (Spatial GPS Density on Basemap)..."
-"${PYTHON_BIN}" "${SCRIPT_DIR}/analysis/04_spatial_density.py" > /dev/null
+echo "   ▶ Running 03_spatial_density.py (Spatial GPS Density on Basemap)..."
+"${PYTHON_BIN}" "${SCRIPT_DIR}/analysis/03_spatial_density.py" > /dev/null
 
-echo "   ▶ Running 05_exploratory_spatial_maps.py (Atlas of 5 Exploratory Spatial Maps)..."
-"${PYTHON_BIN}" "${SCRIPT_DIR}/analysis/05_exploratory_spatial_maps.py" > /dev/null
+echo "   ▶ Running 04_exploratory_maps.py (Atlas of 5 Exploratory Spatial Maps)..."
+"${PYTHON_BIN}" "${SCRIPT_DIR}/analysis/04_exploratory_maps.py" > /dev/null
 
 echo "   ✅ All Python modeling scripts executed successfully."
 

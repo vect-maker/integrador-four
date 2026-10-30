@@ -68,9 +68,10 @@ movigo-analytics/
 │   └── README.md                    # Índice del directorio de documentación
 ├── pipeline/                   # Pipeline ELT y suite de análisis computacional
 │   ├── analysis/               # Scripts de modelado científico (Python nativo en .venv)
-│   │   ├── 03_optimization.py  # Teoría de grafos, centralidad de intermediación y Dijkstra
-│   │   ├── 04_spatial_density.py # Densidad espacial y proyección WGS84 sobre mapa base OSM
-│   │   └── 05_exploratory_spatial_maps.py # Atlas de 5 mapas geoespaciales exploratorios
+│   │   ├── 01_regression.py    # Regresión multivariable SVD e intervalos al 95% (Métodos Numéricos & Estadística II)
+│   │   ├── 02_optimization.py  # Teoría de grafos, centralidad de intermediación y Dijkstra
+│   │   ├── 03_spatial_density.py # Densidad espacial y proyección WGS84 sobre mapa base OSM
+│   │   └── 04_exploratory_maps.py # Atlas de 5 mapas geoespaciales exploratorios
 │   ├── dbt/                    # Proyecto dbt Core (capas staging y marts / Star Schema)
 │   ├── sql/                    # Consultas SQL modulares de hidratación analítica
 │   ├── data/                   # Datos locales (raw parquet y snapshot analytics.duckdb)
