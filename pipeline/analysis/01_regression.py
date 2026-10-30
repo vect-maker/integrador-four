@@ -7,13 +7,11 @@ MoviGo (UNAN-Managua). Models the physical, operational, and financial dimension
 of urban ride-hailing mobility via Multivariable Linear Regression solved through
 Stochastic Gradient Descent (SGD / Descenso de Gradiente) using scikit-learn.
 
-The suite defines three dedicated, decoupled functions for fitting and testing
+The suite defines two dedicated, decoupled functions for fitting and testing
 each model independently:
   1. fit_eta_duration_model():
      duration_minutes = f(distance_km, origin_congestion_index, origin_precipitation_mm)
-  2. fit_speed_decay_model():
-     effective_speed_kmh = f(origin_congestion_index, origin_precipitation_mm)
-  3. fit_pricing_fare_model():
+  2. fit_pricing_fare_model():
      final_fare = f(distance_km, duration_minutes, surge_multiplier)
 
 Data Partitioning:
@@ -31,8 +29,7 @@ Theoretical Foundations:
 Outputs:
   - JSON data: typst/data/numerical_methods.json
   - Plot 1: typst/graphs/numerical_duration.png
-  - Plot 2: typst/graphs/numerical_speed.png
-  - Plot 3: typst/graphs/numerical_fare.png
+  - Plot 2: typst/graphs/numerical_fare.png
 """
 
 from __future__ import annotations
@@ -45,6 +42,7 @@ import duckdb
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from sklearn.decomposition import PCA
 from sklearn.linear_model import SGDRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
@@ -245,6 +243,18 @@ def fit_eta_duration_model(
     beta_0, beta_coefs = extract_unscaled_coefficients(pipeline)
     fitted_sgd = cast(SGDRegressor, pipeline.named_steps["sgd"])
 
+    # Feature Reduction: Principal Component Analysis (PCA) on input features
+    pca_scaler = StandardScaler()
+    x_train_scaled = pca_scaler.fit_transform(x_train_df)
+    x_test_scaled = pca_scaler.transform(x_test_df)
+
+    pca = PCA(n_components=1, random_state=RANDOM_STATE)
+    pca.fit(x_train_scaled)
+    assert pca.components_ is not None
+    pc1_test = pca.transform(x_test_scaled).flatten()
+    pca_var_ratio = float(pca.explained_variance_ratio_[0])
+    loadings = {col: round(float(val), 4) for col, val in zip(feature_cols, pca.components_[0])}
+
     # Descenso de Gradiente optimization diagnostics
     sgd_diagnostics = compute_gradient_descent_diagnostics(fitted_sgd, feature_cols)
 
@@ -288,96 +298,16 @@ def fit_eta_duration_model(
             "n_observations": n_test,
         },
         "gradient_descent_diagnostics": sgd_diagnostics,
-        "_pipeline": pipeline,
-        "_test_actual": y_test,
-        "_test_pred": y_test_pred,
-    }
-
-
-def fit_speed_decay_model(
-    train_df: pd.DataFrame,
-    test_df: pd.DataFrame,
-) -> dict[str, Any]:
-    """
-    Model 2: Physical Kinematics Velocity Decay Model
-    --------------------------------------------------
-    Formula: effective_speed_kmh = beta0 + beta1*origin_congestion_index + beta2*origin_precipitation_mm
-    Models the physical degradation of circulation velocity across Managua's arterial avenues
-    via Stochastic Gradient Descent (SGDRegressor).
-    """
-    feature_cols = ["origin_congestion_index", "origin_precipitation_mm"]
-    target_col = "effective_speed_kmh"
-
-    x_train_df = train_df[feature_cols]
-    y_train = train_df[target_col].to_numpy()
-    x_test_df = test_df[feature_cols]
-    y_test = test_df[target_col].to_numpy()
-
-    pipeline = create_sgd_pipeline()
-    pipeline.fit(x_train_df, y_train)
-
-    # Train metrics
-    y_train_pred = pipeline.predict(x_train_df)
-    r2_train = float(r2_score(y_train, y_train_pred))
-    rmse_train = float(np.sqrt(mean_squared_error(y_train, y_train_pred)))
-    mae_train = float(mean_absolute_error(y_train, y_train_pred))
-
-    # Test metrics
-    y_test_pred = pipeline.predict(x_test_df)
-    r2_test = float(r2_score(y_test, y_test_pred))
-    rmse_test = float(np.sqrt(mean_squared_error(y_test, y_test_pred)))
-    mae_test = float(mean_absolute_error(y_test, y_test_pred))
-
-    n_test = len(y_test)
-    p_features = len(feature_cols)
-    adj_r2_test = float(1.0 - (1.0 - r2_test) * (n_test - 1) / (n_test - p_features - 1))
-
-    # Unscaling
-    beta_0, beta_coefs = extract_unscaled_coefficients(pipeline)
-    fitted_sgd = cast(SGDRegressor, pipeline.named_steps["sgd"])
-
-    # Diagnostics
-    sgd_diagnostics = compute_gradient_descent_diagnostics(fitted_sgd, feature_cols)
-
-    # Statistics II: 95% Confidence Intervals
-    ci_dict = compute_parameter_confidence_intervals(
-        beta_0, beta_coefs, x_train_df.to_numpy(), y_train, feature_cols
-    )
-
-    equation_str = (
-        f"{beta_0:+.2f} + {beta_coefs[0]:.4f} * origin_congestion_index "
-        f"+ {beta_coefs[1]:.4f} * origin_precipitation_mm"
-    )
-
-    coefficients_dict = {
-        "intercept": round(beta_0, 4),
-        "origin_congestion_index": round(float(beta_coefs[0]), 4),
-        "origin_precipitation_mm": round(float(beta_coefs[1]), 4),
-    }
-
-    return {
-        "model_id": "speed_decay",
-        "target_variable": target_col,
-        "target_label": "Velocidad Media Efectiva",
-        "target_unit": "km/h",
-        "predictor_variables": feature_cols,
-        "equation": equation_str,
-        "coefficients": coefficients_dict,
-        "confidence_intervals_95_coefficients": ci_dict,
-        "metrics_train": {
-            "r2": round(r2_train, 4),
-            "rmse": round(rmse_train, 2),
-            "mae": round(mae_train, 2),
+        "feature_reduction": {
+            "method": "Principal Component Analysis (PCA)",
+            "components": 1,
+            "explained_variance_ratio_pc1": round(pca_var_ratio * 100, 2),
+            "feature_loadings_pc1": loadings,
         },
-        "metrics_test": {
-            "r2": round(r2_test, 4),
-            "adjusted_r2": round(adj_r2_test, 4),
-            "rmse": round(rmse_test, 2),
-            "mae": round(mae_test, 2),
-            "n_observations": n_test,
-        },
-        "gradient_descent_diagnostics": sgd_diagnostics,
         "_pipeline": pipeline,
+        "_pca": pca,
+        "_pca_scaler": pca_scaler,
+        "_test_pc1": pc1_test,
         "_test_actual": y_test,
         "_test_pred": y_test_pred,
     }
@@ -388,7 +318,7 @@ def fit_pricing_fare_model(
     test_df: pd.DataFrame,
 ) -> dict[str, Any]:
     """
-    Model 3: Economic Dynamic Pricing Fare Model
+    Model 2: Economic Dynamic Pricing Fare Model
     ---------------------------------------------
     Formula: final_fare = beta0 + beta1*distance_km + beta2*duration_minutes + beta3*surge_multiplier
     Models the fare charged in Nicaraguan Cordobas (NIO) as a function of trip length, time, and surge
@@ -424,6 +354,18 @@ def fit_pricing_fare_model(
     # Unscaling
     beta_0, beta_coefs = extract_unscaled_coefficients(pipeline)
     fitted_sgd = cast(SGDRegressor, pipeline.named_steps["sgd"])
+
+    # Feature Reduction: Principal Component Analysis (PCA) on input features
+    pca_scaler = StandardScaler()
+    x_train_scaled = pca_scaler.fit_transform(x_train_df)
+    x_test_scaled = pca_scaler.transform(x_test_df)
+
+    pca = PCA(n_components=1, random_state=RANDOM_STATE)
+    pca.fit(x_train_scaled)
+    assert pca.components_ is not None
+    pc1_test = pca.transform(x_test_scaled).flatten()
+    pca_var_ratio = float(pca.explained_variance_ratio_[0])
+    loadings = {col: round(float(val), 4) for col, val in zip(feature_cols, pca.components_[0])}
 
     # Diagnostics
     sgd_diagnostics = compute_gradient_descent_diagnostics(fitted_sgd, feature_cols)
@@ -468,7 +410,16 @@ def fit_pricing_fare_model(
             "n_observations": n_test,
         },
         "gradient_descent_diagnostics": sgd_diagnostics,
+        "feature_reduction": {
+            "method": "Principal Component Analysis (PCA)",
+            "components": 1,
+            "explained_variance_ratio_pc1": round(pca_var_ratio * 100, 2),
+            "feature_loadings_pc1": loadings,
+        },
         "_pipeline": pipeline,
+        "_pca": pca,
+        "_pca_scaler": pca_scaler,
+        "_test_pc1": pc1_test,
         "_test_actual": y_test,
         "_test_pred": y_test_pred,
     }
@@ -479,132 +430,136 @@ def fit_pricing_fare_model(
 # =============================================================================
 
 def plot_duration_model(model_results: dict[str, Any], output_path: Path) -> None:
-    """Generates actual vs. predicted plot for the ETA Duration model."""
+    """Generates feature-reduced PCA input projection vs. actual trip duration."""
     y_test: np.ndarray = model_results["_test_actual"]
-    y_pred: np.ndarray = model_results["_test_pred"]
+    pc1_test: np.ndarray = model_results["_test_pc1"]
+    pipeline: Pipeline = model_results["_pipeline"]
+    pca: PCA = model_results["_pca"]
+    pca_scaler: StandardScaler = model_results["_pca_scaler"]
+    feature_cols: list[str] = model_results["predictor_variables"]
     r2 = model_results["metrics_test"]["r2"]
     mae = model_results["metrics_test"]["mae"]
+    var_exp = model_results["feature_reduction"]["explained_variance_ratio_pc1"]
 
     idx = np.random.choice(len(y_test), size=min(2500, len(y_test)), replace=False)
+    pc_sub = pc1_test[idx]
     y_sub = y_test[idx]
-    p_sub = y_pred[idx]
 
     plt.figure(figsize=(8, 6), dpi=300)
-    plt.scatter(y_sub, p_sub, alpha=0.35, color=COLOR_PRIMARY, edgecolors="none", s=22, label="Viajes Observados (Test)")
+    plt.scatter(
+        pc_sub,
+        y_sub,
+        alpha=0.35,
+        color=COLOR_PRIMARY,
+        edgecolors="none",
+        s=22,
+        label=f"Viajes Observados (Test: N = {len(y_test):,})",
+    )
 
-    lims = [0, max(np.max(y_sub), np.max(p_sub)) + 5]
-    plt.plot(lims, lims, color=COLOR_ACCENT, linestyle="--", linewidth=2.0, label="Predicción Perfecta (y = x)")
+    # Compute regression model response curve along PC1 trajectory
+    pc_grid = np.linspace(np.percentile(pc1_test, 0.5), np.percentile(pc1_test, 99.5), 150)
+    x_grid_scaled = pca.inverse_transform(pc_grid.reshape(-1, 1))
+    x_grid_unscaled = pca_scaler.inverse_transform(x_grid_scaled)
+    y_grid = pipeline.predict(pd.DataFrame(x_grid_unscaled, columns=feature_cols))
 
-    poly = np.poly1d(np.polyfit(y_sub, p_sub, deg=1))
-    x_line = np.linspace(lims[0], lims[1], 100)
-    plt.plot(x_line, poly(x_line), color=COLOR_DANGER, linestyle="-", linewidth=1.5, label="Ajuste Descenso de Gradiente (SGD)")
+    plt.plot(
+        pc_grid,
+        y_grid,
+        color=COLOR_DANGER,
+        linestyle="-",
+        linewidth=2.2,
+        label="Ajuste Descenso de Gradiente (SGD)",
+    )
 
     plt.title(
-        "Modelo 1: Estimación de Tiempo de Viaje (ETA)\nPredicción Multivariable vía Descenso de Gradiente (SGD)",
-        fontsize=12,
+        "Modelo 1: Reducción de Dimensionalidad (PCA) vs. Duración del Viaje (ETA)\n"
+        "Proyección de Variables de Entrada (Distancia, Congestión y Lluvia) frente a Duración Real",
+        fontsize=11,
         pad=12,
         fontweight="bold",
     )
-    plt.xlabel("Duración Real del Viaje (minutos)", fontsize=11)
-    plt.ylabel("Duración Predicha (minutos)", fontsize=11)
-    plt.xlim(0, max(np.max(y_sub), np.max(p_sub)) + 2)
-    plt.ylim(0, max(np.max(y_sub), np.max(p_sub)) + 2)
+    plt.xlabel(f"Primer Componente Principal de Predictores ($PC_1$) — Varianza Explicada: {var_exp:.1f}%", fontsize=11)
+    plt.ylabel("Duración Real del Viaje (minutos)", fontsize=11)
     plt.grid(True, linestyle=":", alpha=0.6)
 
-    textstr = f"$R^2 = {r2:.4f}$\n$MAE = {mae:.2f}$ min\n$N_{{test}} = {len(y_test):,}$"
+    textstr = (
+        f"$R^2_{{test}} = {r2:.4f}$\n"
+        f"$MAE = {mae:.2f}$ min\n"
+        f"Varianza $PC_1 = {var_exp:.1f}\\%$\n"
+        f"Método: PCA + SGD"
+    )
     props = dict(boxstyle="round,pad=0.5", facecolor="white", edgecolor=COLOR_MUTED, alpha=0.9)
     plt.gca().text(0.05, 0.92, textstr, transform=plt.gca().transAxes, fontsize=10, verticalalignment="top", bbox=props)
 
-    plt.legend(loc="lower right", framealpha=0.9)
-    plt.tight_layout()
-    plt.savefig(output_path, dpi=300)
-    plt.close()
-
-
-def plot_speed_decay_model(model_results: dict[str, Any], output_path: Path) -> None:
-    """Generates speed degradation curves across congestion and rain levels."""
-    pipeline: Pipeline = model_results["_pipeline"]
-    r2 = model_results["metrics_test"]["r2"]
-    coefs = model_results["coefficients"]
-
-    c_vals = np.linspace(1.0, 2.0, 100)
-
-    plt.figure(figsize=(8, 6), dpi=300)
-
-    rain_scenarios = [
-        (0.0, "Sin lluvia (0 mm)", COLOR_PRIMARY, "-"),
-        (10.0, "Lluvia moderada (10 mm)", COLOR_ACCENT, "--"),
-        (25.0, "Tormenta severa (25 mm)", COLOR_DANGER, "-."),
-    ]
-
-    for rain, label, color, style in rain_scenarios:
-        eval_df = pd.DataFrame({
-            "origin_congestion_index": c_vals,
-            "origin_precipitation_mm": np.full_like(c_vals, rain),
-        })
-        speed_pred = pipeline.predict(eval_df)
-        plt.plot(c_vals, speed_pred, label=label, color=color, linestyle=style, linewidth=2.2)
-
-    plt.title(
-        "Modelo 2: Decaimiento de Velocidad Vehicular Urbana\nImpacto de la Fricción Vial y Lluvia en Managua (SGD)",
-        fontsize=12,
-        pad=12,
-        fontweight="bold",
-    )
-    plt.xlabel("Índice de Congestión en Cuadrante de Origen", fontsize=11)
-    plt.ylabel("Velocidad Media Efectiva Estimada (km/h)", fontsize=11)
-    plt.xlim(1.0, 2.0)
-    plt.ylim(10, 32)
-    plt.grid(True, linestyle=":", alpha=0.6)
-
-    textstr = f"$R^2 = {r2:.4f}$\nPendiente Congestión: ${coefs['origin_congestion_index']:.2f}$ km/h"
-    props = dict(boxstyle="round,pad=0.5", facecolor="white", edgecolor=COLOR_MUTED, alpha=0.9)
-    plt.gca().text(0.05, 0.25, textstr, transform=plt.gca().transAxes, fontsize=10, verticalalignment="top", bbox=props)
-
-    plt.legend(loc="upper right", framealpha=0.9)
+    plt.legend(loc="upper left", framealpha=0.9)
     plt.tight_layout()
     plt.savefig(output_path, dpi=300)
     plt.close()
 
 
 def plot_fare_model(model_results: dict[str, Any], output_path: Path) -> None:
-    """Generates actual vs. predicted plot for the dynamic pricing fare model."""
+    """Generates feature-reduced PCA input projection vs. final fare charged."""
     y_test: np.ndarray = model_results["_test_actual"]
-    y_pred: np.ndarray = model_results["_test_pred"]
+    pc1_test: np.ndarray = model_results["_test_pc1"]
+    pipeline: Pipeline = model_results["_pipeline"]
+    pca: PCA = model_results["_pca"]
+    pca_scaler: StandardScaler = model_results["_pca_scaler"]
+    feature_cols: list[str] = model_results["predictor_variables"]
     r2 = model_results["metrics_test"]["r2"]
     mae = model_results["metrics_test"]["mae"]
+    var_exp = model_results["feature_reduction"]["explained_variance_ratio_pc1"]
 
     idx = np.random.choice(len(y_test), size=min(2500, len(y_test)), replace=False)
+    pc_sub = pc1_test[idx]
     y_sub = y_test[idx]
-    p_sub = y_pred[idx]
 
     plt.figure(figsize=(8, 6), dpi=300)
-    plt.scatter(y_sub, p_sub, alpha=0.35, color=COLOR_SUCCESS, edgecolors="none", s=22, label="Tarifas Facturadas (Test)")
+    plt.scatter(
+        pc_sub,
+        y_sub,
+        alpha=0.35,
+        color=COLOR_SUCCESS,
+        edgecolors="none",
+        s=22,
+        label=f"Tarifas Facturadas (Test: N = {len(y_test):,})",
+    )
 
-    lims = [0, max(np.max(y_sub), np.max(p_sub)) + 50]
-    plt.plot(lims, lims, color=COLOR_ACCENT, linestyle="--", linewidth=2.0, label="Facturación Exacta (y = x)")
+    # Compute regression model response curve along PC1 trajectory
+    pc_grid = np.linspace(np.percentile(pc1_test, 0.5), np.percentile(pc1_test, 99.5), 150)
+    x_grid_scaled = pca.inverse_transform(pc_grid.reshape(-1, 1))
+    x_grid_unscaled = pca_scaler.inverse_transform(x_grid_scaled)
+    y_grid = pipeline.predict(pd.DataFrame(x_grid_unscaled, columns=feature_cols))
 
-    poly = np.poly1d(np.polyfit(y_sub, p_sub, deg=1))
-    x_line = np.linspace(lims[0], lims[1], 100)
-    plt.plot(x_line, poly(x_line), color=COLOR_DANGER, linestyle="-", linewidth=1.5, label="Ajuste Descenso de Gradiente (SGD)")
+    plt.plot(
+        pc_grid,
+        y_grid,
+        color=COLOR_DANGER,
+        linestyle="-",
+        linewidth=2.2,
+        label="Ajuste Descenso de Gradiente (SGD)",
+    )
 
     plt.title(
-        "Modelo 3: Estimación de Tarifa Final del Servicio\nModelado vía Descenso de Gradiente (Distancia, Duración y Multiplicador)",
-        fontsize=12,
+        "Modelo 2: Reducción de Dimensionalidad (PCA) vs. Tarifa Final del Servicio\n"
+        "Proyección de Variables de Entrada (Distancia, Duración y Multiplicador) frente a Tarifa Facturada",
+        fontsize=11,
         pad=12,
         fontweight="bold",
     )
-    plt.xlabel("Tarifa Final Real (NIO)", fontsize=11)
-    plt.ylabel("Tarifa Final Predicha (NIO)", fontsize=11)
-    plt.xlim(0, max(np.max(y_sub), np.max(p_sub)) + 20)
-    plt.ylim(0, max(np.max(y_sub), np.max(p_sub)) + 20)
+    plt.xlabel(f"Primer Componente Principal de Predictores ($PC_1$) — Varianza Explicada: {var_exp:.1f}%", fontsize=11)
+    plt.ylabel("Tarifa Final Real (NIO)", fontsize=11)
     plt.grid(True, linestyle=":", alpha=0.6)
 
-    textstr = f"$R^2 = {r2:.4f}$\n$MAE = {mae:.2f}$ NIO\n$N_{{test}} = {len(y_test):,}$"
+    textstr = (
+        f"$R^2_{{test}} = {r2:.4f}$\n"
+        f"$MAE = {mae:.2f}$ NIO\n"
+        f"Varianza $PC_1 = {var_exp:.1f}\\%$\n"
+        f"Método: PCA + SGD"
+    )
     props = dict(boxstyle="round,pad=0.5", facecolor="white", edgecolor=COLOR_MUTED, alpha=0.9)
     plt.gca().text(0.05, 0.92, textstr, transform=plt.gca().transAxes, fontsize=10, verticalalignment="top", bbox=props)
 
-    plt.legend(loc="lower right", framealpha=0.9)
+    plt.legend(loc="upper left", framealpha=0.9)
     plt.tight_layout()
     plt.savefig(output_path, dpi=300)
     plt.close()
@@ -650,31 +605,22 @@ def main() -> None:
     print(f"       Convergencia: {res_eta['gradient_descent_diagnostics']['iterations_to_convergence']} épocas | Regla: {res_eta['gradient_descent_diagnostics']['optimization_rule']}")
     print(f"       Ecuación: {res_eta['equation']}")
 
-    # Dedicated Function 2: Speed Decay Model
-    res_speed = fit_speed_decay_model(train_df, test_df)
-    print(f"   ✓ Modelo 2 [fit_speed_decay_model]:")
-    print(f"       R²_test = {res_speed['metrics_test']['r2']:.4f} | RMSE = {res_speed['metrics_test']['rmse']:.2f} | MAE = {res_speed['metrics_test']['mae']:.2f} km/h")
-    print(f"       Convergencia: {res_speed['gradient_descent_diagnostics']['iterations_to_convergence']} épocas | Regla: {res_speed['gradient_descent_diagnostics']['optimization_rule']}")
-    print(f"       Ecuación: {res_speed['equation']}")
-
-    # Dedicated Function 3: Pricing Fare Model
+    # Dedicated Function 2: Pricing Fare Model
     res_fare = fit_pricing_fare_model(train_df, test_df)
-    print(f"   ✓ Modelo 3 [fit_pricing_fare_model]:")
+    print(f"   ✓ Modelo 2 [fit_pricing_fare_model]:")
     print(f"       R²_test = {res_fare['metrics_test']['r2']:.4f} | RMSE = {res_fare['metrics_test']['rmse']:.2f} | MAE = {res_fare['metrics_test']['mae']:.2f} NIO")
     print(f"       Convergencia: {res_fare['gradient_descent_diagnostics']['iterations_to_convergence']} épocas | Regla: {res_fare['gradient_descent_diagnostics']['optimization_rule']}")
     print(f"       Ecuación: {res_fare['equation']}")
 
     fitted_models = {
         "eta_duration": res_eta,
-        "speed_decay": res_speed,
         "pricing_fare": res_fare,
     }
 
     print("▶ 4. Generando visualizaciones diagnósticas de alta resolución (300 DPI) sobre el conjunto Test...")
     plot_duration_model(res_eta, OUTPUT_GRAPHS_DIR / "numerical_duration.png")
-    plot_speed_decay_model(res_speed, OUTPUT_GRAPHS_DIR / "numerical_speed.png")
     plot_fare_model(res_fare, OUTPUT_GRAPHS_DIR / "numerical_fare.png")
-    print("   ✓ Gráficos guardados en typst/graphs/ (numerical_duration.png, numerical_speed.png, numerical_fare.png)")
+    print("   ✓ Gráficos guardados en typst/graphs/ (numerical_duration.png, numerical_fare.png)")
 
     print("▶ 5. Exportando métricas, coeficientes e intervalos a typst/data/numerical_methods.json...")
     clean_models = {}

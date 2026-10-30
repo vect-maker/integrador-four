@@ -82,69 +82,16 @@
           "origin_congestion_index",
           "origin_precipitation_mm"
         ]
-      }
-    },
-    "speed_decay": {
-      "model_id": "speed_decay",
-      "target_variable": "effective_speed_kmh",
-      "target_label": "Velocidad Media Efectiva",
-      "target_unit": "km/h",
-      "predictor_variables": [
-        "origin_congestion_index",
-        "origin_precipitation_mm"
-      ],
-      "equation": "+36.40 + -11.6614 * origin_congestion_index + 0.2129 * origin_precipitation_mm",
-      "coefficients": {
-        "intercept": 36.3976,
-        "origin_congestion_index": -11.6614,
-        "origin_precipitation_mm": 0.2129
       },
-      "confidence_intervals_95_coefficients": {
-        "intercept": {
-          "estimate": 36.3976,
-          "std_error": 0.1012,
-          "ci_95_lower": 36.1993,
-          "ci_95_upper": 36.5959
-        },
-        "origin_congestion_index": {
-          "estimate": -11.6614,
-          "std_error": 0.0784,
-          "ci_95_lower": -11.815,
-          "ci_95_upper": -11.5078
-        },
-        "origin_precipitation_mm": {
-          "estimate": 0.2129,
-          "std_error": 0.0226,
-          "ci_95_lower": 0.1687,
-          "ci_95_upper": 0.2571
+      "feature_reduction": {
+        "method": "Principal Component Analysis (PCA)",
+        "components": 1,
+        "explained_variance_ratio_pc1": 53.74,
+        "feature_loadings_pc1": {
+          "distance_km": 0.0812,
+          "origin_congestion_index": 0.7047,
+          "origin_precipitation_mm": 0.7049
         }
-      },
-      "metrics_train": {
-        "r2": 0.4948,
-        "rmse": 2.68,
-        "mae": 1.89
-      },
-      "metrics_test": {
-        "r2": 0.4997,
-        "adjusted_r2": 0.4996,
-        "rmse": 2.67,
-        "mae": 1.9,
-        "n_observations": 9810
-      },
-      "gradient_descent_diagnostics": {
-        "numerical_method": "Descenso de Gradiente Estocástico (SGD / Gradient Descent)",
-        "loss_function": "Squared Error (Error Cuadrático Medio: 0.5 * (y - y_hat)^2)",
-        "optimization_rule": "beta^(k+1) = beta^(k) - eta * grad(L)",
-        "learning_rate_schedule": "invscaling",
-        "initial_learning_rate_eta0": 0.01,
-        "convergence_tolerance": 0.001,
-        "iterations_to_convergence": 15,
-        "n_samples_seen": 588586,
-        "features_standardized": true,
-        "features_list": [
-          "origin_congestion_index",
-          "origin_precipitation_mm"
-        ]
       }
     },
     "pricing_fare": {
@@ -217,6 +164,16 @@
           "duration_minutes",
           "surge_multiplier"
         ]
+      },
+      "feature_reduction": {
+        "method": "Principal Component Analysis (PCA)",
+        "components": 1,
+        "explained_variance_ratio_pc1": 61.94,
+        "feature_loadings_pc1": {
+          "distance_km": 0.7027,
+          "duration_minutes": 0.706,
+          "surge_multiplier": 0.0885
+        }
       }
     }
   }

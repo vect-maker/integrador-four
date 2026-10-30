@@ -155,7 +155,6 @@ PNG_FILES=(
     "map_exploratory_flood_risk_quadrants.png"
     "map_exploratory_wait_times.png"
     "numerical_duration.png"
-    "numerical_speed.png"
     "numerical_fare.png"
 )
 
