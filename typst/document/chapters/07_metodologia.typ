@@ -14,7 +14,7 @@ El diseño metodológico establece la secuencia técnica, analítica y computaci
 
 - *Enfoque Mixto (con predominio cuantitativo):* De acuerdo con la tipología metodológica de @sampieri2014, la investigación adopta un enfoque mixto donde converge el rigor cuantitativo formal del modelado analítico dimensional y la optimización en redes espaciales sobre el censo de $N = #total-trips-fmt$ registros transaccionales, articulado con el análisis cualitativo y contextual de la estratificación socioespacial, la infraestructura urbana y la vulnerabilidad histórica ante anegamientos en el municipio de Managua.
 - *Diseño No Experimental y Longitudinal:* Se observan transacciones operativas y registros meteorológicos a lo largo del ciclo anual 2024 ($n = 366$ días), sin manipulación deliberada ni intervención exógena sobre las variables del sistema de transporte.
-- *Alcance Mixto (Descriptivo y Prescriptivo):* Trasciende la descripción exploratoria del comportamiento de movilidad del servicio; describe los patrones empíricos de asignación, espera y cancelación (dimensión descriptiva), y prescribe estrategias óptimas de ruteo y resiliencia vial ante contingencias meteorológicas mediante algoritmos de caminos mínimos (dimensión prescriptiva).
+- *Alcance Mixto (Descriptivo, Explicativo y Prescriptivo):* Trasciende la descripción exploratoria del comportamiento de movilidad del servicio; describe los patrones empíricos de asignación, espera y cancelación (dimensión descriptiva), cuantifica mediante modelos funcionales e inferencia estadística el impacto de la distancia sobre la duración y la tarifa (dimensión explicativa), y prescribe estrategias óptimas de ruteo y resiliencia vial ante contingencias meteorológicas mediante algoritmos de caminos mínimos (dimensión prescriptiva).
 - *Unidad de Análisis:* El viaje individual o solicitud de traslado ($N = #total-trips-fmt$ registros), caracterizado por su origen, destino, marca temporal, multiplicador dinámico aplicado, condiciones climáticas concurrentes y estado final de atención o cancelación.
 
 A fin de operacionalizar formalmente las hipótesis y dimensiones analíticas del estudio, la @tbl-variables-operationalization desglosa la matriz metodológica de variables, definiendo para cada una su rol analítico, definición conceptual, operacionalización computacional, escala de medición y entidad del repositorio analítico de procedencia.
@@ -54,7 +54,23 @@ Para consolidar el repositorio analítico a partir de las fuentes desacopladas d
 
 #fig-trip-origins-density <fig-trip-origins-density>
 
-=== Fase 2: Modelado de Redes, Centralidad y Resiliencia Espacial ante Inundaciones (Objetivo 2)
+=== Fase 2: Modelado de Regresión Simple vía Descenso de Gradiente e Inferencia al 95% (Objetivo 2)
+
+Para modelar la dinámica física y comercial del servicio a partir del censo analítico depurado, se formula un esquema de regresión lineal simple bivariada (una variable de entrada y una de salida) resuelto mediante optimización numérica iterativa e inferencia estadística:
+
++ *Partición Analítica Reproducible (80% Train / 20% Test):* Sobre el universo de viajes completados con telemetría válida ($N = 49,049$), se realiza una partición analítica estricta utilizando un generador pseudoaleatorio fijo (`random_state=42`) sin reposición:
+  - *Conjunto de Entrenamiento ($N_"train" = 39,239$ viajes, 80%):* Destinado exclusivamente al ajuste de los pesos paramétricos mediante optimización iterativa.
+  - *Conjunto de Prueba ($N_"test" = 9,810$ viajes, 20%):* Mantenido estrictamente aislado para evaluar la capacidad de generalización fuera de muestra mediante el Coeficiente de Determinación ($R^2$), el Error Absoluto Medio ($"MAE"$) y la Raíz del Error Cuadrático Medio ($"RMSE"$).
+
++ *Formulación y Ajuste de Modelos Operativo y Económico:*
+  - *Modelo 1 (Tiempo de Viaje / ETA):* Estima la duración del recorrido en minutos a partir de la distancia recorrida: $"duracion_minutos" = f("distance_km")$.
+  - *Modelo 2 (Tarificación del Servicio):* Estima la tarifa final facturada en Córdobas a partir de la distancia recorrida: $"final_fare" = f("distance_km")$.
+
++ *Optimización Numérica por Descenso de Gradiente (SGD):* Se emplea el algoritmo de Descenso de Gradiente Estocástico con función de pérdida del Error Cuadrático Medio ($"loss" = "squared_error"$). Para acelerar la convergencia y acondicionar la curvatura de la superficie de error, se aplica estandarización $Z$ sobre la distancia (`StandardScaler`). El esquema utiliza una tasa de aprendizaje con decaimiento inverso (`invscaling`, $eta_0 = 0.01$, $"power_t" = 0.25$) y tolerancia de parada $"tol" = 10^(-4)$, alcanzando convergencia en pocas épocas (13 épocas para Duración y 10 para Tarifa). Tras la convergencia, los pesos se des-escalan analíticamente a sus unidades físicas reales.
+
++ *Inferencia Paramétrica e Intervalos de Confianza al 95%:* Se estima la matriz de varianza-covarianza muestral $sigma^2 (X^T X)^(-1)$ sobre los datos de entrenamiento para derivar los errores estándar de los estimadores y construir intervalos de confianza al 95% ($z_(0.025) = 1.96$), verificando la significancia estadística y la estabilidad de las pendientes operativas y tarifarias.
+
+=== Fase 3: Modelado de Redes, Centralidad y Resiliencia Espacial ante Inundaciones (Objetivo 3)
 Para mitigar los retrasos operacionales y evaluar la vulnerabilidad de la movilidad ante eventos climáticos severos:
 + *Modelado de la Red Vial como Grafo Ponderado:* Se estructura la red de las 24 zonas urbanas de Managua (`dim_zones`) como un grafo $G = (V, E)$ de 44 corredores arteriales principales (Pista Juan Pablo II, Carretera a Masaya, Eje Tiscapa, radiales comerciales), calibrados con distancias Haversine corregidas por tortuosidad vial ($kappa = 1.30$).
 + *Análisis de Centralidad de Intermediación (_Betweenness_):* Se computa la métrica de intermediación $C_B(v)$ sobre los 24 vértices para rankear e identificar los cuellos de botella sistémicos de la infraestructura vial de Managua.
@@ -66,8 +82,9 @@ Para asegurar la validez metodológica y la reproducibilidad científica estrict
 
 + *Análisis Exploratorio y Consultas OLAP de Baja Latencia (DuckDB CLI):* Para la exploración inicial y la generación de agregaciones multidimensionales sobre los #total-trips-fmt registros, se emplea *DuckDB CLI*. Su motor columnar en proceso permite ejecutar analítica OLAP de alto rendimiento con latencias de milisegundos directamente sobre el almacén analítico. A través de DuckDB se extraen agregaciones espaciotemporales consolidadas (distribución de cancelaciones por estrato, franja horaria y condición meteorológica), las cuales se exportan de forma automatizada hacia artefactos estructurados en formato `.json`.
 
-+ *Optimización Espacial en Redes y Grafos (Python):* El cálculo científico avanzado se ejecuta mediante scripts modulares en *Python* soportados en librerías especializadas (`networkx`, `scipy`, `matplotlib`). Este entorno recibe las tablas analíticas depuradas para:
-  - Computar las métricas de centralidad de intermediación (_betweenness_), cuellos de botella viales y simular la resiliencia de la red ante inundaciones mediante el algoritmo de Dijkstra (Fase 2).
++ *Modelado y Optimización Computacional en Python:* El cálculo científico avanzado se ejecuta mediante scripts modulares en *Python* soportados en librerías especializadas (`scikit-learn`, `networkx`, `scipy`, `matplotlib`). Este entorno recibe las tablas analíticas depuradas para:
+  - Ajustar y evaluar los modelos de regresión simple mediante Descenso de Gradiente Estocástico (SGD) y estimar intervalos de confianza al 95% para los parámetros (Fase 2).
+  - Computar las métricas de centralidad de intermediación (_betweenness_), cuellos de botella viales y simular la resiliencia de la red ante inundaciones mediante el algoritmo de Dijkstra (Fase 3).
 
 + *Renderizado Programático y Trazabilidad sin Error Humano (Typst):* La inclusión de *Typst* como motor de maquetación científica trasciende la tipografía convencional al operar como un procesador de documentos enlazado dinámicamente a los datos:
   - Typst consume directamente los archivos `.json` generados por DuckDB y los parámetros cuantitativos calculados por Python mediante funciones nativas de ingesta de datos (`#json(...)`).

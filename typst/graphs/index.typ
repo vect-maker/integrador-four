@@ -16,6 +16,20 @@
 )
 
 // -----------------------------------------------------------------------------
+// Suite de Regresión Simple vía Descenso de Gradiente (SGD)
+// -----------------------------------------------------------------------------
+
+#let fig-numerical-duration = figure(
+  image("numerical_duration.png", width: 90%),
+  caption: [Ajuste de Regresión Lineal Simple para Tiempo de Viaje (ETA) en Función de la Distancia mediante Descenso de Gradiente Estocástico (SGD)],
+)
+
+#let fig-numerical-fare = figure(
+  image("numerical_fare.png", width: 90%),
+  caption: [Ajuste de Regresión Lineal Simple para Tarificación del Servicio en Función de la Distancia mediante Descenso de Gradiente Estocástico (SGD)],
+)
+
+// -----------------------------------------------------------------------------
 // Suite de Mapas Geoespaciales Exploratorios (Apéndice A: Atlas Espacial MoviGo)
 // -----------------------------------------------------------------------------
 

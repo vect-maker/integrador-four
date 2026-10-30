@@ -8,6 +8,7 @@
 #let cancellations-by-weather = json("data/cancellations_by_weather.json")
 #let campaigns = json("data/campaigns_optimization.json")
 #let routing = json("data/routing_optimization.json")
+#let numerical-methods = json("data/numerical_methods.json")
 
 // Formatter for integers with thousands separator (comma)
 #let fmt-int(n) = {
@@ -64,3 +65,28 @@
 #let od1-storm-time = od1.storm_scenario.travel_time_minutes
 #let od1-delay-pct = od1.storm_scenario.delay_percentage
 #let od1-rerouted = od1.storm_scenario.path_rerouted
+
+// -----------------------------------------------------------------------------
+// Modelado Numérico & Inferencia: Regresión Lineal Simple vía SGD
+// -----------------------------------------------------------------------------
+#let m1-eta = numerical-methods.models.eta_duration
+#let m1-b0 = m1-eta.coefficients.intercept
+#let m1-b1 = m1-eta.coefficients.distance_km
+#let m1-r2 = m1-eta.metrics_test.r2
+#let m1-mae = m1-eta.metrics_test.mae
+#let m1-rmse = m1-eta.metrics_test.rmse
+#let m1-ci-b1-low = m1-eta.confidence_intervals_95_coefficients.distance_km.ci_95_lower
+#let m1-ci-b1-upp = m1-eta.confidence_intervals_95_coefficients.distance_km.ci_95_upper
+#let m1-epochs = m1-eta.gradient_descent_diagnostics.iterations_to_convergence
+
+#let m2-fare = numerical-methods.models.pricing_fare
+#let m2-b0 = m2-fare.coefficients.intercept
+#let m2-b1 = m2-fare.coefficients.distance_km
+#let m2-r2 = m2-fare.metrics_test.r2
+#let m2-mae = m2-fare.metrics_test.mae
+#let m2-rmse = m2-fare.metrics_test.rmse
+#let m2-ci-b1-low = m2-fare.confidence_intervals_95_coefficients.distance_km.ci_95_lower
+#let m2-ci-b1-upp = m2-fare.confidence_intervals_95_coefficients.distance_km.ci_95_upper
+#let m2-epochs = m2-fare.gradient_descent_diagnostics.iterations_to_convergence
+#let regression-n-train = fmt-int(39239)
+#let regression-n-test = fmt-int(m1-eta.metrics_test.n_observations)

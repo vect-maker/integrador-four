@@ -74,6 +74,46 @@ El diseño analítico sigue rigurosamente los principios de modelado dimensional
   - `dim_campaigns`: Almacena el portafolio de programas de incentivos y bonos para conductores, especificando el costo presupuestario, horas de conexión proyectadas y zona urbana objetivo.
 + *Llaves Subrogadas Sintéticas Determinísticas (MD5):* En concordancia con las mejores prácticas de la ingeniería analítica moderna, el enlace entre la tabla de hechos y las dimensiones no depende de las claves primarias autoincrementales del sistema origen, sino de llaves subrogadas hash (`sk_*`) generadas mediante la función criptográfica `md5(cast(id as text))`. Este mecanismo desacopla el almacén de posibles colisiones o mutaciones en los identificadores operativos, garantizando idempotencia, inmutabilidad y máxima eficiencia en las operaciones de cruce (_joins_).
 
+== Optimización Numérica por Descenso de Gradiente (SGD) e Inferencia Paramétrica
+
+La modelación de las relaciones operativas y financieras del servicio de movilidad se formula formalmente como un problema de *optimización matemática iterativa* sobre la función de pérdida del Error Cuadrático Medio ($"MSE"$). Dado un conjunto de observaciones muestrales $(x_i, y_i)_(i=1)^n$ donde $x_i$ representa la distancia de recorrido en kilómetros e $y_i$ la variable respuesta (duración del viaje en minutos o tarifa final en Córdobas - NIO), el modelo lineal postula:
+
+$ y_i = beta_0 + beta_1 x_i + epsilon_i, quad epsilon_i tilde.op cal(N)(0, sigma^2) $ <eq-regresion-simple>
+
+Para estimar los parámetros óptimos $bold(beta) = [beta_0, beta_1]^T$, se define la función convexa de pérdida cuadrática:
+
+$ L(bold(beta)) = frac(1, 2n) sum_(i=1)^n (y_i - (beta_0 + beta_1 x_i))^2 $ <eq-loss-mse>
+
+En lugar de recurrir a la solución analítica clásica de inversión matricial directa (ecuaciones normales $(X^T X)^(-1) X^T y$), cuya complejidad computacional y demanda de memoria escalan con el volumen transaccional masivo, se implementa el algoritmo iterativo de *Descenso de Gradiente Estocástico (SGD)*. La regla de actualización paramétrica en la época $k+1$ se rige por:
+
+$ bold(beta)^((k+1)) = bold(beta)^((k)) - eta_k nabla L_i (bold(beta)^((k))) $ <eq-sgd-rule>
+
+donde $eta_k$ representa la tasa de aprendizaje modulada mediante un esquema de decrecimiento inverso (_inverse scaling_):
+
+$ eta_k = frac(eta_0, (1 + gamma dot k)^p) $ <eq-learning-rate>
+
+Para asegurar un condicionamiento numérico favorable y evitar oscilaciones en valles alargados de la superficie de pérdida, la variable predictora es estandarizada previamente a escala normal estándar ($z = (x - mu) \/ sigma$). Tras alcanzar la convergencia algorítmica bajo el criterio $\|bold(beta)^((k+1)) - bold(beta)^((k))\|_2 < "tol"$, los coeficientes son des-escalados analíticamente a sus dimensiones físicas reales:
+
+$ beta_1 = frac(w_"scaled", sigma_x), quad beta_0 = b_"scaled" - beta_1 mu_x $ <eq-unscaling>
+
+=== Inferencia Estadística y Bandas de Confianza al 95%
+
+Desde el marco de la inferencia estadística paramétrica, la varianza del estimador de mínimos cuadrados se deduce de la matriz de varianza-covarianza:
+
+$ "Var"(hat(bold(beta))) = sigma^2 (X^T X)^(-1) $ <eq-var-covar>
+
+donde la varianza residual insesgada del modelo se calcula mediante:
+
+$ hat(sigma)^2 = frac(sum_(i=1)^n (y_i - hat(y)_i)^2, n - p) $ <eq-sigma2>
+
+siendo $n$ el tamaño de muestra de entrenamiento y $p = 2$ el número de parámetros libres calculados (intercepto y pendiente). Los errores estándar de los estimadores corresponden a la raíz cuadrada de los elementos diagonales: $"SE"(hat(beta)_j) = sqrt(hat(sigma)^2 [(X^T X)^(-1)]_(j j))$.
+
+Bajo el supuesto de normalidad asintótica garantizado por el Teorema del Límite Central sobre grandes muestras ($N_"train" > 39,000$), el intervalo de confianza al 95% para cada coeficiente paramétrico se establece formalmente como:
+
+$ "IC"_(95%) (beta_j) = [hat(beta)_j - z_(alpha \/ 2) dot "SE"(hat(beta)_j), quad hat(beta)_j + z_(alpha \/ 2) dot "SE"(hat(beta)_j)] $ <eq-ci-95>
+
+donde $z_(0.025) = 1.96$ corresponde al cuantil crítico de la distribución normal estándar.
+
 == Fundamentos Teóricos para la Optimización Espacial y Resiliencia en Redes
 
 La infraestructura vial urbana de Managua se modela formalmente como una red espacial mediante un *grafo ponderado* $G = (V, E)$, donde:
