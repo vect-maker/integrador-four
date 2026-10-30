@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "title": "MoviGo: Modelado de Regresión Multivariable mediante Métodos Numéricos y Estadística II",
+    "title": "MoviGo: Modelado de Regresión Simple mediante Métodos Numéricos y Estadística II",
     "academic_context": "Proyecto Integrador IV (UNAN-Managua) - Asignaturas: Métodos Numéricos (Descenso de Gradiente / SGD) y Estadística II (Intervalos de Confianza al 95%)",
     "numerical_solver": "Descenso de Gradiente Estocástico (SGDRegressor vía scikit-learn)",
     "loss_function": "Squared Error (Error Cuadrático: 0.5 * (y - y_hat)^2)",
@@ -14,57 +14,42 @@
   "models": {
     "eta_duration": {
       "model_id": "eta_duration",
+      "model_type": "Regresión Lineal Simple (1 Entrada -> 1 Salida)",
       "target_variable": "duration_minutes",
       "target_label": "Duración del Viaje (ETA)",
       "target_unit": "minutos",
       "predictor_variables": [
-        "distance_km",
-        "origin_congestion_index",
-        "origin_precipitation_mm"
+        "distance_km"
       ],
-      "equation": "-21.29 + 2.5952 * distance_km + 17.2590 * origin_congestion_index + 2.7700 * origin_precipitation_mm",
+      "equation": "+1.7221 + 2.6348 * distance_km",
       "coefficients": {
-        "intercept": -21.2933,
-        "distance_km": 2.5952,
-        "origin_congestion_index": 17.259,
-        "origin_precipitation_mm": 2.77
+        "intercept": 1.7221,
+        "distance_km": 2.6348
       },
       "confidence_intervals_95_coefficients": {
         "intercept": {
-          "estimate": -21.2933,
-          "std_error": 0.1961,
-          "ci_95_lower": -21.6775,
-          "ci_95_upper": -20.909
+          "estimate": 1.7221,
+          "std_error": 0.077,
+          "ci_95_lower": 1.5711,
+          "ci_95_upper": 1.8731
         },
         "distance_km": {
-          "estimate": 2.5952,
-          "std_error": 0.0058,
-          "ci_95_lower": 2.5837,
-          "ci_95_upper": 2.6066
-        },
-        "origin_congestion_index": {
-          "estimate": 17.259,
-          "std_error": 0.1476,
-          "ci_95_lower": 16.9697,
-          "ci_95_upper": 17.5484
-        },
-        "origin_precipitation_mm": {
-          "estimate": 2.77,
-          "std_error": 0.0425,
-          "ci_95_lower": 2.6867,
-          "ci_95_upper": 2.8533
+          "estimate": 2.6348,
+          "std_error": 0.0082,
+          "ci_95_lower": 2.6187,
+          "ci_95_upper": 2.6508
         }
       },
       "metrics_train": {
-        "r2": 0.8603,
-        "rmse": 5.04,
-        "mae": 2.03
+        "r2": 0.7252,
+        "rmse": 7.0688,
+        "mae": 3.3377
       },
       "metrics_test": {
-        "r2": 0.8737,
-        "adjusted_r2": 0.8737,
-        "rmse": 4.71,
-        "mae": 2.02,
+        "r2": 0.7212,
+        "adjusted_r2": 0.7212,
+        "rmse": 6.9973,
+        "mae": 3.3561,
         "n_observations": 9810
       },
       "gradient_descent_diagnostics": {
@@ -73,80 +58,53 @@
         "optimization_rule": "beta^(k+1) = beta^(k) - eta * grad(L)",
         "learning_rate_schedule": "invscaling",
         "initial_learning_rate_eta0": 0.01,
-        "convergence_tolerance": 0.001,
+        "convergence_tolerance": 0.0001,
         "iterations_to_convergence": 13,
         "n_samples_seen": 510108,
         "features_standardized": true,
         "features_list": [
-          "distance_km",
-          "origin_congestion_index",
-          "origin_precipitation_mm"
+          "distance_km"
         ]
-      },
-      "feature_reduction": {
-        "method": "Principal Component Analysis (PCA)",
-        "components": 1,
-        "explained_variance_ratio_pc1": 53.74,
-        "feature_loadings_pc1": {
-          "distance_km": 0.0812,
-          "origin_congestion_index": 0.7047,
-          "origin_precipitation_mm": 0.7049
-        }
       }
     },
     "pricing_fare": {
       "model_id": "pricing_fare",
+      "model_type": "Regresión Lineal Simple (1 Entrada -> 1 Salida)",
       "target_variable": "final_fare",
       "target_label": "Tarifa Final del Servicio",
-      "target_unit": "NIO (córdobas)",
+      "target_unit": "NIO (Córdobas)",
       "predictor_variables": [
-        "distance_km",
-        "duration_minutes",
-        "surge_multiplier"
+        "distance_km"
       ],
-      "equation": "-126.82 + 10.3602 * distance_km + 7.5527 * duration_minutes + 144.0179 * surge_multiplier",
+      "equation": "+73.8090 + 29.9470 * distance_km",
       "coefficients": {
-        "intercept": -126.8212,
-        "distance_km": 10.3602,
-        "duration_minutes": 7.5527,
-        "surge_multiplier": 144.0179
+        "intercept": 73.809,
+        "distance_km": 29.947
       },
       "confidence_intervals_95_coefficients": {
         "intercept": {
-          "estimate": -126.8212,
-          "std_error": 2.5995,
-          "ci_95_lower": -131.9162,
-          "ci_95_upper": -121.7262
+          "estimate": 73.809,
+          "std_error": 1.2989,
+          "ci_95_lower": 71.2632,
+          "ci_95_upper": 76.3548
         },
         "distance_km": {
-          "estimate": 10.3602,
-          "std_error": 0.2152,
-          "ci_95_lower": 9.9384,
-          "ci_95_upper": 10.7821
-        },
-        "duration_minutes": {
-          "estimate": 7.5527,
-          "std_error": 0.0698,
-          "ci_95_lower": 7.4159,
-          "ci_95_upper": 7.6895
-        },
-        "surge_multiplier": {
-          "estimate": 144.0179,
-          "std_error": 1.8654,
-          "ci_95_lower": 140.3617,
-          "ci_95_upper": 147.6742
+          "estimate": 29.947,
+          "std_error": 0.1381,
+          "ci_95_lower": 29.6764,
+          "ci_95_upper": 30.2177
         }
       },
       "metrics_train": {
-        "r2": 0.6962,
-        "rmse": 96.89,
-        "mae": 67.09
+        "r2": 0.5404,
+        "rmse": 119.1655,
+        "mae": 69.8979
       },
       "metrics_test": {
-        "r2": 0.6735,
-        "adjusted_r2": 0.6734,
-        "rmse": 108.1,
-        "mae": 68.19,
+        "r2": 0.4634,
+        "adjusted_r2": 0.4634,
+        "rmse": 138.5838,
+        "mae": 71.2761,
         "n_observations": 9810
       },
       "gradient_descent_diagnostics": {
@@ -155,26 +113,70 @@
         "optimization_rule": "beta^(k+1) = beta^(k) - eta * grad(L)",
         "learning_rate_schedule": "invscaling",
         "initial_learning_rate_eta0": 0.01,
-        "convergence_tolerance": 0.001,
-        "iterations_to_convergence": 21,
-        "n_samples_seen": 824020,
+        "convergence_tolerance": 0.0001,
+        "iterations_to_convergence": 10,
+        "n_samples_seen": 392391,
         "features_standardized": true,
         "features_list": [
-          "distance_km",
-          "duration_minutes",
-          "surge_multiplier"
+          "distance_km"
         ]
-      },
-      "feature_reduction": {
-        "method": "Principal Component Analysis (PCA)",
-        "components": 1,
-        "explained_variance_ratio_pc1": 61.94,
-        "feature_loadings_pc1": {
-          "distance_km": 0.7027,
-          "duration_minutes": 0.706,
-          "surge_multiplier": 0.0885
-        }
       }
+    }
+  },
+  "variable_distributions": {
+    "distance_km": {
+      "mean": 8.334,
+      "median": 7.69,
+      "std": 4.346,
+      "p25": 4.94,
+      "p75": 11.3,
+      "skewness": 0.583,
+      "unit": "km"
+    },
+    "duration_minutes": {
+      "mean": 23.661,
+      "median": 21.38,
+      "std": 13.438,
+      "p25": 14.39,
+      "p75": 30.4,
+      "skewness": 2.809,
+      "unit": "min"
+    },
+    "final_fare": {
+      "mean": 323.21,
+      "median": 289.51,
+      "std": 178.536,
+      "p25": 203.46,
+      "p75": 402.36,
+      "skewness": 3.207,
+      "unit": "NIO"
+    },
+    "origin_congestion_index": {
+      "mean": 1.317,
+      "median": 1.25,
+      "std": 0.218,
+      "p25": 1.16,
+      "p75": 1.49,
+      "skewness": 2.52,
+      "unit": "índice"
+    },
+    "origin_precipitation_mm": {
+      "mean": 0.221,
+      "median": 0.0,
+      "std": 0.761,
+      "p25": 0.0,
+      "p75": 0.1,
+      "skewness": 7.409,
+      "unit": "mm"
+    },
+    "surge_multiplier": {
+      "mean": 1.291,
+      "median": 1.25,
+      "std": 0.265,
+      "p25": 1.03,
+      "p75": 1.46,
+      "skewness": 0.985,
+      "unit": "factor"
     }
   }
 }

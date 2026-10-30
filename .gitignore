@@ -14,6 +14,7 @@ dist/
 # Ignorar archivos SVG y PNG pesados autogenerados para evitar contaminar el historial
 typst/graphs/*.svg
 typst/graphs/*.png
+typst/graphs/distributions/
 
 # Caché y artefactos del Language Server de Typst (Tinymist)
 .tinymist/

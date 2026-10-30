@@ -45,6 +45,9 @@ echo "==========================================================================
 echo "🧹 Step 1: Purging stale data and figure artifacts..."
 find "${DATA_DIR}" -maxdepth 1 -type f \( -name "*.json" -o -name "*.csv" \) ! -name "README.md" -delete
 find "${GRAPHS_DIR}" -maxdepth 1 -type f \( -name "*.png" -o -name "*.svg" \) ! -name "README.md" -delete
+if [ -d "${GRAPHS_DIR}/distributions" ]; then
+    find "${GRAPHS_DIR}/distributions" -maxdepth 1 -type f -name "*.png" -delete
+fi
 echo "   ✅ Stale artifacts purged. Documentation files preserved."
 
 # -----------------------------------------------------------------------------
@@ -156,6 +159,12 @@ PNG_FILES=(
     "map_exploratory_wait_times.png"
     "numerical_duration.png"
     "numerical_fare.png"
+    "distributions/dist_distance_km.png"
+    "distributions/dist_duration_minutes.png"
+    "distributions/dist_origin_congestion_index.png"
+    "distributions/dist_origin_precipitation_mm.png"
+    "distributions/dist_surge_multiplier.png"
+    "distributions/dist_final_fare.png"
 )
 
 # Validate JSON files
