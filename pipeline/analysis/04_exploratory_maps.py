@@ -30,6 +30,7 @@ import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.axes import Axes
+from matplotlib.collections import LineCollection
 from matplotlib.lines import Line2D
 from PIL import Image
 
@@ -530,6 +531,23 @@ def plot_flood_risk_quadrants(
         )
         ax.add_patch(rect)
 
+    # Overlay Drainage Cauces from GeoJSON
+    cauces_path = ROOT_DIR / "pipeline" / "data" / "spatial" / "managua_cauces.geojson"
+    if cauces_path.exists():
+        with open(cauces_path, encoding="utf-8") as f:
+            cg_data = json.load(f)
+        cauces_lines = []
+        for feat in cg_data.get("features", []):
+            geom = feat.get("geometry", {})
+            if geom.get("type") == "LineString":
+                cauces_lines.append(geom.get("coordinates", []))
+            elif geom.get("type") == "MultiLineString":
+                for part in geom.get("coordinates", []):
+                    cauces_lines.append(part)
+        if cauces_lines:
+            lc = LineCollection(cauces_lines, colors="#0077b6", linewidths=1.2, alpha=0.85, zorder=4)
+            ax.add_collection(lc)
+
     # Reference landmark zones for spatial orientation
     landmark_zones = {1, 6, 7, 8, 9, 11}
     for z in zones:
@@ -557,11 +575,14 @@ def plot_flood_risk_quadrants(
         zorder=10,
     )
 
-    # Custom Legend without sample size counts
+    # Custom Legend
     legend_elements = [
         patches.Patch(facecolor=cfg["color"], edgecolor="#2b2d42", alpha=cfg["alpha"], label=cfg["label"])
         for k, cfg in risk_styles.items()
     ]
+    legend_elements.append(
+        Line2D([0], [0], color="#0077b6", linewidth=1.5, label="Cauces Pluviales (Vectores OSM)")
+    )
     ax.legend(handles=legend_elements, loc="upper right", frameon=True, facecolor="white", edgecolor="#b0bec5", framealpha=0.95, fontsize=8.2)
 
     ax.set_xlabel("Longitud Oeste (WGS84)", fontsize=9.5)

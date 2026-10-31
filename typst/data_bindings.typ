@@ -52,8 +52,8 @@
 // -----------------------------------------------------------------------------
 // Optimizacion: Red Vial y Algoritmo de Dijkstra
 // -----------------------------------------------------------------------------
-#let routing-nodes = routing.network_summary.total_nodes
-#let routing-edges = routing.network_summary.total_edges
+#let routing-nodes = fmt-int(routing.network_summary.total_nodes)
+#let routing-edges = fmt-int(routing.network_summary.total_edges)
 #let routing-avg-dry = routing.global_resilience.avg_travel_time_dry_min
 #let routing-avg-storm = routing.global_resilience.avg_travel_time_storm_min
 #let routing-net-delay = routing.global_resilience.network_delay_percentage

@@ -1,0 +1,461 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": 1,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -86.26,
+          12.115
+        ]
+      },
+      "properties": {
+        "zone_id": 1,
+        "zone_name": "Villa Fontana",
+        "district": "Distrito I",
+        "socioeconomic_stratum": "alto",
+        "coverage_radius_km": 2.5,
+        "base_flag_drop_fare": 70.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 4,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -86.268,
+          12.128
+        ]
+      },
+      "properties": {
+        "zone_id": 4,
+        "zone_name": "Los Robles",
+        "district": "Distrito I",
+        "socioeconomic_stratum": "medio",
+        "coverage_radius_km": 2.0,
+        "base_flag_drop_fare": 55.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 6,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -86.28,
+          12.142
+        ]
+      },
+      "properties": {
+        "zone_id": 6,
+        "zone_name": "Bolonia",
+        "district": "Distrito I",
+        "socioeconomic_stratum": "medio",
+        "coverage_radius_km": 2.2,
+        "base_flag_drop_fare": 55.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 9,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -86.2665,
+          12.1265
+        ]
+      },
+      "properties": {
+        "zone_id": 9,
+        "zone_name": "Metrocentro / Eje Corporativo UCA",
+        "district": "Distrito I",
+        "socioeconomic_stratum": "comercial",
+        "coverage_radius_km": 1.8,
+        "base_flag_drop_fare": 60.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 8,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -86.305,
+          12.155
+        ]
+      },
+      "properties": {
+        "zone_id": 8,
+        "zone_name": "Linda Vista",
+        "district": "Distrito II",
+        "socioeconomic_stratum": "medio",
+        "coverage_radius_km": 2.8,
+        "base_flag_drop_fare": 50.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 13,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -86.295,
+          12.145
+        ]
+      },
+      "properties": {
+        "zone_id": 13,
+        "zone_name": "Monseñor Lezcano / Batahola",
+        "district": "Distrito II",
+        "socioeconomic_stratum": "popular",
+        "coverage_radius_km": 2.2,
+        "base_flag_drop_fare": 42.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 14,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -86.278,
+          12.16
+        ]
+      },
+      "properties": {
+        "zone_id": 14,
+        "zone_name": "Puerto Salvador Allende / Malecón",
+        "district": "Distrito II",
+        "socioeconomic_stratum": "comercial",
+        "coverage_radius_km": 2.0,
+        "base_flag_drop_fare": 55.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 15,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -86.285,
+          12.135
+        ]
+      },
+      "properties": {
+        "zone_id": 15,
+        "zone_name": "Altagracia",
+        "district": "Distrito III",
+        "socioeconomic_stratum": "popular",
+        "coverage_radius_km": 2.2,
+        "base_flag_drop_fare": 45.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 16,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -86.295,
+          12.118
+        ]
+      },
+      "properties": {
+        "zone_id": 16,
+        "zone_name": "San Judas / Sierra Maestra",
+        "district": "Distrito III",
+        "socioeconomic_stratum": "popular",
+        "coverage_radius_km": 2.5,
+        "base_flag_drop_fare": 40.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 17,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -86.315,
+          12.095
+        ]
+      },
+      "properties": {
+        "zone_id": 17,
+        "zone_name": "Carretera Sur / Nejapa",
+        "district": "Distrito III",
+        "socioeconomic_stratum": "medio",
+        "coverage_radius_km": 3.0,
+        "base_flag_drop_fare": 52.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 7,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -86.23,
+          12.142
+        ]
+      },
+      "properties": {
+        "zone_id": 7,
+        "zone_name": "Bello Horizonte",
+        "district": "Distrito IV",
+        "socioeconomic_stratum": "medio",
+        "coverage_radius_km": 2.5,
+        "base_flag_drop_fare": 48.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 10,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -86.255,
+          12.14
+        ]
+      },
+      "properties": {
+        "zone_id": 10,
+        "zone_name": "Ciudad Jardín",
+        "district": "Distrito IV",
+        "socioeconomic_stratum": "popular",
+        "coverage_radius_km": 2.0,
+        "base_flag_drop_fare": 40.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 11,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -86.265,
+          12.148
+        ]
+      },
+      "properties": {
+        "zone_id": 11,
+        "zone_name": "Mercado Oriental",
+        "district": "Distrito IV",
+        "socioeconomic_stratum": "popular",
+        "coverage_radius_km": 2.5,
+        "base_flag_drop_fare": 35.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 2,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -86.242,
+          12.105
+        ]
+      },
+      "properties": {
+        "zone_id": 2,
+        "zone_name": "Las Colinas",
+        "district": "Distrito V",
+        "socioeconomic_stratum": "alto",
+        "coverage_radius_km": 3.0,
+        "base_flag_drop_fare": 75.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 3,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -86.23,
+          12.1
+        ]
+      },
+      "properties": {
+        "zone_id": 3,
+        "zone_name": "Santo Domingo",
+        "district": "Distrito V",
+        "socioeconomic_stratum": "alto",
+        "coverage_radius_km": 2.8,
+        "base_flag_drop_fare": 80.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 5,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -86.25,
+          12.13
+        ]
+      },
+      "properties": {
+        "zone_id": 5,
+        "zone_name": "Altamira",
+        "district": "Distrito V",
+        "socioeconomic_stratum": "medio",
+        "coverage_radius_km": 2.0,
+        "base_flag_drop_fare": 50.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 12,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -86.242,
+          12.122
+        ]
+      },
+      "properties": {
+        "zone_id": 12,
+        "zone_name": "Mercado Roberto Huembes",
+        "district": "Distrito V",
+        "socioeconomic_stratum": "popular",
+        "coverage_radius_km": 2.5,
+        "base_flag_drop_fare": 38.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 18,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -86.22,
+          12.065
+        ]
+      },
+      "properties": {
+        "zone_id": 18,
+        "zone_name": "Esquipulas / Carretera a Masaya km 11-14",
+        "district": "Distrito V",
+        "socioeconomic_stratum": "alto",
+        "coverage_radius_km": 3.5,
+        "base_flag_drop_fare": 78.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 19,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -86.215,
+          12.142
+        ]
+      },
+      "properties": {
+        "zone_id": 19,
+        "zone_name": "Multicentro Las Américas / Villa Miguel Gutiérrez",
+        "district": "Distrito VI",
+        "socioeconomic_stratum": "comercial",
+        "coverage_radius_km": 2.5,
+        "base_flag_drop_fare": 58.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 20,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -86.202,
+          12.138
+        ]
+      },
+      "properties": {
+        "zone_id": 20,
+        "zone_name": "Mercado El Mayoreo",
+        "district": "Distrito VI",
+        "socioeconomic_stratum": "popular",
+        "coverage_radius_km": 2.5,
+        "base_flag_drop_fare": 38.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 21,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -86.168,
+          12.142
+        ]
+      },
+      "properties": {
+        "zone_id": 21,
+        "zone_name": "Aeropuerto Augusto C. Sandino / Zona Franca",
+        "district": "Distrito VI",
+        "socioeconomic_stratum": "comercial",
+        "coverage_radius_km": 3.2,
+        "base_flag_drop_fare": 65.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 22,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -86.21,
+          12.133
+        ]
+      },
+      "properties": {
+        "zone_id": 22,
+        "zone_name": "Colonia Primero de Mayo / Villa Venezuela",
+        "district": "Distrito VII",
+        "socioeconomic_stratum": "popular",
+        "coverage_radius_km": 2.5,
+        "base_flag_drop_fare": 42.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 23,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -86.195,
+          12.126
+        ]
+      },
+      "properties": {
+        "zone_id": 23,
+        "zone_name": "Villa Libertad / Laureles",
+        "district": "Distrito VII",
+        "socioeconomic_stratum": "popular",
+        "coverage_radius_km": 2.5,
+        "base_flag_drop_fare": 40.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 24,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -86.175,
+          12.115
+        ]
+      },
+      "properties": {
+        "zone_id": 24,
+        "zone_name": "Sabana Grande / Ciudad Belén",
+        "district": "Distrito VII",
+        "socioeconomic_stratum": "popular",
+        "coverage_radius_km": 3.0,
+        "base_flag_drop_fare": 45.0
+      }
+    }
+  ]
+}

@@ -1,20 +1,22 @@
 {
-  "description": "Auditoria de Ruteo y Optimizacion Prescriptiva de Caminos Minimos en Red Espacial de Managua",
+  "description": "Auditoria de Ruteo y Optimizacion Prescriptiva en Red Vial OpenStreetMap de Managua",
   "network_summary": {
-    "total_nodes": 298,
-    "total_edges": 1072,
-    "tortuosity_factor": 1.25,
+    "total_nodes": 69695,
+    "total_edges": 80287,
+    "total_quadrant_hubs": 298,
+    "total_quadrant_edges": 1072,
+    "tortuosity_factor": 1.0,
     "baseline_arterial_speed_kmh": 32.0,
     "storm_flood_speed_kmh": 8.01,
     "flood_prone_corridors_count": 20
   },
   "global_resilience": {
     "total_pairs_evaluated": 552,
-    "avg_travel_time_dry_min": 17.33,
-    "avg_travel_time_storm_min": 24.84,
-    "network_delay_percentage": 43.3,
-    "diameter_dry_min": 46.48,
-    "diameter_storm_min": 61.84
+    "avg_travel_time_dry_min": 13.31,
+    "avg_travel_time_storm_min": 23.22,
+    "network_delay_percentage": 74.4,
+    "diameter_dry_min": 34.33,
+    "diameter_storm_min": 54.71
   },
   "top_bottlenecks": [
     {
@@ -22,63 +24,63 @@
       "name": "Santo Domingo",
       "stratum": "alto",
       "betweenness_dry": 1.0,
-      "betweenness_storm": 1.0,
+      "betweenness_storm": 0.99,
       "degree": 8
     },
     {
       "zone_id": 1,
       "name": "Villa Fontana",
       "stratum": "alto",
-      "betweenness_dry": 0.861,
-      "betweenness_storm": 0.93,
+      "betweenness_dry": 0.885,
+      "betweenness_storm": 1.0,
       "degree": 8
     },
     {
       "zone_id": 16,
       "name": "San Judas / Sierra Maestra",
       "stratum": "popular",
-      "betweenness_dry": 0.809,
-      "betweenness_storm": 0.821,
+      "betweenness_dry": 0.829,
+      "betweenness_storm": 0.897,
       "degree": 8
     },
     {
       "zone_id": 18,
       "name": "Esquipulas / Carretera a Masaya km 11-14",
       "stratum": "alto",
-      "betweenness_dry": 0.702,
-      "betweenness_storm": 0.7,
-      "degree": 7
-    },
-    {
-      "zone_id": 17,
-      "name": "Carretera Sur / Nejapa",
-      "stratum": "medio",
-      "betweenness_dry": 0.639,
-      "betweenness_storm": 0.629,
+      "betweenness_dry": 0.688,
+      "betweenness_storm": 0.791,
       "degree": 7
     },
     {
       "zone_id": 23,
       "name": "Villa Libertad / Laureles",
       "stratum": "popular",
-      "betweenness_dry": 0.633,
-      "betweenness_storm": 0.642,
+      "betweenness_dry": 0.645,
+      "betweenness_storm": 0.679,
       "degree": 8
+    },
+    {
+      "zone_id": 17,
+      "name": "Carretera Sur / Nejapa",
+      "stratum": "medio",
+      "betweenness_dry": 0.621,
+      "betweenness_storm": 0.684,
+      "degree": 7
     },
     {
       "zone_id": 24,
       "name": "Sabana Grande / Ciudad Belén",
       "stratum": "popular",
-      "betweenness_dry": 0.626,
-      "betweenness_storm": 0.61,
+      "betweenness_dry": 0.618,
+      "betweenness_storm": 0.695,
       "degree": 7
     },
     {
       "zone_id": 2,
       "name": "Las Colinas",
       "stratum": "alto",
-      "betweenness_dry": 0.597,
-      "betweenness_storm": 0.544,
+      "betweenness_dry": 0.61,
+      "betweenness_storm": 0.566,
       "degree": 7
     }
   ],
@@ -88,151 +90,135 @@
       "name": "Santo Domingo",
       "stratum": "alto",
       "betweenness_dry": 1.0,
-      "betweenness_storm": 1.0,
+      "betweenness_storm": 0.99,
       "degree": 8
     },
     {
       "zone_id": 1,
       "name": "Villa Fontana",
       "stratum": "alto",
-      "betweenness_dry": 0.861,
-      "betweenness_storm": 0.93,
+      "betweenness_dry": 0.885,
+      "betweenness_storm": 1.0,
       "degree": 8
     },
     {
       "zone_id": 16,
       "name": "San Judas / Sierra Maestra",
       "stratum": "popular",
-      "betweenness_dry": 0.809,
-      "betweenness_storm": 0.821,
+      "betweenness_dry": 0.829,
+      "betweenness_storm": 0.897,
       "degree": 8
     },
     {
       "zone_id": 18,
       "name": "Esquipulas / Carretera a Masaya km 11-14",
       "stratum": "alto",
-      "betweenness_dry": 0.702,
-      "betweenness_storm": 0.7,
-      "degree": 7
-    },
-    {
-      "zone_id": 17,
-      "name": "Carretera Sur / Nejapa",
-      "stratum": "medio",
-      "betweenness_dry": 0.639,
-      "betweenness_storm": 0.629,
+      "betweenness_dry": 0.688,
+      "betweenness_storm": 0.791,
       "degree": 7
     },
     {
       "zone_id": 23,
       "name": "Villa Libertad / Laureles",
       "stratum": "popular",
-      "betweenness_dry": 0.633,
-      "betweenness_storm": 0.642,
+      "betweenness_dry": 0.645,
+      "betweenness_storm": 0.679,
       "degree": 8
+    },
+    {
+      "zone_id": 17,
+      "name": "Carretera Sur / Nejapa",
+      "stratum": "medio",
+      "betweenness_dry": 0.621,
+      "betweenness_storm": 0.684,
+      "degree": 7
     },
     {
       "zone_id": 24,
       "name": "Sabana Grande / Ciudad Belén",
       "stratum": "popular",
-      "betweenness_dry": 0.626,
-      "betweenness_storm": 0.61,
+      "betweenness_dry": 0.618,
+      "betweenness_storm": 0.695,
       "degree": 7
     },
     {
       "zone_id": 2,
       "name": "Las Colinas",
       "stratum": "alto",
-      "betweenness_dry": 0.597,
-      "betweenness_storm": 0.544,
+      "betweenness_dry": 0.61,
+      "betweenness_storm": 0.566,
       "degree": 7
     },
     {
       "zone_id": 7,
       "name": "Bello Horizonte",
       "stratum": "medio",
-      "betweenness_dry": 0.593,
-      "betweenness_storm": 0.533,
+      "betweenness_dry": 0.566,
+      "betweenness_storm": 0.597,
       "degree": 7
     },
     {
       "zone_id": 12,
       "name": "Mercado Roberto Huembes",
       "stratum": "popular",
-      "betweenness_dry": 0.574,
-      "betweenness_storm": 0.513,
+      "betweenness_dry": 0.553,
+      "betweenness_storm": 0.57,
       "degree": 8
     },
     {
       "zone_id": 21,
       "name": "Aeropuerto Augusto C. Sandino / Zona Franca",
       "stratum": "comercial",
-      "betweenness_dry": 0.526,
-      "betweenness_storm": 0.488,
-      "degree": 7
-    },
-    {
-      "zone_id": 11,
-      "name": "Mercado Oriental",
-      "stratum": "popular",
-      "betweenness_dry": 0.358,
-      "betweenness_storm": 0.327,
+      "betweenness_dry": 0.504,
+      "betweenness_storm": 0.54,
       "degree": 7
     },
     {
       "zone_id": 22,
       "name": "Colonia Primero de Mayo / Villa Venezuela",
       "stratum": "popular",
-      "betweenness_dry": 0.342,
-      "betweenness_storm": 0.316,
+      "betweenness_dry": 0.344,
+      "betweenness_storm": 0.337,
       "degree": 8
+    },
+    {
+      "zone_id": 11,
+      "name": "Mercado Oriental",
+      "stratum": "popular",
+      "betweenness_dry": 0.34,
+      "betweenness_storm": 0.357,
+      "degree": 7
     },
     {
       "zone_id": 8,
       "name": "Linda Vista",
       "stratum": "medio",
-      "betweenness_dry": 0.332,
-      "betweenness_storm": 0.292,
+      "betweenness_dry": 0.307,
+      "betweenness_storm": 0.342,
       "degree": 6
     },
     {
       "zone_id": 19,
       "name": "Multicentro Las Américas / Villa Miguel Gutiérrez",
       "stratum": "comercial",
-      "betweenness_dry": 0.329,
-      "betweenness_storm": 0.289,
+      "betweenness_dry": 0.305,
+      "betweenness_storm": 0.331,
       "degree": 7
     },
     {
       "zone_id": 20,
       "name": "Mercado El Mayoreo",
       "stratum": "popular",
-      "betweenness_dry": 0.299,
-      "betweenness_storm": 0.273,
+      "betweenness_dry": 0.291,
+      "betweenness_storm": 0.306,
       "degree": 8
-    },
-    {
-      "zone_id": 14,
-      "name": "Puerto Salvador Allende / Malecón",
-      "stratum": "comercial",
-      "betweenness_dry": 0.234,
-      "betweenness_storm": 0.183,
-      "degree": 6
     },
     {
       "zone_id": 5,
       "name": "Altamira",
       "stratum": "medio",
-      "betweenness_dry": 0.222,
-      "betweenness_storm": 0.196,
-      "degree": 8
-    },
-    {
-      "zone_id": 4,
-      "name": "Los Robles",
-      "stratum": "medio",
-      "betweenness_dry": 0.204,
-      "betweenness_storm": 0.188,
+      "betweenness_dry": 0.209,
+      "betweenness_storm": 0.222,
       "degree": 8
     },
     {
@@ -240,129 +226,238 @@
       "name": "Altagracia",
       "stratum": "popular",
       "betweenness_dry": 0.204,
-      "betweenness_storm": 0.208,
+      "betweenness_storm": 0.206,
       "degree": 8
     },
     {
-      "zone_id": 10,
-      "name": "Ciudad Jardín",
-      "stratum": "popular",
-      "betweenness_dry": 0.195,
-      "betweenness_storm": 0.174,
+      "zone_id": 14,
+      "name": "Puerto Salvador Allende / Malecón",
+      "stratum": "comercial",
+      "betweenness_dry": 0.201,
+      "betweenness_storm": 0.229,
+      "degree": 6
+    },
+    {
+      "zone_id": 4,
+      "name": "Los Robles",
+      "stratum": "medio",
+      "betweenness_dry": 0.194,
+      "betweenness_storm": 0.208,
       "degree": 8
     },
     {
       "zone_id": 13,
       "name": "Monseñor Lezcano / Batahola",
       "stratum": "popular",
+      "betweenness_dry": 0.189,
+      "betweenness_storm": 0.192,
+      "degree": 8
+    },
+    {
+      "zone_id": 10,
+      "name": "Ciudad Jardín",
+      "stratum": "popular",
       "betweenness_dry": 0.185,
-      "betweenness_storm": 0.184,
+      "betweenness_storm": 0.188,
       "degree": 8
     },
     {
       "zone_id": 6,
       "name": "Bolonia",
       "stratum": "medio",
-      "betweenness_dry": 0.158,
-      "betweenness_storm": 0.155,
+      "betweenness_dry": 0.156,
+      "betweenness_storm": 0.175,
       "degree": 8
     },
     {
       "zone_id": 9,
       "name": "Metrocentro / Eje Corporativo UCA",
       "stratum": "comercial",
-      "betweenness_dry": 0.073,
-      "betweenness_storm": 0.067,
+      "betweenness_dry": 0.071,
+      "betweenness_storm": 0.073,
       "degree": 8
     }
   ],
   "routes": [
     {
       "od_id": "OD_1",
-      "description": "Diagonal Noroccidente - Suroriente (Eje Cauce Occidental a Tiscapa)",
+      "description": "Corredor Transversal Este - Centro Comercial (Bello Horizonte a Metrocentro)",
       "origin": {
-        "id": 8,
-        "name": "Linda Vista",
-        "quadrant_id": 243
+        "id": 7,
+        "name": "Bello Horizonte",
+        "quadrant_id": 229
       },
       "destination": {
-        "id": 3,
-        "name": "Santo Domingo",
-        "quadrant_id": 90
+        "id": 9,
+        "name": "Metrocentro / Eje Corporativo UCA",
+        "quadrant_id": 155
       },
       "dry_scenario": {
         "path_nodes": [
-          243,
-          244,
-          245,
-          246,
-          223,
-          200,
-          178,
-          179,
-          157,
-          135,
-          113,
-          90
+          35423,
+          35421,
+          35419,
+          35417,
+          35415,
+          866,
+          35412,
+          35410,
+          35408,
+          35406,
+          35404,
+          867,
+          58859,
+          58865,
+          58863
         ],
         "path_names": [
-          "Linda Vista",
-          "Monseñor Lezcano",
-          "Bolonia",
-          "Los Robles",
+          "Bello Horizonte",
           "Altamira",
-          "Mercado Roberto Huembes",
-          "Santo Domingo"
+          "Ciudad Jardín",
+          "Altamira",
+          "Los Robles",
+          "Metrocentro"
         ],
-        "travel_time_minutes": 29.6,
-        "distance_km": 15.23,
-        "avg_speed_kmh": 30.9
+        "street_nodes_count": 192,
+        "travel_time_minutes": 7.3,
+        "distance_km": 5.31,
+        "avg_speed_kmh": 43.5
       },
       "storm_scenario": {
         "path_nodes": [
-          243,
-          244,
-          221,
-          198,
-          199,
-          200,
-          178,
-          156,
-          134,
-          112,
-          89,
-          90
+          35423,
+          35421,
+          35419,
+          35417,
+          35415,
+          866,
+          35412,
+          35410,
+          35408,
+          35406,
+          35404,
+          867,
+          58859,
+          58865,
+          58863
         ],
         "path_names": [
-          "Linda Vista",
-          "Monseñor Lezcano",
-          "Altagracia",
-          "Bolonia",
+          "Bello Horizonte",
+          "Ciudad Jardín",
+          "Mercado Oriental",
+          "Ciudad Jardín",
+          "Altamira",
           "Los Robles",
-          "Villa Fontana",
-          "Las Colinas",
-          "Santo Domingo"
+          "Metrocentro"
         ],
-        "travel_time_minutes": 54.7,
-        "distance_km": 15.23,
-        "avg_speed_kmh": 16.7,
-        "delay_percentage": 84.7,
+        "street_nodes_count": 235,
+        "travel_time_minutes": 16.4,
+        "distance_km": 6.28,
+        "avg_speed_kmh": 23.0,
+        "delay_percentage": 123.5,
         "path_rerouted": true
       },
       "empirical_benchmark": {
-        "movigo_observed_storm_min": 136.9,
-        "prescriptive_time_saved_min": 82.2,
+        "movigo_observed_storm_min": 41.0,
+        "prescriptive_time_saved_min": 24.6,
         "suboptimality_ratio": 2.5,
         "mitigated_cancellations": true
       }
     },
     {
       "od_id": "OD_2",
-      "description": "Transversal Este - Suroeste (Eje Cauce Oriental / Solidaridad a Villa Fontana)",
+      "description": "Eje Radial Suroriente - Corporativo (Esquipulas a Los Robles)",
       "origin": {
-        "id": 7,
-        "name": "Bello Horizonte",
-        "quadrant_id": 229
+        "id": 18,
+        "name": "Esquipulas / Carretera a Masaya km 11-14",
+        "quadrant_id": 18
+      },
+      "destination": {
+        "id": 4,
+        "name": "Los Robles",
+        "quadrant_id": 177
+      },
+      "dry_scenario": {
+        "path_nodes": [
+          24339,
+          24340,
+          14785,
+          55914,
+          24341,
+          14782,
+          24342,
+          55915,
+          24343,
+          24344,
+          14781,
+          40878,
+          14780,
+          14790,
+          21854
+        ],
+        "path_names": [
+          "Esquipulas",
+          "Santo Domingo",
+          "Las Colinas",
+          "Villa Fontana",
+          "Metrocentro",
+          "Los Robles"
+        ],
+        "street_nodes_count": 253,
+        "travel_time_minutes": 19.3,
+        "distance_km": 10.12,
+        "avg_speed_kmh": 31.4
+      },
+      "storm_scenario": {
+        "path_nodes": [
+          24339,
+          24340,
+          14785,
+          55914,
+          24341,
+          14782,
+          24342,
+          55915,
+          24343,
+          24344,
+          14781,
+          40878,
+          14780,
+          14790,
+          21854
+        ],
+        "path_names": [
+          "Esquipulas",
+          "Santo Domingo",
+          "Las Colinas",
+          "Villa Fontana",
+          "Metrocentro",
+          "Los Robles",
+          "Mercado Oriental",
+          "Bolonia",
+          "Los Robles"
+        ],
+        "street_nodes_count": 354,
+        "travel_time_minutes": 37.5,
+        "distance_km": 11.42,
+        "avg_speed_kmh": 18.3,
+        "delay_percentage": 94.2,
+        "path_rerouted": true
+      },
+      "empirical_benchmark": {
+        "movigo_observed_storm_min": 94.0,
+        "prescriptive_time_saved_min": 56.5,
+        "suboptimality_ratio": 2.51,
+        "mitigated_cancellations": true
+      }
+    },
+    {
+      "od_id": "OD_3",
+      "description": "Eje Radial Suroccidente - Centro Financiero (Carretera Sur a Villa Fontana)",
+      "origin": {
+        "id": 17,
+        "name": "Carretera Sur / Nejapa",
+        "quadrant_id": 56
       },
       "destination": {
         "id": 1,
@@ -371,96 +466,68 @@
       },
       "dry_scenario": {
         "path_nodes": [
-          229,
-          205,
-          181,
-          157,
-          133,
-          109
+          19228,
+          18878,
+          42426,
+          18877,
+          18876,
+          18879,
+          18875,
+          18874,
+          42434,
+          45739,
+          42433,
+          18873,
+          42436,
+          18880,
+          9999
         ],
         "path_names": [
-          "Bello Horizonte",
-          "Mercado Roberto Huembes",
+          "Carretera Sur",
+          "San Judas",
+          "Carretera Sur",
+          "San Judas",
           "Villa Fontana"
         ],
-        "travel_time_minutes": 14.2,
-        "distance_km": 7.33,
-        "avg_speed_kmh": 30.9
+        "street_nodes_count": 281,
+        "travel_time_minutes": 18.0,
+        "distance_km": 10.4,
+        "avg_speed_kmh": 34.6
       },
       "storm_scenario": {
         "path_nodes": [
-          229,
-          205,
-          181,
-          157,
-          133,
-          109
+          19228,
+          18878,
+          42426,
+          18877,
+          18876,
+          18879,
+          18875,
+          18874,
+          42434,
+          45739,
+          42433,
+          18873,
+          42436,
+          18880,
+          9999
         ],
         "path_names": [
-          "Bello Horizonte",
-          "Mercado Roberto Huembes",
+          "Carretera Sur",
+          "San Judas",
           "Villa Fontana"
         ],
-        "travel_time_minutes": 17.4,
-        "distance_km": 7.33,
-        "avg_speed_kmh": 25.3,
-        "delay_percentage": 22.0,
-        "path_rerouted": false
+        "street_nodes_count": 317,
+        "travel_time_minutes": 32.4,
+        "distance_km": 10.64,
+        "avg_speed_kmh": 19.7,
+        "delay_percentage": 79.6,
+        "path_rerouted": true
       },
       "empirical_benchmark": {
-        "movigo_observed_storm_min": 43.5,
-        "prescriptive_time_saved_min": 26.1,
-        "suboptimality_ratio": 2.5,
-        "mitigated_cancellations": true
-      }
-    },
-    {
-      "od_id": "OD_3",
-      "description": "Núcleo Comercial Central Mayorista (Mercado Oriental a Ciudad Jardín)",
-      "origin": {
-        "id": 11,
-        "name": "Mercado Oriental",
-        "quadrant_id": 250
-      },
-      "destination": {
-        "id": 10,
-        "name": "Ciudad Jardín",
-        "quadrant_id": 203
-      },
-      "dry_scenario": {
-        "path_nodes": [
-          250,
-          226,
-          203
-        ],
-        "path_names": [
-          "Mercado Oriental",
-          "Ciudad Jardín"
-        ],
-        "travel_time_minutes": 5.2,
-        "distance_km": 2.67,
-        "avg_speed_kmh": 30.9
-      },
-      "storm_scenario": {
-        "path_nodes": [
-          250,
-          226,
-          203
-        ],
-        "path_names": [
-          "Mercado Oriental",
-          "Ciudad Jardín"
-        ],
-        "travel_time_minutes": 6.3,
-        "distance_km": 2.67,
-        "avg_speed_kmh": 25.3,
-        "delay_percentage": 21.9,
-        "path_rerouted": false
-      },
-      "empirical_benchmark": {
-        "movigo_observed_storm_min": 15.8,
-        "prescriptive_time_saved_min": 9.5,
-        "suboptimality_ratio": 2.5,
+        "movigo_observed_storm_min": 81.2,
+        "prescriptive_time_saved_min": 48.8,
+        "suboptimality_ratio": 2.51,
         "mitigated_cancellations": true
       }
     }
@@ -481,7 +548,7 @@
       "cancellation_rate_pct": 76.36
     },
     "prescriptive_savings": {
-      "avg_time_saved_min": 82.2,
+      "avg_time_saved_min": 24.6,
       "suboptimality_ratio": 2.5
     }
   }

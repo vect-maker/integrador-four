@@ -116,13 +116,13 @@ donde $z_(0.025) = 1.96$ corresponde al cuantil crítico de la distribución nor
 
 == Fundamentos Teóricos para la Optimización Espacial y Auditoría de Ruteo
 
-La infraestructura territorial y la movilidad urbana de Managua se modelan formalmente como una red espacial celular mediante un *grafo ponderado* $G = (V, E)$, donde:
-- $V = {q_1, q_2, dots, q_(298)}$ representa el conjunto de vértices correspondientes a los 298 cuadrantes urbanos georreferenciados en una malla regular de $18 times 25$ celdas ($0.89 times 0.89$ km), agrupados territorialmente en 24 zonas y provistos de atributos de elevación topográfica y riesgo de desbordamiento de cauces pluviales.
-- $E subset.eq V times V$ representa el conjunto de 1,072 aristas de conectividad contigua según la 8-vecindad espacial de Moore (@fig-urban-network-topology).
-- Cada arista $(i, j) in E$ posee una función de impedancia temporal generalizada $tau_(i j)$ que cuantifica el costo de cruce en minutos:
+La infraestructura territorial y la movilidad urbana de Managua se modelan formalmente como una red espacial jerárquica de dos escalas:
+- Una *red física densa de vías urbanas* $G_"street" = (V_s, E_s)$ extraída de OpenStreetMap, compuesta por $|V_s| = 69,695$ nodos de intersección y $|E_s| = 80,287$ aristas de circulación vial calibradas según su jerarquía funcional (autopistas, arterias principales, vías secundarias y residenciales), donde los tramos a menos de 50 metros de los 485 cauces pluviales sufren anegamiento y colapso de velocidad en eventos de lluvia (@fig-urban-network-topology).
+- Una *red celular territorial* $G_"cell" = (V_c, E_c)$ de 298 cuadrantes (`dim_quadrants`) y 1,072 conexiones contiguas en 24 zonas analíticas, articulada con el Star Schema dimensional Kimball para el análisis macroscópico de flujos y centralidad de intermediación.
+- Cada arista vial $(i, j) in E_s$ posee una función de impedancia temporal generalizada $tau_(i j)$ que cuantifica el costo de cruce en minutos a partir de su longitud física real $d_(i j)$:
   $ tau_(i j) = frac(d_(i j), v_(i j) (c)) dot 60 $
-  donde $d_(i j)$ es la distancia geodésica corregida por el factor de tortuosidad vial ($kappa = 1.25$) y $v_(i j)(c)$ es la velocidad efectiva de circulación condicionada por el índice de congestión empírico y el régimen meteorológico $c in {"seco", "tormenta"}$:
-  $ v_(i j) (c) = frac(v_0, 1 + alpha dot (overline(I)_"cong" - 1)) dot (1 - beta dot bb(I)_"inundación") $
+  donde $v_(i j)(c)$ es la velocidad efectiva de circulación condicionada por la jerarquía vial y el régimen meteorológico $c in {"seco", "tormenta"}$:
+  $ v_(i j) (c) = v_(0, "vía") dot (1 - 0.75 dot bb(I)_"anegamiento") $
 
 #fig-urban-network-topology <fig-urban-network-topology>
 

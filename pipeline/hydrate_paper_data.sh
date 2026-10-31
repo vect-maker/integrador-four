@@ -51,12 +51,25 @@ fi
 echo "   ✅ Stale artifacts purged. Documentation files preserved."
 
 # -----------------------------------------------------------------------------
-# 2. Database Snapshot Verification
+# 2. Database Snapshot & Spatial Verification
 # -----------------------------------------------------------------------------
 if [ ! -f "${DB_FILE}" ]; then
     echo "⚠️  Local analytics snapshot (${DB_FILE}) not found."
     echo "🔄 Running initial snapshot extraction from Azure PostgreSQL..."
     bash "${SCRIPT_DIR}/snapshot_duckdb.sh"
+fi
+
+SPATIAL_DIR="${ROOT_DIR}/pipeline/data/spatial"
+if [ ! -f "${SPATIAL_DIR}/managua_street_network.json" ] || [ ! -f "${SPATIAL_DIR}/managua_cauces.geojson" ]; then
+    SIM_REPO="/var/home/ocelot/Repositories/cs-datos-simulations"
+    if [ -d "${SIM_REPO}" ]; then
+        echo "🔄 Syncing spatial assets from ${SIM_REPO}..."
+        mkdir -p "${SPATIAL_DIR}"
+        cp -f "${SIM_REPO}/src/movigo_sim/seeds/deterministic/managua_street_network.json" "${SPATIAL_DIR}/" 2>/dev/null || true
+        cp -f "${SIM_REPO}/artifacts/movigo/spatial/managua_cauces.geojson" "${SPATIAL_DIR}/" 2>/dev/null || true
+        cp -f "${SIM_REPO}/artifacts/movigo/spatial/managua_quadrants.geojson" "${SPATIAL_DIR}/" 2>/dev/null || true
+        cp -f "${SIM_REPO}/artifacts/movigo/spatial/managua_zones.geojson" "${SPATIAL_DIR}/" 2>/dev/null || true
+    fi
 fi
 
 # -----------------------------------------------------------------------------

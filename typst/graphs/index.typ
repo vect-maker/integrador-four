@@ -2,12 +2,12 @@
 
 #let fig-urban-network-topology = figure(
   image("urban_network_topology.png", width: 85%),
-  caption: [Topología de la Red Vial Urbana de Managua: 298 Cuadrantes Urbanos (278 Drenados y 20 Críticos de Inundación) Conectados según 8-Vecindad de Moore],
+  caption: [Topología de la Red Vial Urbana de Managua: Red Densa OpenStreetMap (69,695 Nodos y 80,287 Aristas) con Superposición de 485 Cauces Pluviales y 298 Hubs de Cuadrante],
 )
 
 #let fig-urban-network-dijkstra = figure(
-  image("urban_network_dijkstra.png", width: 80%),
-  caption: [Ruteo Óptimo mediante Algoritmo de Dijkstra: Comparativa de Trayectorias de Ciudad Jardín a Villa Fontana bajo Flujo Seco vs. Tormenta],
+  image("urban_network_dijkstra.png", width: 85%),
+  caption: [Ruteo Óptimo mediante Algoritmo de Dijkstra sobre Calles Reales de Managua: Desvío Adaptativo en el Corredor Bello Horizonte a Metrocentro para Evadir Tramos Viales Anegados en el Cauce Oriental],
   placement: top,
 )
 
