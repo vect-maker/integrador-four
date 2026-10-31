@@ -732,6 +732,8 @@ def main() -> None:
             "confidence_level": 0.95,
             "z_critical": Z_CRITICAL_95,
             "n_total_observations": total_obs,
+            "n_train": len(train_split),
+            "n_test": len(test_split),
             "train_test_split_ratio": f"{int(TRAIN_RATIO*100)}/{int(TEST_RATIO*100)}",
             "random_seed": RANDOM_STATE,
         },

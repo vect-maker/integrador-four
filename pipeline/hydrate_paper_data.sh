@@ -115,6 +115,9 @@ if [ ! -f "${ROOT_DIR}/pipeline/data/managua_basemap.png" ] || [ ! -f "${ROOT_DI
     "${PYTHON_BIN}" "${SCRIPT_DIR}/analysis/cache_basemap.py" > /dev/null
 fi
 
+echo "   ▶ Running 00_pipeline_inventory.py (Warehouse Inventory & Integrity Audit)..."
+"${PYTHON_BIN}" "${SCRIPT_DIR}/analysis/00_pipeline_inventory.py" > /dev/null
+
 echo "   ▶ Running 01_regression.py (Multivariable Gradient Descent SGD Regression & 95% CI)..."
 "${PYTHON_BIN}" "${SCRIPT_DIR}/analysis/01_regression.py" > /dev/null
 
@@ -143,6 +146,7 @@ JSON_FILES=(
     "campaigns_optimization.json"
     "zones.json"
     "numerical_methods.json"
+    "pipeline_inventory.json"
     "routing_optimization.json"
     "spatial_density_summary.json"
     "exploratory_spatial_kpis.json"

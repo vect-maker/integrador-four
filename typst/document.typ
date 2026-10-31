@@ -71,6 +71,12 @@
 #include "document/chapters/07_metodologia.typ"
 #pagebreak()
 
+#include "document/chapters/08_resultados.typ"
+#pagebreak()
+
+#include "document/chapters/09_conclusiones.typ"
+#pagebreak()
+
 // ==========================================
 // REFERENCIAS (NORMA APA 7MA EDICIÓN)
 // ==========================================
@@ -88,7 +94,7 @@
 // ==========================================
 // APÉNDICE A: ATLAS CARTOGRÁFICO Y EXPLORATORIO
 // ==========================================
-#include "document/chapters/08_apendice_atlas.typ"
+#include "document/chapters/apendice_a_atlas.typ"
 
 #pagebreak()
 

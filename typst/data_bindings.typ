@@ -88,5 +88,57 @@
 #let m2-ci-b1-low = m2-fare.confidence_intervals_95_coefficients.distance_km.ci_95_lower
 #let m2-ci-b1-upp = m2-fare.confidence_intervals_95_coefficients.distance_km.ci_95_upper
 #let m2-epochs = m2-fare.gradient_descent_diagnostics.iterations_to_convergence
-#let regression-n-train = fmt-int(39239)
-#let regression-n-test = fmt-int(m1-eta.metrics_test.n_observations)
+#let regression-n-train = fmt-int(numerical-methods.metadata.n_train)
+#let regression-n-test = fmt-int(numerical-methods.metadata.n_test)
+
+// ==========================================
+// OE1: INVENTARIO Y AUDITORÍA DEL PIPELINE
+// ==========================================
+#let pipeline-inventory = json("data/pipeline_inventory.json")
+#let inv-rows = pipeline-inventory.warehouse.rows
+#let inv-integrity = pipeline-inventory.warehouse.integrity
+#let inv-dbt = pipeline-inventory.dbt
+#let dbt-total-tests = inv-dbt.total_tests
+#let dbt-staging-models = inv-dbt.staging_models
+#let dbt-mart-models = inv-dbt.mart_models
+#let dbt-tests-unique = inv-dbt.tests_by_type.unique
+#let dbt-tests-not-null = inv-dbt.tests_by_type.not_null
+#let dbt-tests-relationships = inv-dbt.tests_by_type.relationships
+#let dbt-tests-accepted-values = inv-dbt.tests_by_type.accepted_values
+#let total-quadrants = inv-rows.dim_quadrants
+
+// ==========================================
+// OE2: BINDINGS ADICIONALES DE REGRESIÓN
+// ==========================================
+#let regression-n-total = fmt-int(numerical-methods.metadata.n_total_observations)
+#let m1-ci-b0-low = m1-eta.confidence_intervals_95_coefficients.intercept.ci_95_lower
+#let m1-ci-b0-upp = m1-eta.confidence_intervals_95_coefficients.intercept.ci_95_upper
+#let m2-ci-b0-low = m2-fare.confidence_intervals_95_coefficients.intercept.ci_95_lower
+#let m2-ci-b0-upp = m2-fare.confidence_intervals_95_coefficients.intercept.ci_95_upper
+#let m1-se-b1 = m1-eta.confidence_intervals_95_coefficients.distance_km.std_error
+#let m2-se-b1 = m2-fare.confidence_intervals_95_coefficients.distance_km.std_error
+#let m1-r2-train = m1-eta.metrics_train.r2
+#let m2-r2-train = m2-fare.metrics_train.r2
+#let m1-samples-seen = fmt-int(m1-eta.gradient_descent_diagnostics.n_samples_seen)
+#let m2-samples-seen = fmt-int(m2-fare.gradient_descent_diagnostics.n_samples_seen)
+#let sgd-eta0 = m1-eta.gradient_descent_diagnostics.initial_learning_rate_eta0
+#let var-dist = numerical-methods.variable_distributions
+#let dist-mean-km = var-dist.distance_km.mean
+#let dur-skew = var-dist.duration_minutes.skewness
+#let fare-skew = var-dist.final_fare.skewness
+#let surge-mean-completed = var-dist.surge_multiplier.mean
+#let flag-drop-min = calc.min(..zones.map(z => z.tarifa_base_bajada_bandera))
+#let flag-drop-max = calc.max(..zones.map(z => z.tarifa_base_bajada_bandera))
+
+// Redondeo con decimales fijos para presentación (ej. 2.6 -> "2.60")
+#let fmt-dec(x, digits: 2) = {
+  let r = str(calc.round(x, digits: digits))
+  let parts = r.split(".")
+  let dec = if parts.len() > 1 { parts.at(1) } else { "" }
+  if digits == 0 { return parts.at(0) }
+  parts.at(0) + "." + dec + "0" * (digits - dec.len())
+}
+// Predicción de la regresión simple: y = b0 + b1 * d
+// Usa los coeficientes y la distancia redondeados a 2 decimales (tal como se muestran en el texto),
+// para que el lector pueda reproducir el cálculo a mano.
+#let predict(b0, b1, d) = calc.round(b0, digits: 2) + calc.round(b1, digits: 2) * calc.round(d, digits: 2)

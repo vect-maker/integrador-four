@@ -1,0 +1,50 @@
+{
+  "warehouse": {
+    "rows": {
+      "fct_viajes": 77487,
+      "dim_zones": 24,
+      "dim_quadrants": 298,
+      "dim_weather": 366,
+      "dim_users": 800,
+      "dim_drivers": 150,
+      "dim_campaigns": 12
+    },
+    "integrity": {
+      "duplicated_trip_keys": 0,
+      "orphan_foreign_keys": {
+        "sk_zone_origin": 0,
+        "sk_zone_destination": 0,
+        "sk_user": 0,
+        "sk_driver": 0,
+        "sk_weather": 0
+      },
+      "null_foreign_keys": {
+        "sk_zone_origin": 0,
+        "sk_zone_destination": 0,
+        "sk_user": 0,
+        "sk_driver": 0,
+        "sk_weather": 0
+      },
+      "null_analytic_metrics": {
+        "distance_km": 0,
+        "duration_minutes": 0,
+        "final_fare": 0,
+        "surge_multiplier": 0
+      },
+      "total_orphans": 0,
+      "total_null_keys": 0,
+      "total_null_metrics": 0
+    }
+  },
+  "dbt": {
+    "staging_models": 14,
+    "mart_models": 7,
+    "total_tests": 104,
+    "tests_by_type": {
+      "unique": 43,
+      "not_null": 53,
+      "relationships": 6,
+      "accepted_values": 2
+    }
+  }
+}

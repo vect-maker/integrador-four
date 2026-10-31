@@ -8,6 +8,8 @@
     "confidence_level": 0.95,
     "z_critical": 1.96,
     "n_total_observations": 49049,
+    "n_train": 39239,
+    "n_test": 9810,
     "train_test_split_ratio": "80/20",
     "random_seed": 42
   },
