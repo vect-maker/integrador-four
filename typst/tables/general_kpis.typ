@@ -32,4 +32,5 @@
 #let fig-general-kpis = figure(
   table-general-kpis(),
   caption: [Indicadores macroeconómicos y operativos del ciclo anual 2024 (MoviGo)],
+  placement: top,
 )

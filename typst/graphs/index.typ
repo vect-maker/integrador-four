@@ -6,13 +6,15 @@
 )
 
 #let fig-urban-network-dijkstra = figure(
-  image("urban_network_dijkstra.png", width: 95%),
+  image("urban_network_dijkstra.png", width: 80%),
   caption: [Ruteo Óptimo mediante Algoritmo de Dijkstra: Comparativa de Trayectorias bajo Flujo Seco vs. Tormenta],
+  placement: top,
 )
 
 #let fig-trip-origins-density = figure(
   image("trip_origins_density.png", width: 90%),
   caption: [Distribución Espacial de Puntos de Origen de Solicitudes (WGS84) y Concentración de Cancelaciones sobre la Trama Vial de Managua],
+  placement: top,
 )
 
 // -----------------------------------------------------------------------------
@@ -20,13 +22,15 @@
 // -----------------------------------------------------------------------------
 
 #let fig-numerical-duration = figure(
-  image("numerical_duration.png", width: 90%),
+  image("numerical_duration.png", width: 80%),
   caption: [Ajuste de Regresión Lineal Simple para Tiempo de Viaje (ETA) en Función de la Distancia mediante Descenso de Gradiente Estocástico (SGD)],
+  placement: top,
 )
 
 #let fig-numerical-fare = figure(
-  image("numerical_fare.png", width: 90%),
+  image("numerical_fare.png", width: 80%),
   caption: [Ajuste de Regresión Lineal Simple para Tarificación del Servicio en Función de la Distancia mediante Descenso de Gradiente Estocástico (SGD)],
+  placement: top,
 )
 
 // -----------------------------------------------------------------------------

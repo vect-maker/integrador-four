@@ -122,7 +122,61 @@ models:
           - not_null
 ```
 
+// 7. Resultados OE1: Pruebas declarativas de integridad en el modelo de hechos
+#let snippet-dbt-integrity = ```yaml
+# pipeline/dbt/models/marts/_marts__models.yml (fragmento)
+version: 2
+models:
+  - name: fct_viajes
+    columns:
+      - name: sk_viaje
+        tests: [unique, not_null]
+      - name: sk_zone_origin
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_zones')
+              field: sk_zone
+      - name: sk_user
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_users')
+              field: sk_user
+      - name: sk_weather
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_weather')
+              field: sk_weather
+```
+
+// 8. Resultados OE1: Consulta reproducible del censo operativo 2024
+#let snippet-duckdb-kpis = ```sql
+-- pipeline/sql/hydration/01_general_kpis.sql (fragmento)
+SELECT
+    COUNT(*) AS total_viajes,
+    COUNT(CASE WHEN is_cancelled THEN 1 END) AS total_cancelados,
+    ROUND(COUNT(CASE WHEN is_cancelled THEN 1 END) * 100.0
+          / COUNT(*), 2) AS tasa_cancelacion_pct,
+    ROUND(AVG(surge_multiplier), 2) AS surge_promedio,
+    ROUND(AVG(final_fare), 2) AS tarifa_final_promedio_nio,
+    ROUND(AVG(distance_km), 2) AS distancia_promedio_km,
+    ROUND(AVG(wait_time_minutes), 2) AS tiempo_espera_promedio_min
+FROM fct_viajes;
+```
+
 // Figuras y Listados enumerados con título formal para documentos y artículos
+#let fig-dbt-integrity = figure(
+  snippet-dbt-integrity,
+  caption: [Pruebas declarativas de unicidad, completitud e integridad referencial sobre el modelo de hechos (`_marts__models.yml`, fragmento)],
+)
+
+#let fig-duckdb-kpis = figure(
+  snippet-duckdb-kpis,
+  caption: [Consulta reproducible que produce el censo operativo 2024 desde la tabla de hechos (`01_general_kpis.sql`, fragmento)],
+)
+
 #let fig-raw-ddl = figure(
   snippet-raw-ddl,
   caption: [Definición del esquema DDL relacional y restricciones de integridad (`raw_schema.sql`)],

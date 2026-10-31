@@ -65,6 +65,58 @@
 #let od1-storm-time = od1.storm_scenario.travel_time_minutes
 #let od1-delay-pct = od1.storm_scenario.delay_percentage
 #let od1-rerouted = od1.storm_scenario.path_rerouted
+#let od1-dry-route = od1.dry_scenario.path_names.join(" → ")
+#let od1-storm-route = od1.storm_scenario.path_names.join(" → ")
+
+// Resiliencia global y topología de la red
+#let routing-pairs = fmt-int(routing.global_resilience.total_pairs_evaluated)
+#let routing-diameter-dry = routing.global_resilience.diameter_dry_min
+#let routing-diameter-storm = routing.global_resilience.diameter_storm_min
+#let routing-flood-corridors = routing.network_summary.flood_prone_corridors_count
+#let routing-speed-dry = routing.network_summary.baseline_arterial_speed_kmh
+#let routing-speed-storm = routing.network_summary.storm_flood_speed_kmh
+#let routing-tortuosity = routing.network_summary.tortuosity_factor
+
+// Cuellos de botella por centralidad de intermediación
+#let bn1 = routing.top_bottlenecks.at(0)
+#let bn2 = routing.top_bottlenecks.at(1)
+#let bn3 = routing.top_bottlenecks.at(2)
+#let bn1-name = bn1.name
+#let bn2-name = bn2.name
+#let bn3-name = bn3.name
+#let bn1-stratum = bn1.stratum
+#let bn2-stratum = bn2.stratum
+#let bn3-stratum = bn3.stratum
+#let bn1-dry = bn1.betweenness_dry
+#let bn2-dry = bn2.betweenness_dry
+#let bn3-dry = bn3.betweenness_dry
+#let bn1-storm = bn1.betweenness_storm
+#let bn2-storm = bn2.betweenness_storm
+#let bn3-storm = bn3.betweenness_storm
+#let bn1-degree = bn1.degree
+#let bn2-degree = bn2.degree
+#let bn3-degree = bn3.degree
+
+// Escenarios origen-destino complementarios (OD 2 y OD 3)
+#let od2 = routing.routes.at(1)
+#let od2-origin = od2.origin.name
+#let od2-dest = od2.destination.name
+#let od2-dry-time = od2.dry_scenario.travel_time_minutes
+#let od2-storm-time = od2.storm_scenario.travel_time_minutes
+#let od2-delay-pct = od2.storm_scenario.delay_percentage
+#let od2-rerouted = od2.storm_scenario.path_rerouted
+#let od2-dry-route = od2.dry_scenario.path_names.join(" → ")
+#let od2-storm-route = od2.storm_scenario.path_names.join(" → ")
+
+#let od3 = routing.routes.at(2)
+#let od3-origin = od3.origin.name
+#let od3-dest = od3.destination.name
+#let od3-dry-time = od3.dry_scenario.travel_time_minutes
+#let od3-storm-time = od3.storm_scenario.travel_time_minutes
+#let od3-delay-pct = od3.storm_scenario.delay_percentage
+#let od3-rerouted = od3.storm_scenario.path_rerouted
+#let od3-dry-route = od3.dry_scenario.path_names.join(" → ")
+#let od3-storm-route = od3.storm_scenario.path_names.join(" → ")
 
 // -----------------------------------------------------------------------------
 // Modelado Numérico & Inferencia: Regresión Lineal Simple vía SGD

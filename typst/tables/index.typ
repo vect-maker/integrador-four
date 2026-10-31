@@ -5,5 +5,6 @@
 #import "variables_operationalization.typ": table-variables-operationalization, fig-variables-operationalization
 #import "general_kpis.typ": table-general-kpis, fig-general-kpis
 #import "routing_comparison.typ": table-routing-comparison, fig-routing-comparison
+#import "bottlenecks.typ": table-bottlenecks, fig-bottlenecks
 #import "data_inventory.typ": table-data-inventory, fig-data-inventory
 #import "regression_summary.typ": table-regression-summary, fig-regression-summary

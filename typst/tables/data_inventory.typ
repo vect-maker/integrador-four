@@ -24,5 +24,6 @@
 
 #let fig-data-inventory = figure(
   table-data-inventory(),
-  caption: [Inventario del repositorio analítico consolidado: tabla de hechos y dimensiones conformadas],
+  caption: [Inventario del repositorio analítico: tabla de hechos y dimensiones],
+  placement: top,
 )
