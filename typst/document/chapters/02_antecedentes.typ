@@ -33,11 +33,11 @@ En el caso de MoviGo, estos antecedentes justifican la necesidad de estimar emp�
 
 La incidencia de las condiciones atmosféricas sobre los sistemas de transporte selectivo cuenta con amplio respaldo empírico en la literatura contemporánea.
 
-#cite(<xu2018>, form: "prose"), mediante el análisis de registros de trayectorias GPS de taxi y datos contextuales de clima y tráfico urbano, evidenciaron que las condiciones meteorológicas —en particular la precipitación— constituyen predictores significativos de la demanda de movilidad en tiempo real. Su marco basado en redes neuronales recurrentes captura la dependencia espaciotemporal entre clima, oferta y demanda de viajes.
+#cite(<xu2018>, form: "prose"), mediante el análisis de registros de trayectorias GPS de taxi y datos contextuales de clima y tráfico urbano, evidenciaron que las condiciones meteorológicas, en particular la precipitación, constituyen predictores significativos de la demanda de movilidad en tiempo real. Su marco basado en redes neuronales recurrentes captura la dependencia espaciotemporal entre clima, oferta y demanda de viajes.
 
 #cite(<li2018>, form: "prose"), utilizando datos empíricos del sistema de taxis de Shenzhen (China), cuantificaron la influencia directa de la lluvia sobre la demanda urbana de taxi, constatando reducciones en la velocidad de circulación, alteraciones en los patrones de recogida y deterioro del nivel de servicio bajo distintas intensidades de precipitación.
 
-Asimismo, #cite(<battifarano2019>, form: "prose") integraron explícitamente variables meteorológicas —velocidad del viento, precipitación, visibilidad— junto con datos de tráfico y entorno urbano para construir modelos predictivos del multiplicador tarifario en tiempo real, demostrando la estrecha interdependencia entre clima, congestión y _surge pricing_ en plataformas de movilidad. Estos hallazgos fundamentan la incorporación de los factores climáticos como variables explicativas complementarias en la investigación de MoviGo.
+Asimismo, #cite(<battifarano2019>, form: "prose") integraron explícitamente variables meteorológicas (como velocidad del viento, precipitación y visibilidad) junto con datos de tráfico y entorno urbano para construir modelos predictivos del multiplicador tarifario en tiempo real, demostrando la estrecha interdependencia entre clima, congestión y _surge pricing_ en plataformas de movilidad. Estos hallazgos fundamentan la incorporación de los factores climáticos como variables explicativas complementarias en la investigación de MoviGo.
 
 == Uso de Telemetría GPS y Datos Georreferenciados en Ciencia de Datos
 

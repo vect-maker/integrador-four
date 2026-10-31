@@ -114,28 +114,35 @@ $ "IC"_(95%) (beta_j) = [hat(beta)_j - z_(alpha \/ 2) dot "SE"(hat(beta)_j), qua
 
 donde $z_(0.025) = 1.96$ corresponde al cuantil crítico de la distribución normal estándar.
 
-== Fundamentos Teóricos para la Optimización Espacial y Resiliencia en Redes
+== Fundamentos Teóricos para la Optimización Espacial y Auditoría de Ruteo
 
-La infraestructura vial urbana de Managua se modela formalmente como una red espacial mediante un *grafo ponderado* $G = (V, E)$, donde:
-- $V = {v_1, v_2, dots, v_(24)}$ representa el conjunto de vértices correspondientes a los 24 centroides zonales de la capital.
-- $E subset.eq V times V$ representa el conjunto de 44 corredores y arterias viales principales (@fig-urban-network-topology).
-- Cada arista $(i, j) in E$ posee una función de costo o impedancia temporal $tau_(i j)$ que cuantifica el tiempo de viaje estimado en minutos:
-  $ tau_(i j) (c) = frac(d_(i j), v_(i j) (c)) dot 60 $
-  donde $d_(i j)$ es la distancia vial corregida por el factor de tortuosidad metropolitana ($kappa = 1.30$) y $v_(i j)(c)$ es la velocidad de circulación condicionada por el régimen meteorológico $c in {"seco", "tormenta"}$.
+La infraestructura territorial y la movilidad urbana de Managua se modelan formalmente como una red espacial celular mediante un *grafo ponderado* $G = (V, E)$, donde:
+- $V = {q_1, q_2, dots, q_(298)}$ representa el conjunto de vértices correspondientes a los 298 cuadrantes urbanos georreferenciados en una malla regular de $18 times 25$ celdas ($0.89 times 0.89$ km), agrupados territorialmente en 24 zonas y provistos de atributos de elevación topográfica y riesgo de desbordamiento de cauces pluviales.
+- $E subset.eq V times V$ representa el conjunto de 1,072 aristas de conectividad contigua según la 8-vecindad espacial de Moore (@fig-urban-network-topology).
+- Cada arista $(i, j) in E$ posee una función de impedancia temporal generalizada $tau_(i j)$ que cuantifica el costo de cruce en minutos:
+  $ tau_(i j) = frac(d_(i j), v_(i j) (c)) dot 60 $
+  donde $d_(i j)$ es la distancia geodésica corregida por el factor de tortuosidad vial ($kappa = 1.25$) y $v_(i j)(c)$ es la velocidad efectiva de circulación condicionada por el índice de congestión empírico y el régimen meteorológico $c in {"seco", "tormenta"}$:
+  $ v_(i j) (c) = frac(v_0, 1 + alpha dot (overline(I)_"cong" - 1)) dot (1 - beta dot bb(I)_"inundación") $
 
 #fig-urban-network-topology <fig-urban-network-topology>
 
-Para identificar los puntos neurálgicos de estrangulamiento y vulnerabilidad estructural en el sistema de transporte, se analiza la *Centralidad de Intermediación (_Betweenness Centrality_)* de cada zona:
+Para identificar los puntos neurálgicos de estrangulamiento y vulnerabilidad estructural en el sistema de transporte, se analiza la *Centralidad de Intermediación (_Betweenness Centrality_)* de cada cuadrante y zona urbana:
 
 $ C_B (v) = sum_(s eq.not v eq.not t) frac(sigma_(s t)(v), sigma_(s t)) $ <eq-betweenness>
 
-donde $sigma_(s t)$ es el número total de caminos más cortos entre los pares de origen y destino $s$ y $t$, y $sigma_(s t)(v)$ es la cantidad de dichos caminos que transitan obligatoriamente a través del vértice $v$. Las zonas con elevado $C_B$ (como Ciudad Jardín con 0.4190 y Bolonia con 0.3715) constituyen cuellos de botella sistémicos donde las perturbaciones viales multiplican los retrasos y disparan el multiplicador dinámico.
+donde $sigma_(s t)$ es el número total de caminos más cortos entre los pares de origen y destino $s$ y $t$, y $sigma_(s t)(v)$ es la cantidad de dichos caminos que transitan obligatoriamente a través del vértice $v$.
 
-Para determinar las trayectorias de mínima impedancia bajo condiciones normales y de contingencia pluvial, se implementa el *Algoritmo de Dijkstra*, el cual mantiene una estimación de distancia tentativa desde el origen y actualiza progresivamente las etiquetas de los nodos adyacentes mediante relajación de aristas:
+=== Auditoría Algorítmica de Caja Negra y Algoritmo de Dijkstra
+
+Dado que el algoritmo de ruteo interno de la plataforma MoviGo es propietario y cerrado (*black box*), su desempeño se evalúa a través de los resultados empíricos observados en el almacén analítico ($t_"real"$, $v_"real"$, $d_"real"$). Para contrastar este comportamiento frente a una alternativa óptima, se implementa el *Algoritmo de Dijkstra* con relajación de aristas:
 
 $ "dist"[j] = min("dist"[j], "dist"[i] + tau_(i j)) $
 
-Este marco matemático posibilita contrastar analíticamente el comportamiento de la red ante escenarios meteorológicos dispares: bajo condiciones basales de flujo seco frente a eventos de saturación hidrológica donde arterias neurálgicas sufren anegamientos severos, forzando la reasignación de trayectorias hacia vías alternas y alterando la impedancia global de la red (cuya evaluación empírica detallada se presenta en el Capítulo 8).
+Dijkstra determina la trayectoria prescriptiva de mínima impedancia capaz de circunnavegar activamente los cuadrantes con cauces desbordados (como el Cauce Occidental y el Cauce Oriental). La ineficiencia o sub-optimización de las rutas observadas de MoviGo frente al óptimo prescriptivo se cuantifica mediante el *Índice de Sub-optimización* ($rho$) y el ahorro temporal neto ($Delta T$):
+
+$ rho = frac(t_"real", t_"óptimo"), quad Delta T = t_"real" - t_"óptimo" $
+
+Este marco permite demostrar empíricamente cómo el ruteo adaptativo no solo reduce las dilataciones de viaje en hasta un 60%, sino que previene el cruce del umbral crítico de 15 minutos de espera que precipita las cancelaciones de viajes.
 
 === Arquitectura DataOps y Reproducibilidad Computacional
 

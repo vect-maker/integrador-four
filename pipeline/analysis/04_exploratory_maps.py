@@ -30,6 +30,7 @@ import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.axes import Axes
+from matplotlib.lines import Line2D
 from PIL import Image
 
 # Directory constants
@@ -227,33 +228,9 @@ def plot_quadrants_by_zone(
             zorder=6,
         )
 
-    ax.set_title(
-        "Partición Territorial de Managua: 298 Cuadrantes Urbanos Agrupados en 24 Zonas (MoviGo)",
-        fontsize=12,
-        fontweight="bold",
-        pad=12,
-    )
     ax.set_xlabel("Longitud Oeste (WGS84)", fontsize=9.5)
     ax.set_ylabel("Latitud Norte (WGS84)", fontsize=9.5)
     ax.grid(True, linestyle="--", alpha=0.32)
-
-    # Info box
-    info = (
-        "Estructura Territorial:\n"
-        "• 298 Cuadrantes Operacionales (0.008° x 0.008°)\n"
-        "• 24 Zonas Urbanas de Tarifa Base\n"
-        "• 7 Distritos Municipales de Managua\n"
-        "• Fuente: dim_quadrants & dim_zones"
-    )
-    ax.text(
-        0.02, 0.03, info,
-        transform=ax.transAxes,
-        fontsize=8.2,
-        fontfamily="monospace",
-        verticalalignment="bottom",
-        bbox=dict(boxstyle="square,pad=0.45", facecolor="#ffffff", edgecolor="#b0bec5", alpha=0.94),
-        zorder=10,
-    )
 
     plt.tight_layout()
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -366,33 +343,17 @@ def plot_od_mobility_flows(
             zorder=6,
         )
 
-    ax.set_title(
-        "Corredores de Movilidad Urbana y Matriz de Deseo de Viajes (Top 25 Pares OD en Managua)",
-        fontsize=12,
-        fontweight="bold",
-        pad=12,
-    )
     ax.set_xlabel("Longitud Oeste (WGS84)", fontsize=9.5)
     ax.set_ylabel("Latitud Norte (WGS84)", fontsize=9.5)
     ax.grid(True, linestyle="--", alpha=0.32)
 
-    # Flow Legend Box
-    od_summary = (
-        f"Matriz de Movilidad:\n"
-        f"• Par OD #1: {top_od[0][1].split(' / ')[0]} -> {top_od[0][5].split(' / ')[0]} ({top_od[0][8]:,} viajes)\n"
-        f"• Par OD #2: {top_od[1][1].split(' / ')[0]} -> {top_od[1][5].split(' / ')[0]} ({top_od[1][8]:,} viajes)\n"
-        f"• Rango Top 25: {min_vol:,} a {max_vol:,} viajes\n"
-        f"• Grosor de vector representa volumen transaccional"
-    )
-    ax.text(
-        0.02, 0.03, od_summary,
-        transform=ax.transAxes,
-        fontsize=8.0,
-        fontfamily="monospace",
-        verticalalignment="bottom",
-        bbox=dict(boxstyle="square,pad=0.45", facecolor="#ffffff", edgecolor="#b0bec5", alpha=0.94),
-        zorder=10,
-    )
+    # Clean flow intensity legend
+    flow_legend = [
+        Line2D([0], [0], color=plt.cm.plasma(0.85), lw=4.5, label="Alto Volumen (> 1,000 viajes)"),  # type: ignore[reportUnknownMemberType]
+        Line2D([0], [0], color=plt.cm.plasma(0.45), lw=2.5, label="Volumen Medio (500 - 1,000 viajes)"),  # type: ignore[reportUnknownMemberType]
+        Line2D([0], [0], color=plt.cm.plasma(0.15), lw=1.2, label="Volumen Moderado (< 500 viajes)"),  # type: ignore[reportUnknownMemberType]
+    ]
+    ax.legend(handles=flow_legend, loc="upper right", frameon=True, facecolor="white", edgecolor="#b0bec5", framealpha=0.95, fontsize=8.2)
 
     plt.tight_layout()
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -467,34 +428,30 @@ def plot_cancellation_causes(
         xs = [p[0] for p in pts]
         ys = [p[1] for p in pts]
         color = cause_colors[cause]
-        pct = (len(xs) / total_canc * 100.0) if total_canc > 0 else 0.0
         ax.scatter(
             xs, ys,
             s=8,
             c=color,
             alpha=0.45,
             edgecolors="none",
-            label=f"{cause} ({len(xs):,} — {pct:.1f}%)",
+            label=cause,
             zorder=3,
             rasterized=True,
         )
 
-    # Zone centroids
+    # Reference landmark zones for spatial orientation
+    landmark_zones = {1, 6, 7, 8, 9, 11}
     for z in zones:
         zid = int(z[0])
+        if zid not in landmark_zones:
+            continue
+        zname = clean_zone_name(str(z[1]))
         zlat, zlon = z[2], z[3]
-        ax.scatter([zlon], [zlat], s=90, c="#ffffff", edgecolors="#212529", linewidths=1.5, zorder=5)
         dx, dy, ha, va = ZONE_LABEL_OFFSETS.get(zid, (0.0, 0.0028, "center", "bottom"))
-        ax.text(zlon + dx, zlat + dy, f"Z{zid}", fontsize=7.0, fontweight="bold", ha=ha, va=va,
-                bbox=dict(boxstyle="round,pad=0.15", facecolor="#ffffff", edgecolor="#212529", alpha=0.90),
+        ax.text(zlon + dx, zlat + dy, f"Z{zid}: {zname}", fontsize=7.2, fontweight="bold", ha=ha, va=va,
+                bbox=dict(boxstyle="round,pad=0.18", facecolor="#ffffff", edgecolor="#37474f", alpha=0.90, linewidth=0.8),
                 zorder=6)
 
-    ax.set_title(
-        "Desagregación Espacial de Causas de Cancelación de Viajes en Managua (MoviGo 2024)",
-        fontsize=12,
-        fontweight="bold",
-        pad=12,
-    )
     ax.set_xlabel("Longitud Oeste (WGS84)", fontsize=9.5)
     ax.set_ylabel("Latitud Norte (WGS84)", fontsize=9.5)
     ax.legend(loc="upper right", frameon=True, facecolor="white", edgecolor="#b0bec5", framealpha=0.95, fontsize=8.2)
@@ -573,44 +530,40 @@ def plot_flood_risk_quadrants(
         )
         ax.add_patch(rect)
 
-    # Zone centroids
+    # Reference landmark zones for spatial orientation
+    landmark_zones = {1, 6, 7, 8, 9, 11}
     for z in zones:
         zid = int(z[0])
+        if zid not in landmark_zones:
+            continue
         zname = clean_zone_name(str(z[1]))
         zlat, zlon = z[2], z[3]
         dx, dy, ha, va = ZONE_LABEL_OFFSETS.get(zid, (0.0, 0.0028, "center", "bottom"))
-        ax.scatter([zlon], [zlat], s=110, c="#ffffff", edgecolors="#d90429", linewidths=1.8, zorder=5)
         ax.text(zlon + dx, zlat + dy, f"Z{zid}: {zname}", fontsize=7.2, fontweight="bold", ha=ha, va=va,
-                bbox=dict(boxstyle="round,pad=0.20", facecolor="#ffffff", edgecolor="#d90429", alpha=0.92, linewidth=1.1),
+                bbox=dict(boxstyle="round,pad=0.18", facecolor="#ffffff", edgecolor="#d90429", alpha=0.90, linewidth=0.9),
                 zorder=6)
 
-    # Runoff indicator
+    # Clean runoff indicator
     ax.annotate(
-        "Dirección de Escorrentía Pluvial hacia Lago Xolotlán (Norte) ⬇",
+        "Escorrentía al Lago Xolotlán (Norte) ⬇",
         xy=(-86.265, 12.170),
-        xytext=(-86.265, 12.180),
-        arrowprops=dict(facecolor="#0077b6", edgecolor="#ffffff", width=2.5, headwidth=8.0),
-        fontsize=8.5,
+        xytext=(-86.265, 12.178),
+        arrowprops=dict(facecolor="#0077b6", edgecolor="#ffffff", width=2.0, headwidth=6.0),
+        fontsize=8.0,
         fontweight="bold",
         color="#0077b6",
         ha="center",
-        bbox=dict(boxstyle="round,pad=0.3", facecolor="#e0f2fe", edgecolor="#0077b6", alpha=0.90),
+        bbox=dict(boxstyle="round,pad=0.25", facecolor="#f0f9ff", edgecolor="#0077b6", alpha=0.92),
         zorder=10,
     )
 
-    # Custom Legend
+    # Custom Legend without sample size counts
     legend_elements = [
-        patches.Patch(facecolor=cfg["color"], edgecolor="#2b2d42", alpha=cfg["alpha"], label=f"{cfg['label']} (n={risk_counts.get(k, 0)})")
+        patches.Patch(facecolor=cfg["color"], edgecolor="#2b2d42", alpha=cfg["alpha"], label=cfg["label"])
         for k, cfg in risk_styles.items()
     ]
     ax.legend(handles=legend_elements, loc="upper right", frameon=True, facecolor="white", edgecolor="#b0bec5", framealpha=0.95, fontsize=8.2)
 
-    ax.set_title(
-        "Vulnerabilidad Hidrológica y Riesgo de Inundación en 298 Cuadrantes Urbanos de Managua",
-        fontsize=12,
-        fontweight="bold",
-        pad=12,
-    )
     ax.set_xlabel("Longitud Oeste (WGS84)", fontsize=9.5)
     ax.set_ylabel("Latitud Norte (WGS84)", fontsize=9.5)
     ax.grid(True, linestyle="--", alpha=0.32)
@@ -675,7 +628,7 @@ def plot_wait_times(
         dx, dy, ha, va = ZONE_LABEL_OFFSETS.get(zid, (0.0, 0.0028, "center", "bottom"))
         ax.text(
             zlon + dx, zlat + dy,
-            f"Z{zid}: {zname}\n{wait_min:.1f} min",
+            f"Z{zid}: {zname}",
             fontsize=7.2,
             fontweight="bold",
             ha=ha, va=va,
@@ -689,44 +642,9 @@ def plot_wait_times(
     cbar = fig.colorbar(sm, ax=ax, orientation="horizontal", pad=0.06, fraction=0.035, aspect=35)
     cbar.set_label("Tiempo Medio de Espera de Recogida (Minutos)", fontsize=9.0, fontweight="medium")
 
-    ax.set_title(
-        "Accesibilidad Temporal del Servicio: Tiempos Medios de Espera para Recogida (MoviGo Managua)",
-        fontsize=12,
-        fontweight="bold",
-        pad=12,
-    )
     ax.set_xlabel("Longitud Oeste (WGS84)", fontsize=9.5)
     ax.set_ylabel("Latitud Norte (WGS84)", fontsize=9.5)
     ax.grid(True, linestyle="--", alpha=0.32)
-
-    # Disparity info box
-    fastest_z = str(zone_waits[-1][1]).split(" / ")[0]
-    fastest_w = float(zone_waits[-1][6])
-    second_fastest_z = str(zone_waits[-2][1]).split(" / ")[0]
-    second_fastest_w = float(zone_waits[-2][6])
-
-    slowest_z = str(zone_waits[0][1]).split(" / ")[0]
-    slowest_w = float(zone_waits[0][6])
-    second_slowest_z = str(zone_waits[1][1]).split(" / ")[0]
-    second_slowest_w = float(zone_waits[1][6])
-    total_trips = sum(int(r[5]) for r in zone_waits)
-
-    disparity_text = (
-        f"Brecha de Accesibilidad Temporal:\n"
-        f"• Más Rápido: {fastest_z} ({fastest_w:.1f} min) | {second_fastest_z} ({second_fastest_w:.1f} min)\n"
-        f"• Mayor Demora: {slowest_z} ({slowest_w:.1f} min) | {second_slowest_z} ({second_slowest_w:.1f} min)\n"
-        f"• Disparidad Territorial: {slowest_w / fastest_w:.1f}x mayor tiempo en periferias\n"
-        f"• Base: {total_trips:,} viajes transaccionales"
-    )
-    ax.text(
-        0.02, 0.03, disparity_text,
-        transform=ax.transAxes,
-        fontsize=8.0,
-        fontfamily="monospace",
-        verticalalignment="bottom",
-        bbox=dict(boxstyle="square,pad=0.45", facecolor="#ffffff", edgecolor="#b0bec5", alpha=0.94),
-        zorder=10,
-    )
 
     plt.tight_layout()
     output_path.parent.mkdir(parents=True, exist_ok=True)

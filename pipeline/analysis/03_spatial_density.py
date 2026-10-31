@@ -92,6 +92,8 @@ def generate_density_plot(
     comp_lats = [r[1] for r in completed_coords]
     canc_lons = [r[0] for r in cancelled_coords]
     canc_lats = [r[1] for r in cancelled_coords]
+    total_samples = len(comp_lons) + len(canc_lons)
+    cancellation_rate = (len(canc_lons) / total_samples * 100.0) if total_samples > 0 else 0.0
 
     fig, ax = plt.subplots(figsize=(10, 8.5), dpi=300)
 
@@ -124,7 +126,7 @@ def generate_density_plot(
         s=2.5,
         c="#0077b6",
         alpha=0.15,
-        label=f"Viajes Completados ({len(comp_lons):,})",
+        label="Viajes Completados",
         zorder=2,
         rasterized=True,
     )
@@ -136,74 +138,31 @@ def generate_density_plot(
         s=3.5,
         c="#d62828",
         alpha=0.30,
-        label=f"Viajes Cancelados ({len(canc_lons):,})",
+        label="Viajes Cancelados",
         zorder=3,
         rasterized=True,
     )
 
-    # 4. Stratum colors for Zone Centers
-    stratum_colors = {
-        "alto": "#1d3557",
-        "medio": "#2a9d8f",
-        "comercial": "#e76f51",
-        "popular": "#6a0572",
-    }
-
-    # Anti-collision label offsets for the 24 urban zones
+    # 4. Anti-collision label offsets for reference landmarks
     zone_label_offsets: dict[int, tuple[float, float, str, str]] = {
         1: (0.0000, -0.0030, "center", "top"),      # Villa Fontana
-        2: (-0.0020, -0.0025, "right", "top"),      # Las Colinas
-        3: (0.0025, 0.0022, "left", "bottom"),      # Santo Domingo
-        4: (-0.0035, 0.0025, "right", "bottom"),    # Los Robles (Northwest)
-        5: (0.0030, 0.0010, "left", "center"),      # Altamira (East)
         6: (-0.0025, 0.0022, "right", "bottom"),    # Bolonia
-        7: (0.0000, -0.0030, "center", "top"),      # Bello Horizonte (South)
+        7: (0.0000, -0.0030, "center", "top"),      # Bello Horizonte
         8: (0.0000, 0.0028, "center", "bottom"),    # Linda Vista
-        9: (0.0035, -0.0025, "left", "top"),        # Metrocentro (Southeast)
-        10: (0.0000, 0.0028, "center", "bottom"),   # Ciudad Jardín
+        9: (0.0035, -0.0025, "left", "top"),        # Metrocentro
         11: (0.0000, 0.0028, "center", "bottom"),   # Mercado Oriental
-        12: (0.0020, -0.0028, "left", "top"),       # Mercado Roberto Huembes
-        13: (-0.0025, 0.0025, "right", "bottom"),   # Monseñor Lezcano
-        14: (0.0000, 0.0028, "center", "bottom"),   # Puerto Salvador Allende
-        15: (-0.0025, -0.0022, "right", "top"),     # Altagracia
-        16: (0.0000, -0.0030, "center", "top"),     # San Judas (South)
-        17: (0.0000, 0.0028, "center", "bottom"),   # Carretera Sur
-        18: (0.0000, 0.0028, "center", "bottom"),   # Esquipulas
-        19: (0.0000, 0.0030, "center", "bottom"),   # Multicentro (North)
-        20: (0.0025, 0.0022, "left", "bottom"),     # Mercado El Mayoreo (North)
-        21: (0.0000, 0.0028, "center", "bottom"),   # Aeropuerto
-        22: (0.0000, -0.0028, "center", "top"),     # Primero de Mayo
-        23: (0.0020, -0.0025, "left", "top"),       # Villa Libertad (South)
-        24: (0.0000, 0.0028, "center", "bottom"),   # Sabana Grande
     }
 
-    # 5. Plot Urban Zone Centroids and Labels
+    # 5. Reference Landmarks (Orientation badges without extraneous dot clutter)
+    landmark_zones = {1, 6, 7, 8, 9, 11}
     for row in zones_rows:
         zid = int(row[0])
-        zname = str(row[1]).split(" / ")[0]
-        replacements = {
-            "Multicentro Las Américas": "Multicentro",
-            "Aeropuerto Augusto C. Sandino": "Aeropuerto Sandino",
-            "Colonia Primero de Mayo": "Primero de Mayo",
-            "Puerto Salvador Allende": "Salvador Allende",
-        }
-        for old, new in replacements.items():
-            zname = zname.replace(old, new)
-        stratum = str(row[2]).lower()
+        if zid not in landmark_zones:
+            continue
+        zname = str(row[1]).split(" / ")[0].replace("Mercado Oriental", "M. Oriental")
         lat = float(row[3])
         lon = float(row[4])
-        color = stratum_colors.get(stratum, "#333333")
         dx, dy, ha, va = zone_label_offsets.get(zid, (0.0, 0.0028, "center", "bottom"))
-
-        ax.scatter(
-            [lon],
-            [lat],
-            s=120,
-            c=color,
-            edgecolors="#ffffff",
-            linewidths=1.8,
-            zorder=5,
-        )
 
         ax.text(
             lon + dx,
@@ -216,22 +175,16 @@ def generate_density_plot(
             bbox=dict(
                 boxstyle="round,pad=0.20",
                 facecolor="white",
-                edgecolor=color,
-                alpha=0.92,
-                linewidth=1.2,
+                edgecolor="#37474f",
+                alpha=0.90,
+                linewidth=0.8,
             ),
             zorder=6,
         )
 
-    # 6. Formatting and Metadata
-    ax.set_title(
-        "Distribución Geoespacial de Orígenes de Viajes en Managua (MoviGo 2024)",
-        fontsize=12,
-        fontweight="bold",
-        pad=12,
-    )
-    ax.set_xlabel("Longitud Oeste (WGS84)", fontsize=9, fontweight="medium")
-    ax.set_ylabel("Latitud Norte (WGS84)", fontsize=9, fontweight="medium")
+    # 6. Clean Coordinates Formatting
+    ax.set_xlabel("Longitud Oeste (WGS84)", fontsize=9.5, fontweight="medium")
+    ax.set_ylabel("Latitud Norte (WGS84)", fontsize=9.5, fontweight="medium")
 
     # Legend
     legend = ax.legend(
@@ -240,35 +193,10 @@ def generate_density_plot(
         facecolor="white",
         edgecolor="#b0bec5",
         framealpha=0.95,
-        fontsize=8,
+        fontsize=8.5,
     )
     legend.set_zorder(10)
     ax.grid(True, linestyle="--", alpha=0.30)
-
-    # Annotate summary box in bottom left
-    total_samples = len(comp_lons) + len(canc_lons)
-    cancellation_rate = (len(canc_lons) / total_samples) * 100 if total_samples > 0 else 0.0
-    summary_text = (
-        f"Muestras WGS84: {total_samples:,}\n"
-        f"Completados: {len(comp_lons):,} ({100 - cancellation_rate:.1f}%)\n"
-        f"Cancelaciones: {len(canc_lons):,} ({cancellation_rate:.1f}%)"
-    )
-    ax.text(
-        0.02,
-        0.03,
-        summary_text,
-        transform=ax.transAxes,
-        fontsize=8,
-        fontfamily="monospace",
-        verticalalignment="bottom",
-        bbox=dict(
-            boxstyle="square,pad=0.5",
-            facecolor="#f8f9fa",
-            edgecolor="#adb5bd",
-            alpha=0.92,
-        ),
-        zorder=10,
-    )
 
     plt.tight_layout()
     plt.savefig(output_path, format="png", dpi=300, bbox_inches="tight")

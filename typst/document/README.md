@@ -1,4 +1,4 @@
-# Módulo Documental — MoviGo (Integrador IV)
+# Módulo Documental: MoviGo (Integrador IV)
 
 Este directorio contiene los capítulos modulares y la plantilla académica del documento de investigación de MoviGo maquetada y programada en **Typst**.
 

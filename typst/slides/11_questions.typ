@@ -25,7 +25,7 @@ Muchas gracias a los profesores y miembros del jurado evaluador. Abrimos con gus
 #align(center)[
   #text(size: 8pt, weight: "bold", fill: brand-red)[INTEGRADOR IV • INGENIERÍA EN CIENCIA DE DATOS] \
   #v(1pt)
-  #text(size: 14pt, weight: "bold", fill: brand-dark)[Optimización territorial de la flota y del sistema tarifario — Movi Go] \
+  #text(size: 14pt, weight: "bold", fill: brand-dark)[Optimización territorial de la flota y del sistema tarifario: Movi Go] \
   #v(2pt)
   #text(size: 9pt, fill: text-muted)[Muchas gracias por su atención. Quedamos a disposición del jurado evaluador para comentarios y preguntas.]
 ]

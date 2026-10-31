@@ -64,11 +64,12 @@ Para modelar la dinámica física y comercial del servicio a partir del censo an
 
 + *Inferencia Paramétrica e Intervalos de Confianza al 95%:* Se estima la matriz de varianza-covarianza muestral $sigma^2 (X^T X)^(-1)$ sobre los datos de entrenamiento para derivar los errores estándar de los estimadores y construir intervalos de confianza al 95% ($z_(0.025) = 1.96$), verificando la significancia estadística y la estabilidad de las pendientes operativas y tarifarias.
 
-=== Fase 3: Modelado de Redes, Centralidad y Resiliencia Espacial ante Inundaciones (Objetivo 3)
-Para mitigar los retrasos operacionales y evaluar la vulnerabilidad de la movilidad ante eventos climáticos severos:
-+ *Modelado de la Red Vial como Grafo Ponderado:* Se estructura la red de las 24 zonas urbanas de Managua (`dim_zones`) como un grafo $G = (V, E)$ de 44 corredores arteriales principales (Pista Juan Pablo II, Carretera a Masaya, Eje Tiscapa, radiales comerciales), calibrados con distancias Haversine corregidas por tortuosidad vial ($kappa = 1.30$).
-+ *Análisis de Centralidad de Intermediación (_Betweenness_):* Se computa la métrica de intermediación $C_B(v)$ sobre los 24 vértices para rankear e identificar los cuellos de botella sistémicos de la infraestructura vial de Managua.
-+ *Función de Impedancia y Evaluación de Resiliencia con Dijkstra:* Se calcula el costo temporal de cada arista ($tau_(i j) = frac(d_(i j), v_(i j)(c)) dot 60$) bajo escenarios secos y de lluvia torrencial con penalizaciones hidrológicas por desbordamiento de cauces. Se aplica el algoritmo de Dijkstra sobre la totalidad de los 552 pares OD metropolitanos y sobre corredores estratégicos para cuantificar la dilatación en tiempos de traslado y los desvíos forzosos hacia arterias corporativas.
+=== Fase 3: Modelado de Redes Espaciales Celulares y Auditoría Algorítmica de Ruteo (Objetivo 3)
+Para auditar el ruteo de caja negra de la plataforma y evaluar la optimización prescriptiva ante contingencias meteorológicas:
++ *Modelado de la Red Espacial como Grafo Celular:* Se estructura el territorio metropolitano a partir de los 298 cuadrantes urbanos (`dim_quadrants`) como un grafo ponderado $G = (V, E)$ con 1,072 aristas de conectividad espacial según la 8-vecindad de Moore, integrando coordenadas de centroides, cotas altimétricas y cauces pluviales.
++ *Función de Impedancia Dinámica Multivariable:* Se calcula el costo temporal de cada arista ($tau_(i j) = frac(d_(i j), v_(i j)) dot 60$) incorporando distancias geodésicas corregidas por tortuosidad ($kappa = 1.25$), modulación por congestión empírica (`congestion_index`) y penalizaciones hidrológicas severas en los 20 cuadrantes con cauces críticos anegados extraídos de `quadrant_weather`.
++ *Algoritmo de Dijkstra y Protocolo de Auditoría de Caja Negra:* Se implementa el algoritmo de Dijkstra para resolver caminos mínimos en escenario basal seco y de tormenta. Se evalúan los 552 pares OD metropolitanos y corredores estratégicos, contrastando las trayectorias prescriptivas óptimas frente a los datos observados de MoviGo en `fct_viajes` para cuantificar ahorros temporales ($Delta T$) y mitigación del detonante de cancelaciones.
++ *Centralidad de Intermediación y Cuellos de Botella:* Se computa la centralidad de intermediación $C_B(v)$ sobre la malla espacial para caracterizar la vulnerabilidad estructural y la redistribución del tráfico ante inundaciones.
 
 == Ecosistema Computacional y Flujo de Reproducibilidad (DuckDB, Python y Typst)
 
@@ -87,4 +88,4 @@ Para asegurar la validez metodológica y la reproducibilidad científica estrict
 
 == Disponibilidad de Código, Datos y Reproducibilidad
 
-En concordancia con los principios de reproducibilidad científica y ciencia abierta, la totalidad de los artefactos computacionales de la investigación —incluyendo los scripts de extracción y carga, las definiciones DDL y transformaciones en dbt Core, el almacén de datos columnar en DuckDB, los scripts de modelación y optimización en Python, así como los archivos fuentes de maquetación y generación de figuras en Typst— se encuentran versionados y disponibles públicamente en el repositorio oficial del proyecto @movigo2024repo (#link(repo-url)).
+En concordancia con los principios de reproducibilidad científica y ciencia abierta, la totalidad de los artefactos computacionales de la investigación (incluyendo los scripts de extracción y carga, las definiciones DDL y transformaciones en dbt Core, el almacén de datos columnar en DuckDB, los scripts de modelación y optimización en Python, así como los archivos fuentes de maquetación y generación de figuras en Typst) se encuentran versionados y disponibles públicamente en el repositorio oficial del proyecto @movigo2024repo (#link(repo-url)).

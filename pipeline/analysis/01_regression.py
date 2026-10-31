@@ -415,7 +415,7 @@ def plot_duration_model(model_results: dict[str, Any], output_path: Path) -> Non
         color=COLOR_PRIMARY,
         edgecolors="none",
         s=22,
-        label=f"Viajes Observados (Test: N = {len(y_test):,})",
+        label="Viajes Observados",
     )
 
     # Compute regression line directly across observed distance range
@@ -428,31 +428,14 @@ def plot_duration_model(model_results: dict[str, Any], output_path: Path) -> Non
         color=COLOR_DANGER,
         linestyle="-",
         linewidth=2.4,
-        label=f"Ajuste SGD: $\\hat{{y}} = {b0:.2f} + {b1:.2f}x$",
+        label="Ajuste Lineal (SGD)",
     )
 
-    plt.title(
-        "Modelo 1: Regresión Lineal Simple de Tiempo de Viaje (ETA)\n"
-        "Relación Directa: Distancia Recorrida vs. Duración del Viaje (SGD)",
-        fontsize=11,
-        pad=12,
-        fontweight="bold",
-    )
-    plt.xlabel("Distancia del Viaje (kilómetros)", fontsize=11)
-    plt.ylabel("Duración del Viaje (minutos)", fontsize=11)
-    plt.grid(True, linestyle=":", alpha=0.6)
+    plt.xlabel("Distancia del Viaje (kilómetros)", fontsize=10.5)
+    plt.ylabel("Duración del Viaje (minutos)", fontsize=10.5)
+    plt.grid(True, linestyle=":", alpha=0.5)
 
-    textstr = (
-        f"$R^2 = {r2:.4f}$\n"
-        f"$MAE = {mae:.2f}$ min\n"
-        f"$RMSE = {rmse:.2f}$ min\n"
-        f"Pendiente: {b1:.2f} min/km\n"
-        f"Método: Descenso de Gradiente (SGD)"
-    )
-    props = dict(boxstyle="round,pad=0.5", facecolor="white", edgecolor=COLOR_MUTED, alpha=0.92)
-    plt.gca().text(0.05, 0.92, textstr, transform=plt.gca().transAxes, fontsize=10, verticalalignment="top", bbox=props)
-
-    plt.legend(loc="upper left", bbox_to_anchor=(0.04, 0.63), framealpha=0.9)
+    plt.legend(loc="upper left", framealpha=0.92, fontsize=9.5)
     plt.tight_layout()
     plt.savefig(output_path, dpi=300)
     plt.close()
@@ -483,7 +466,7 @@ def plot_fare_model(model_results: dict[str, Any], output_path: Path) -> None:
         color=COLOR_SUCCESS,
         edgecolors="none",
         s=22,
-        label=f"Tarifas Facturadas (Test: N = {len(y_test):,})",
+        label="Tarifas Facturadas",
     )
 
     # Compute regression line directly across observed distance range
@@ -496,32 +479,14 @@ def plot_fare_model(model_results: dict[str, Any], output_path: Path) -> None:
         color=COLOR_DANGER,
         linestyle="-",
         linewidth=2.4,
-        label=f"Ajuste SGD: $\\hat{{y}} = {b0:.2f} + {b1:.2f}x$",
+        label="Ajuste Lineal (SGD)",
     )
 
-    plt.title(
-        "Modelo 2: Regresión Lineal Simple de Tarificación del Servicio\n"
-        "Relación Directa: Distancia Recorrida vs. Tarifa Cobrada (SGD)",
-        fontsize=11,
-        pad=12,
-        fontweight="bold",
-    )
-    plt.xlabel("Distancia del Viaje (kilómetros)", fontsize=11)
-    plt.ylabel("Tarifa Final del Viaje (Córdobas - NIO)", fontsize=11)
-    plt.grid(True, linestyle=":", alpha=0.6)
+    plt.xlabel("Distancia del Viaje (kilómetros)", fontsize=10.5)
+    plt.ylabel("Tarifa Final del Viaje (Córdobas - NIO)", fontsize=10.5)
+    plt.grid(True, linestyle=":", alpha=0.5)
 
-    textstr = (
-        f"$R^2 = {r2:.4f}$\n"
-        f"$MAE = {mae:.2f}$ NIO\n"
-        f"$RMSE = {rmse:.2f}$ NIO\n"
-        f"Tarifa Base: {b0:.2f} NIO\n"
-        f"Costo por km: {b1:.2f} NIO/km\n"
-        f"Método: Descenso de Gradiente (SGD)"
-    )
-    props = dict(boxstyle="round,pad=0.5", facecolor="white", edgecolor=COLOR_MUTED, alpha=0.92)
-    plt.gca().text(0.05, 0.92, textstr, transform=plt.gca().transAxes, fontsize=10, verticalalignment="top", bbox=props)
-
-    plt.legend(loc="upper left", bbox_to_anchor=(0.04, 0.60), framealpha=0.9)
+    plt.legend(loc="upper left", framealpha=0.92, fontsize=9.5)
     plt.tight_layout()
     plt.savefig(output_path, dpi=300)
     plt.close()

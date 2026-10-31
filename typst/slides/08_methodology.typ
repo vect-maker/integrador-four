@@ -10,7 +10,7 @@ Adoptamos un *enfoque mixto (con predominio cuantitativo)* y un *alcance descrip
 
 La investigación se articula en *dos fases secuenciales*:
 *Fase 1: Pipeline ELT y Star Schema*. Ingesta Parquet, carga en Azure PostgreSQL, transformaciones y pruebas de integridad con dbt Core y DuckDB.
-*Fase 2: Optimización en Redes Viales*. Modelado de grafo metropolitano (24 zonas y 44 corredores), métricas de centralidad de intermediación y algoritmo de Dijkstra para cuantificar la resiliencia ante anegamientos pluviales en Managua.
+*Fase 2: Optimización en Redes Viales*. Modelado de malla espacial celular (298 cuadrantes y 1,072 aristas), métricas de centralidad de intermediación y algoritmo de Dijkstra para auditar el ruteo de caja negra de MoviGo y prescribir caminos mínimos ante anegamientos en Managua.
 
 👉 _Transición:_ "Entremos al detalle de la arquitectura del pipeline de datos con API, Azure, dbt y DuckDB."
 ]

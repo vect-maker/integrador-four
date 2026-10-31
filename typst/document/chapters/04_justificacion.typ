@@ -16,8 +16,8 @@ A partir del análisis de los *77,487 registros históricos de viajes* y las ser
 
 Desde el punto de vista científico y metodológico, la investigación trasciende la analítica descriptiva tradicional para articular herramientas formales de *teoría de grafos, análisis de redes espaciales e investigación de operaciones*:
 
-+ *Modelado Topológico y Cuellos de Botella Sistémicos:* Modela la red vial metropolitana de las 24 zonas urbanas de Managua como un grafo ponderado $G = (V, E)$ de 44 corredores principales, aplicando métricas de *Centralidad de Intermediación (_Betweenness Centrality_)* para rankear y diagnosticar objetivamente los nudos viales con mayor vulnerabilidad estructural.
-+ *Optimización de Trayectorias y Resiliencia ante Eventos Meteorológicos:* Aplica el *Algoritmo de Dijkstra* sobre la totalidad de los pares origen-destino urbanos para cuantificar los costos temporales y la dilatación de traslados generada por anegamientos e inundaciones de cauces, identificando el estrangulamiento físico de la red que incide directamente sobre la degradación del servicio.
++ *Modelado Topológico y Cuellos de Botella Sistémicos:* Modela el territorio metropolitano como una red celular ponderada $G = (V, E)$ de 298 cuadrantes y 1,072 conexiones contiguas en las 24 zonas urbanas de Managua, aplicando métricas de *Centralidad de Intermediación (_Betweenness Centrality_)* para diagnosticar objetivamente los nudos espaciales con mayor vulnerabilidad estructural.
++ *Optimización de Trayectorias y Auditoría de Ruteo de Caja Negra:* Aplica el *Algoritmo de Dijkstra* para calcular caminos mínimos prescriptivos y contrastarlos con las trayectorias reales observadas de MoviGo, demostrando cómo circunnavegar activamente los cauces desbordados ahorra hasta 82 minutos de retraso e impide el colapso operativo por cancelaciones masivas.
 
 == Relevancia Tecnológica y Arquitectura de Ingeniería de Datos (ELT con dbt)
 

@@ -67,6 +67,8 @@
 #let od1-rerouted = od1.storm_scenario.path_rerouted
 #let od1-dry-route = od1.dry_scenario.path_names.join(" → ")
 #let od1-storm-route = od1.storm_scenario.path_names.join(" → ")
+#let od1-movigo-storm = od1.empirical_benchmark.movigo_observed_storm_min
+#let od1-saved-time = od1.empirical_benchmark.prescriptive_time_saved_min
 
 // Resiliencia global y topología de la red
 #let routing-pairs = fmt-int(routing.global_resilience.total_pairs_evaluated)
@@ -107,6 +109,8 @@
 #let od2-rerouted = od2.storm_scenario.path_rerouted
 #let od2-dry-route = od2.dry_scenario.path_names.join(" → ")
 #let od2-storm-route = od2.storm_scenario.path_names.join(" → ")
+#let od2-movigo-storm = od2.empirical_benchmark.movigo_observed_storm_min
+#let od2-saved-time = od2.empirical_benchmark.prescriptive_time_saved_min
 
 #let od3 = routing.routes.at(2)
 #let od3-origin = od3.origin.name
@@ -117,6 +121,8 @@
 #let od3-rerouted = od3.storm_scenario.path_rerouted
 #let od3-dry-route = od3.dry_scenario.path_names.join(" → ")
 #let od3-storm-route = od3.storm_scenario.path_names.join(" → ")
+#let od3-movigo-storm = od3.empirical_benchmark.movigo_observed_storm_min
+#let od3-saved-time = od3.empirical_benchmark.prescriptive_time_saved_min
 
 // -----------------------------------------------------------------------------
 // Modelado Numérico & Inferencia: Regresión Lineal Simple vía SGD
